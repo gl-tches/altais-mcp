@@ -1,1 +1,1 @@
-# Argus
+# talos-mcp
