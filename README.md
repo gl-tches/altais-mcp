@@ -1,1 +1,1 @@
-# talos-mcp
+# altais-mcp
