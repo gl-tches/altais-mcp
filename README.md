@@ -1,4 +1,7 @@
 # altais-mcp
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](./LICENSE) [![Version](https://img.shields.io/badge/version-1.0.0-blue)](./CHANGELOG.md) [![Node.js](https://img.shields.io/badge/node-%3E%3D20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![MCP](https://img.shields.io/badge/MCP-server-blueviolet)](https://modelcontextprotocol.io) [![Tools](https://img.shields.io/badge/tools-132-blueviolet)](./wiki/Home.md) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](./wiki/Contributing.md)
+
 > **Why "Altais"?** Altais (δ Draconis) is a star in the tail of Draco, the dragon constellation that wraps around the north celestial pole. In Greek mythology, Draco was the guardian that never slept. The name felt right for a security tool, something that sits quietly in the background, watching everything that passes through.
 
 ---
