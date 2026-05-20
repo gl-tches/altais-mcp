@@ -2,9 +2,9 @@
 
 This guide explains how to add a new module to altais-mcp. It covers the `ModuleDefinition` contract, the standard module file layout, the `ToolDefinition` shape and required annotations, deterministic finding IDs, Zod input-schema conventions, registration in the server entry point and config schema, testing expectations, and the lint/build gates.
 
-The `container` module (`src/modules/container/`) is used as the worked example throughout — it is small, self-contained, and exercises the full pattern.
+The [`container` module](modules/container.md) (`src/modules/container/`) is used as the worked example throughout — it is small, self-contained, and exercises the full pattern.
 
-Before starting, read [`CLAUDE.md`](../CLAUDE.md) — its **MCP Server Security Rules** and **Code Conventions** are non-negotiable and apply to every module.
+Before starting, read [`CLAUDE.md`](../CLAUDE.md) — its **MCP Server Security Rules** and **Code Conventions** are non-negotiable and apply to every module. The [Contributing guide](Contributing.md) covers branch naming, the commit convention, and the pull-request process.
 
 ---
 
@@ -329,3 +329,11 @@ altais-mcp currently ships as a **single npm package** (`altais-mcp`) that bundl
 ### Recommendation
 
 **Stay with the single `altais-mcp` package for now.** Config-driven module loading already delivers the practical benefit of scoped packages (load only what you need) without the versioning, coordination, and supply-chain costs of fragmentation, and it keeps the project's own attack surface minimal — which is the point of a security tool. Revisit a scoped split only if a concrete need emerges: a much larger runtime-dependency footprint in some modules, genuinely independent release cadences, or third-party module contributions that warrant separate ownership. If a split ever happens, `@altais/core` (types, `FindingStore`, scoring, finding-ID helpers) should be carved out first, with all other packages depending on an exact pinned version of it.
+
+---
+
+## See also
+
+- [Wiki home](Home.md) — the module index and a reference page for every tool
+- [Contributing](Contributing.md) — branch naming, commits, and the PR process
+- [Deployment](Deployment.md) — running altais-mcp once your module ships

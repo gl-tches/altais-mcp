@@ -1,6 +1,8 @@
 # altais-mcp
 > **Why "Altais"?** Altais (δ Draconis) is a star in the tail of Draco, the dragon constellation that wraps around the north celestial pole. In Greek mythology, Draco was the guardian that never slept. The name felt right for a security tool, something that sits quietly in the background, watching everything that passes through.
 
+---
+
 **altais-mcp** is a modular, open-source [Model Context Protocol](https://modelcontextprotocol.io) server that provides comprehensive security analysis for AI coding agents. It exposes 132 tools across 24 modules: agents call them to scan code, model threats, audit dependencies, verify compliance, and generate remediation guidance. Every tool is **read-only** (`readOnlyHint: true`) — altais-mcp analyzes code, configuration, and architecture; it never modifies, executes, or transmits the code it inspects.
 
 - **License:** MIT
@@ -8,6 +10,7 @@
 - **SDK:** `@modelcontextprotocol/sdk`
 - **Transports:** stdio (local / Claude Code) and streamable HTTP (remote / multi-agent)
 - **Config format:** TOML (`altais.config.toml`)
+- **Wiki:** [`wiki/Home.md`](./wiki/Home.md) — a reference page for every tool, plus [deployment](./wiki/Deployment.md) and [contributing](./wiki/Contributing.md) guides
 
 altais-mcp performs static analysis and advisory generation only. It does not execute, `eval`, import, or dynamically load any code passed to it, and it makes no network calls at runtime — all CWE, OWASP, OSV, and pattern databases ship inside the package. See [`SECURITY.md`](./SECURITY.md) for the full security model.
 
@@ -235,7 +238,7 @@ The `scan_root` boundary is a security control: `altais_scan_file` canonicalizes
 | Opt-in           | `crypto`, `container`, `code`, `data`, `iac`, `api`, `compliance`, `infra`, `protocol`, `vuln_db`, `incident`, `testing`, `sdlc`, `ml_security`, `agentic`, `runtime` | 89      |
 | **Total**        | **24 modules**                                                                           | **132** |
 
-Every tool — its name, input fields, and a representative request/response example — is documented in [`docs/TOOLS.md`](./docs/TOOLS.md).
+Every tool has its own reference page in the [project wiki](./wiki/Home.md) — its name, input fields, output shape, and a representative request/response example.
 
 ---
 
@@ -264,16 +267,18 @@ npm run format:check  # verify Prettier formatting without writing
 npm start             # run the built server (node dist/index.js)
 ```
 
-Adding a new module? See [`docs/MODULE_DEVELOPMENT.md`](./docs/MODULE_DEVELOPMENT.md) for the `ModuleDefinition` contract, the file layout, finding-ID conventions, and registration steps.
+Adding a new module? See the [Module Development guide](./wiki/Module-Development.md) in the wiki for the `ModuleDefinition` contract, the file layout, finding-ID conventions, and registration steps.
 
 ---
 
 ## Documentation
 
-| Document                                               | Contents                                                          |
-| ------------------------------------------------------ | ----------------------------------------------------------------- |
-| [`docs/TOOLS.md`](./docs/TOOLS.md)                     | Every tool: inputs, examples, output shapes, grouped by module    |
-| [`docs/MODULE_DEVELOPMENT.md`](./docs/MODULE_DEVELOPMENT.md) | Guide for contributors adding a new module                   |
-| [`SECURITY.md`](./SECURITY.md)                         | Threat model, the nine security rules, vulnerability reporting    |
-| [`CHANGELOG.md`](./CHANGELOG.md)                       | Release history (v0.1.0 – v0.5.0)                                 |
-| `altais-mcp-architecture.md`                           | Full module tree, tool tables, and phase plan                     |
+| Document                                                       | Contents                                                              |
+| -------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [Project wiki](./wiki/Home.md)                                 | A reference page for every tool, module pages, and how-to guides      |
+| [`wiki/Module-Development.md`](./wiki/Module-Development.md)    | Guide for contributors adding a new module                            |
+| [`wiki/Deployment.md`](./wiki/Deployment.md)                   | Deploying altais-mcp (stdio, HTTP, Docker, systemd)                   |
+| [`wiki/Contributing.md`](./wiki/Contributing.md)               | Branch naming, commit conventions, and the PR process                 |
+| [`SECURITY.md`](./SECURITY.md)                                 | Threat model, the nine security rules, vulnerability reporting        |
+| [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.0.0)                                     |
+| `altais-mcp-architecture.md`                                   | Full module tree, tool tables, and phase plan                         |
