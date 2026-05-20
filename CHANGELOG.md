@@ -26,10 +26,11 @@ across 24 modules.**
 - **Documentation**
   - `README.md` — installation, quick start (stdio + HTTP), the 24-module
     table, and the full configuration reference
-  - `docs/TOOLS.md` — every tool documented with input/output examples
+  - A documentation wiki under `wiki/` — a reference page for every tool,
+    a page per module, and the Home, Deployment, Contributing, and
+    Module-Development guides
   - `SECURITY.md` — threat model, the nine MCP server security rules and
     how altais-mcp follows them, and vulnerability-reporting guidance
-  - `docs/MODULE_DEVELOPMENT.md` — guide for adding a new module
 - `LICENSE` — MIT license file.
 
 ### Changed
