@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="testing">
+  <qa_pair>
+    <question>Generate a fuzz-testing configuration for a C library function named `parse_header` using libFuzzer.</question>
+    <tools>altais_generate_fuzz_config</tools>
+    <answer>altais_generate_fuzz_config returns a libFuzzer harness skeleton referencing `parse_header`, a runner script, a sanitizer recommendation (ASan/UBSan), and corpus/dictionary guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a fuzz-testing configuration for Rust, letting the tool pick the idiomatic engine.</question>
+    <tools>altais_generate_fuzz_config</tools>
+    <answer>altais_generate_fuzz_config defaults to cargo-fuzz for Rust and returns a harness skeleton, runner script, and sanitizer/corpus guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a SAST tool configuration for Semgrep targeting `python` and `javascript`.</question>
+    <tools>altais_generate_sast_config</tools>
+    <answer>altais_generate_sast_config returns a Semgrep ruleset config body, recommended rule packs for Python and JavaScript, and a CI invocation snippet.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a SAST configuration for CodeQL targeting `go`.</question>
+    <tools>altais_generate_sast_config</tools>
+    <answer>altais_generate_sast_config returns a CodeQL config plus a workflow, the recommended query packs for Go, and a CI invocation snippet.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a penetration-test scope: `{ "config": { "application_type": "web", "assets": ["https://app.example.com"], "environment": "staging", "objectives": ["prove access to customer PII"] } }`.</question>
+    <tools>altais_generate_pentest_scope</tools>
+    <answer>altais_generate_pentest_scope returns a scoping document with in/out-of-scope definitions, rules of engagement for the staging environment, a methodology aligned to the OWASP WSTG and PTES, and a web-specific testing checklist.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate security test cases for the `injection` vulnerability class in Python using pytest.</question>
+    <tools>altais_generate_security_tests</tools>
+    <answer>altais_generate_security_tests returns pytest-shaped test code with positive cases (benign input accepted) and negative cases (injection payloads rejected) asserting the vulnerability is mitigated.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate security test cases for the `xss` vulnerability class in JavaScript.</question>
+    <tools>altais_generate_security_tests</tools>
+    <answer>altais_generate_security_tests returns JavaScript test code with both benign-input and malicious-XSS-payload cases asserting that output encoding mitigates XSS.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a security chaos-engineering config for Kubernetes with the `pod-kill` and `network-latency` experiments.</question>
+    <tools>altais_generate_chaos_config</tools>
+    <answer>altais_generate_chaos_config returns Chaos-Mesh-style experiment definitions for pod-kill and network-latency, each with a steady-state hypothesis, a blast-radius limit, and rollback guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a red-team engagement scope: `{ "config": { "objectives": ["exfiltrate the customer database"], "threat_actor_profile": "nation-state", "duration_weeks": 6, "assumed_breach": true } }`.</question>
+    <tools>altais_scope_red_team</tools>
+    <answer>altais_scope_red_team returns a red-team scope with objectives and capture flags, MITRE ATT&amp;CK-mapped TTPs for a nation-state actor, rules of engagement, deconfliction procedures, and an assumed-breach starting position.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an IAST configuration for a Java Spring Boot application using Contrast.</question>
+    <tools>altais_generate_iast_config</tools>
+    <answer>altais_generate_iast_config returns Contrast agent setup steps, an instrumentation config for Spring Boot, a CI/CD integration workflow, and coverage guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an IAST configuration for a C application. What does the tool report?</question>
+    <tools>altais_generate_iast_config</tools>
+    <answer>altais_generate_iast_config flags that IAST is not applicable to natively compiled languages like C and recommends DAST plus fuzzing instead.</answer>
+  </qa_pair>
+</evaluation>

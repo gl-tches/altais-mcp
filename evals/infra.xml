@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="infra">
+  <qa_pair>
+    <question>Audit this network config — an ingress rule allows SSH from anywhere: `{ "config": { "firewall_rules": [{ "direction": "ingress", "source": "0.0.0.0/0", "port": 22, "protocol": "tcp", "action": "allow" }] } }`.</question>
+    <tools>altais_audit_network</tools>
+    <answer>altais_audit_network reports a finding that SSH (port 22) ingress is allowed from `0.0.0.0/0`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a network config with an unconstrained allow rule: `{ "config": { "firewall_rules": [{ "direction": "ingress", "source": "any", "port": "any", "protocol": "any", "action": "allow" }] } }`.</question>
+    <tools>altais_audit_network</tools>
+    <answer>altais_audit_network reports a finding for the unconstrained `allow any any` rule.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a network config that has no zones or segments: `{ "config": { "firewall_rules": [], "egress_filtering": false } }`.</question>
+    <tools>altais_audit_network</tools>
+    <answer>altais_audit_network reports findings for the flat topology with no zones or segments and for unrestricted egress.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit DNS config with DNSSEC off and open zone transfers: `{ "config": { "dnssec_enabled": false, "zone_transfer_allowed": true } }`.</question>
+    <tools>altais_audit_dns</tools>
+    <answer>altais_audit_dns reports findings that DNSSEC is disabled and that open AXFR zone transfers are allowed.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit DNS config with no CAA records and a wildcard record: `{ "config": { "dnssec_enabled": true, "caa_records": [], "wildcard_records": true } }`.</question>
+    <tools>altais_audit_dns</tools>
+    <answer>altais_audit_dns reports findings for the missing CAA records and the wildcard record (broadened attack surface).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit DNS config for a dangling record: `{ "config": { "records": [{ "name": "old.example.com", "type": "CNAME", "value": "unclaimed.s3.amazonaws.com", "points_to_external": true }] } }`.</question>
+    <tools>altais_audit_dns</tools>
+    <answer>altais_audit_dns reports a finding for the dangling DNS record pointing to an external resource (subdomain-takeover risk).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Assess this architecture against zero-trust principles: `{ "config": { "verify_explicitly": false, "least_privilege_access": false, "mfa_enforced": false, "microsegmentation": false } }`.</question>
+    <tools>altais_check_zero_trust</tools>
+    <answer>altais_check_zero_trust emits a finding for each missing tenet (verify explicitly, least privilege, MFA, microsegmentation) plus a maturity summary.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Assess a zero-trust architecture where all eleven NIST SP 800-207 tenets are true. Confirm it scores well.</question>
+    <tools>altais_check_zero_trust</tools>
+    <answer>altais_check_zero_trust returns zero missing-tenet findings and a high maturity summary when every tenet is satisfied.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check Linux CIS hardening: `{ "platform": "linux", "settings": { "ssh_root_login": "yes", "firewall_enabled": false } }`.</question>
+    <tools>altais_check_hardening</tools>
+    <answer>altais_check_hardening reports findings that SSH root login is not disabled and that the host firewall is not enabled.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check AWS CIS hardening: `{ "platform": "aws", "settings": { "root_mfa_enabled": false, "cloudtrail_multi_region": false } }`.</question>
+    <tools>altais_check_hardening</tools>
+    <answer>altais_check_hardening reports findings that root MFA is not enabled and that multi-region CloudTrail is not configured.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a network config with a default-deny rule set, defined zones, and egress filtering enabled. Confirm it is clean.</question>
+    <tools>altais_audit_network</tools>
+    <answer>altais_audit_network returns no open-ingress, no flat-topology, and no unrestricted-egress findings when the rule set is default-deny, zones exist, and egress is filtered.</answer>
+  </qa_pair>
+</evaluation>

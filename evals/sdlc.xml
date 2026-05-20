@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="sdlc">
+  <qa_pair>
+    <question>Generate a pre-commit hook configuration for a `python` and `typescript` codebase with the `secrets`, `lint`, and `sast` checks.</question>
+    <tools>altais_generate_precommit</tools>
+    <answer>altais_generate_precommit returns a `.pre-commit-config.yaml` body wiring secret scanning (gitleaks + detect-secrets), Python/TypeScript linters, and SAST (Semgrep, plus Bandit for Python), with setup notes.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a pre-commit config that includes the `private-key` and `large-files` checks for a `go` codebase.</question>
+    <tools>altais_generate_precommit</tools>
+    <answer>altais_generate_precommit returns a `.pre-commit-config.yaml` that wires private-key detection and large-file blocking for the Go codebase.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a CI/CD pipeline for security gates: `{ "config": { "has_sast": false, "has_dependency_scan": false, "has_secret_scan": false, "blocks_on_failure": false } }`.</question>
+    <tools>altais_audit_ci_cd</tools>
+    <answer>altais_audit_ci_cd reports findings for the missing SAST, dependency/SCA scanning, secret scanning, and fail-on-findings gates, citing CWE-1395 / CWE-693.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this CI/CD pipeline YAML for unpinned actions: `jobs:\n  build:\n    steps:\n    - uses: actions/checkout@v4\n    - uses: some/action@main`.</question>
+    <tools>altais_audit_ci_cd</tools>
+    <answer>altais_audit_ci_cd reports a finding for the third-party action `some/action@main` pinned by a mutable branch.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a security code-review checklist for a high-sensitivity `auth` change in a `typescript` codebase.</question>
+    <tools>altais_generate_review_checklist</tools>
+    <answer>altais_generate_review_checklist returns a checklist weighted toward auth concerns, and because sensitivity is high, every recommended item is elevated to mandatory.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a code-review checklist for a low-sensitivity `bugfix` change in a `python` codebase.</question>
+    <tools>altais_generate_review_checklist</tools>
+    <answer>altais_generate_review_checklist returns a bugfix-oriented checklist covering input validation, error handling, and tests at low sensitivity.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check release-process integrity: `{ "config": { "artifacts_signed": false, "checksums_published": false, "sbom_published": false, "provenance_attestation": false } }`.</question>
+    <tools>altais_check_release_integrity</tools>
+    <answer>altais_check_release_integrity reports findings for unsigned artifacts, no published checksums, no SBOM, and no provenance attestation, citing CWE-345 / CWE-353.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Verify commit signing from this summary: `{ "config": { "signing_enforced": false, "total_commits": 100, "signed_commits": 20, "verified_commits": 15 } }`.</question>
+    <tools>altais_check_signed_commits</tools>
+    <answer>altais_check_signed_commits reports findings that commit signing is not enforced and that most commits are unsigned/unverified, citing CWE-347.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit branch-protection settings: `{ "config": { "required_reviews": 0, "enforce_for_admins": false, "restrict_force_push": false, "require_signed_commits": false } }`.</question>
+    <tools>altais_audit_branch_protection</tools>
+    <answer>altais_audit_branch_protection reports findings for no required review, admins able to bypass protection, allowed force pushes, and no signed-commit requirement, citing CWE-284 / CWE-1269.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Assess the SLSA v1.2 Build Track level for: `{ "config": { "scripted_build": true, "build_service": true, "provenance_generated": false } }`.</question>
+    <tools>altais_assess_slsa_level</tools>
+    <answer>altais_assess_slsa_level emits a finding stating the achieved Build Track level (Level 1, since provenance is not generated) and lists the requirements needed to reach the next level.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check this CODEOWNERS file — it has no rule for sensitive paths: `*.md  @docs-team`.</question>
+    <tools>altais_check_codeowners</tools>
+    <answer>altais_check_codeowners reports findings for security-sensitive paths (auth, crypto, CI, infra) with no owner rule and a missing catch-all `*` rule, citing CWE-1220 / CWE-284.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit branch-protection settings that are fully hardened: `{ "config": { "required_reviews": 2, "dismiss_stale_reviews": true, "required_status_checks": true, "enforce_for_admins": true, "restrict_force_push": true, "restrict_deletions": true, "require_signed_commits": true } }`.</question>
+    <tools>altais_audit_branch_protection</tools>
+    <answer>altais_audit_branch_protection returns zero findings; required reviews, status checks, admin enforcement, force-push/deletion restrictions, and signed commits are all configured.</answer>
+  </qa_pair>
+</evaluation>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="code">
+  <qa_pair>
+    <question>Review this C code against secure-coding standards: `printf(user_input);` where user_input is attacker-controlled.</question>
+    <tools>altais_review_secure_coding</tools>
+    <answer>altais_review_secure_coding reports a finding for the non-literal format string passed to `printf` (uncontrolled format string, CWE-134).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Review this C code for a dangerous process API: `system(command);`</question>
+    <tools>altais_review_secure_coding</tools>
+    <answer>altais_review_secure_coding reports a finding for use of the dangerous `system` call.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Review this C `switch` with no default case: `switch (state) { case 0: handle(); break; case 1: other(); break; }`.</question>
+    <tools>altais_review_secure_coding</tools>
+    <answer>altais_review_secure_coding reports a finding that the `switch` statement has no `default` branch.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Rust unsafe block with no safety comment: `unsafe { *ptr = 42; }`.</question>
+    <tools>altais_audit_unsafe</tools>
+    <answer>altais_audit_unsafe reports a finding for an `unsafe` construct (raw-pointer dereference) with no `// SAFETY:` justification.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Rust code for a transmute: `let f: f32 = unsafe { mem::transmute(0x40490fdb_u32) };`.</question>
+    <tools>altais_audit_unsafe</tools>
+    <answer>altais_audit_unsafe reports a finding for the `mem::transmute` call inside the unsafe block.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check error handling in this Java code that returns a stack trace to the client: `catch (Exception e) { response.getWriter().write(e.toString()); e.printStackTrace(); }`.</question>
+    <tools>altais_check_error_handling</tools>
+    <answer>altais_check_error_handling reports findings for the raw exception message returned to the client and the `printStackTrace()` near the response (sensitive-information leakage).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check error handling in this Python for a swallowed exception: `try:\n    risky()\nexcept:\n    pass`.</question>
+    <tools>altais_check_error_handling</tools>
+    <answer>altais_check_error_handling reports a finding for the bare `except: pass` that swallows the exception silently.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check input validation in this JavaScript: `app.post('/u', (req) =&gt; { const name = req.body.name; db.save(name); });` — no validator is used.</question>
+    <tools>altais_check_input_validation</tools>
+    <answer>altais_check_input_validation reports a finding that untrusted input (`req.body`) is consumed with no recognized validator (Zod, Joi, yup, express-validator).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check input validation in this JavaScript: `const n = parseInt(req.query.count);` — is the radix flagged?</question>
+    <tools>altais_check_input_validation</tools>
+    <answer>altais_check_input_validation reports a finding for `parseInt` called without an explicit radix argument.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check memory safety in this C code: `char buf[16]; strcpy(buf, user_input);`.</question>
+    <tools>altais_check_memory_safety</tools>
+    <answer>altais_check_memory_safety reports a finding for the unbounded `strcpy` into a fixed-size buffer (buffer overflow).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check memory safety in this C code that uses malloc without a NULL check: `char *p = malloc(n); memcpy(p, src, n);`.</question>
+    <tools>altais_check_memory_safety</tools>
+    <answer>altais_check_memory_safety reports a finding that the `malloc` result is used without a NULL check.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Review this clean, safe Go function against secure-coding standards: `func add(a, b int) int { return a + b }`.</question>
+    <tools>altais_review_secure_coding</tools>
+    <answer>altais_review_secure_coding returns zero findings for this benign arithmetic function in Go.</answer>
+  </qa_pair>
+</evaluation>

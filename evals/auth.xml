@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="auth">
+  <qa_pair>
+    <question>Audit this OAuth config: `{ "flow": "authorization_code", "pkce": { "used": false }, "uses_state": false }`.</question>
+    <tools>altais_audit_oauth</tools>
+    <answer>altais_audit_oauth reports findings for missing PKCE on the authorization_code flow and for the missing `state` parameter (CSRF on the OAuth callback).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an OAuth config using the implicit grant: `{ "flow": "implicit", "token_storage": "localStorage" }`.</question>
+    <tools>altais_audit_oauth</tools>
+    <answer>altais_audit_oauth reports a finding that the implicit grant is deprecated/insecure and a finding that tokens stored in localStorage are exposed to XSS.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit JWT verifier config: `{ "accepted_algorithms": ["none"], "verify_exp": false }`.</question>
+    <tools>altais_audit_jwt</tools>
+    <answer>altais_audit_jwt reports a critical finding for accepting `alg:none` and a finding that expiration (`exp`) is not verified.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a JWT verifier config that pins `accepted_algorithms: ["RS256"]`, sets `required_iss`, `required_aud`, and `verify_exp: true`. Confirm it is clean.</question>
+    <tools>altais_audit_jwt</tools>
+    <answer>altais_audit_jwt returns zero or only informational findings because the algorithm allowlist, issuer, audience, and expiry verification are all configured.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit session config: `{ "cookie": { "secure": false, "httpOnly": false, "sameSite": false }, "regenerate_on_login": false }`.</question>
+    <tools>altais_audit_session</tools>
+    <answer>altais_audit_session reports findings for the missing Secure, HttpOnly, and SameSite cookie attributes and for not regenerating the session ID on login (session fixation).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit CSRF protection: `{ "auth_via": "cookie", "samesite": "None", "csrf_token": "none", "checks_origin_header": false, "state_changing_methods": ["POST"] }`.</question>
+    <tools>altais_audit_csrf</tools>
+    <answer>altais_audit_csrf reports a finding that cookie-authenticated state-changing endpoints have no CSRF defense — no token, SameSite=None, and no Origin check.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit password hashing in this code: `const hash = crypto.createHash('md5').update(password).digest('hex');`</question>
+    <tools>altais_audit_password_hashing</tools>
+    <answer>altais_audit_password_hashing reports a finding that MD5, a fast hash, is used in a password-hashing context; it recommends Argon2/bcrypt/scrypt.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an RBAC policy with `default: "allow"` and a role named `superuser` with permission `*:*`.</question>
+    <tools>altais_audit_rbac</tools>
+    <answer>altais_audit_rbac reports a finding for the default-allow policy and a finding for the `*:*` superuser wildcard role.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a passkey config: `{ "rp_id": "example.com", "user_verification": "discouraged", "stores_sign_count": false }`.</question>
+    <tools>altais_audit_passkey_impl</tools>
+    <answer>altais_audit_passkey_impl reports findings for `userVerification: discouraged` and for not tracking the authenticator sign-count (cloned-credential detection gap).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit non-human identities: one identity `{ "name": "ci-deploy", "kind": "ci_runner", "credential_type": "static_key", "stored_in_repo": true }`.</question>
+    <tools>altais_audit_nhi</tools>
+    <answer>altais_audit_nhi reports findings for the static-key credential and for credentials stored in the repository, mapping to the OWASP NHI Top 10.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check secret lifecycle: one secret `{ "name": "stripe-api-key", "kind": "api_key", "stored_in": "repo", "revocation_procedure_documented": false }` with no expiry.</question>
+    <tools>altais_check_secret_lifecycle</tools>
+    <answer>altais_check_secret_lifecycle reports findings for the missing expiry, the undocumented revocation procedure, and storage in the repo.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check NHI isolation: an identity `{ "name": "staging-bot", "environment": "staging", "cross_environment_access": ["prod"] }`.</question>
+    <tools>altais_check_nhi_isolation</tools>
+    <answer>altais_check_nhi_isolation flags the staging identity that has cross-environment access to production, violating environment isolation.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit password hashing in code that already uses bcrypt: `const hash = await bcrypt.hash(password, 12);` — confirm no fast-hash finding.</question>
+    <tools>altais_audit_password_hashing</tools>
+    <answer>altais_audit_password_hashing reports no fast-hash misuse finding; it notes bcrypt, an approved adaptive hash, is in use.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check NHI isolation for a workload identity scoped entirely to one project with no cross-environment access. Confirm it is clean.</question>
+    <tools>altais_check_nhi_isolation</tools>
+    <answer>altais_check_nhi_isolation returns no isolation finding because the identity is confined to a single environment/namespace/project and has no cross-environment access.</answer>
+  </qa_pair>
+</evaluation>

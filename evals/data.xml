@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="data">
+  <qa_pair>
+    <question>Detect PII in this sample data: `{"email": "jane.doe@example.com", "phone": "+1-202-555-0173"}`.</question>
+    <tools>altais_detect_pii</tools>
+    <answer>altais_detect_pii reports findings for the email address and the phone number, with the raw values masked in the findings.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Detect PII in this record containing a US SSN: `ssn: 123-45-6789`.</question>
+    <tools>altais_detect_pii</tools>
+    <answer>altais_detect_pii reports a finding for the US Social Security Number, with the value masked.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Detect PII-revealing identifiers in this code even without literal values: `class User { first_name; date_of_birth; passport_number; }`.</question>
+    <tools>altais_detect_pii</tools>
+    <answer>altais_detect_pii reports findings for the PII-revealing field names `first_name`, `date_of_birth`, and `passport_number`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Detect PII in this clean snippet: `const total = price * quantity; return total;` — confirm nothing is flagged.</question>
+    <tools>altais_detect_pii</tools>
+    <answer>altais_detect_pii returns zero findings; the snippet contains no PII values or PII-revealing identifiers.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Classify these data fields by sensitivity: `[{"name":"password"},{"name":"email"},{"name":"user_id"},{"name":"public_slug"}]`.</question>
+    <tools>altais_classify_data</tools>
+    <answer>altais_classify_data classifies `password` as restricted, `email` as confidential, `user_id` as internal, and `public_slug` as public, returning a per-field classification and tier summary.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Classify a field set containing `[{"name":"ssn"},{"name":"credit_card_number"}]` and tell me how many restricted-tier findings are emitted.</question>
+    <tools>altais_classify_data</tools>
+    <answer>altais_classify_data classifies both `ssn` and `credit_card_number` as restricted and emits a tracked finding for each restricted field.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit privacy-by-design for this config: `{ "data_minimization": false, "consent_mechanism": false, "encryption_at_rest": false, "user_data_deletion": false }`.</question>
+    <tools>altais_audit_privacy</tools>
+    <answer>altais_audit_privacy emits a finding for each false principle: missing data minimization, missing consent mechanism, no encryption at rest, and no user data deletion (right to erasure).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit privacy-by-design where `third_party_data_sharing` is true. Is that flagged?</question>
+    <tools>altais_audit_privacy</tools>
+    <answer>altais_audit_privacy flags enabled third-party data sharing as a privacy risk.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit privacy-by-design for a config where every GDPR-aligned principle is true and third-party sharing is false. Confirm it is clean.</question>
+    <tools>altais_audit_privacy</tools>
+    <answer>altais_audit_privacy returns zero findings when all privacy-by-design principles are satisfied and no third-party sharing is enabled.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check this retention policy: `{ "data_category": "marketing_logs", "retention_period_days": -1, "deletion_method": "none", "contains_pii": true }`.</question>
+    <tools>altais_check_retention</tools>
+    <answer>altais_check_retention reports findings for the indefinite retention period, the `none` deletion method, and personal data with no documented legal basis.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check a retention policy `{ "data_category": "audit_trail", "retention_period_days": 365, "deletion_method": "hard_delete", "automated_deletion": true, "legal_basis": "GDPR Art. 6(1)(c)", "contains_pii": false }`.</question>
+    <tools>altais_check_retention</tools>
+    <answer>altais_check_retention returns zero findings; the policy has a bounded retention period, an automated hard delete, and a documented legal basis.</answer>
+  </qa_pair>
+</evaluation>

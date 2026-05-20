@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="agentic">
+  <qa_pair>
+    <question>Audit an agent system against ASI01 goal hijacking: `{ "config": { "instruction_data_separation": false, "untrusted_tool_output_to_planner": true, "system_prompt_protected": false } }`.</question>
+    <tools>altais_audit_goal_hijack</tools>
+    <answer>altais_audit_goal_hijack reports findings for missing separation of trusted instructions from untrusted data, tool output feeding the planner without validation, and an unprotected system prompt.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit tool-integration misuse (ASI02): `{ "config": { "tool_allowlist": false, "tool_descriptors_verified": false, "over_permissioned_apis": true, "input_validation_on_tool_args": false } }`.</question>
+    <tools>altais_audit_tool_misuse</tools>
+    <answer>altais_audit_tool_misuse reports findings for the missing tool allowlist, unverified/poisonable MCP tool descriptors, over-permissioned tool APIs, and unvalidated tool arguments.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit agent identity and privilege model (ASI03): `{ "config": { "per_agent_identity": false, "privilege_inheritance": true, "can_escalate_privileges": true, "scoped_credentials": false } }`.</question>
+    <tools>altais_audit_agent_identity</tools>
+    <answer>altais_audit_agent_identity reports findings for shared/inherited identity, runtime privilege-escalation paths, and unscoped credentials.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit the agentic supply chain (ASI04): `{ "config": { "manifests_signed": false, "plugins_verified": false, "registry_pinned": false, "typosquat_checked": false } }`.</question>
+    <tools>altais_audit_agentic_supply_chain</tools>
+    <answer>altais_audit_agentic_supply_chain reports findings for unsigned manifests, unverified plugins, unpinned registries, and no typosquat check.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit agent code execution (ASI05): `{ "config": { "executes_generated_code": true, "sandboxed": false, "resource_limits": false } }`.</question>
+    <tools>altais_audit_code_execution</tools>
+    <answer>altais_audit_code_execution reports findings for execution of generated code with no sandbox and missing resource limits.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit context and memory poisoning (ASI06): `{ "config": { "memory_validation": false, "memory_isolation_per_user": false, "untrusted_content_persisted": true } }`.</question>
+    <tools>altais_audit_memory_poisoning</tools>
+    <answer>altais_audit_memory_poisoning reports findings for missing memory validation, cross-user memory bleed, and untrusted content persisted into long-term memory.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit inter-agent communication (ASI07): `{ "config": { "message_authentication": false, "message_integrity": false, "encrypted_channel": false, "replay_protection": false } }`.</question>
+    <tools>altais_audit_inter_agent_comms</tools>
+    <answer>altais_audit_inter_agent_comms reports findings for unauthenticated agent-to-agent messages, missing integrity protection, a cleartext channel, and missing replay protection.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit cascading failures (ASI08): `{ "config": { "kill_switch": false, "circuit_breakers": false, "blast_radius_limits": false, "agent_isolation": false } }`.</question>
+    <tools>altais_audit_cascading_failures</tools>
+    <answer>altais_audit_cascading_failures reports findings for a missing kill switch, missing circuit breakers, unbounded blast radius, and no agent isolation.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit human-agent trust exploitation (ASI09): `{ "config": { "consent_separation": false, "agent_cannot_render_own_approval_ui": false, "high_risk_actions_need_confirmation": false } }`.</question>
+    <tools>altais_audit_trust_exploitation</tools>
+    <answer>altais_audit_trust_exploitation reports findings for consent/approval flows rendered by the agent-controlled surface and high-risk actions without independent confirmation.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit rogue-agent detection and governance (ASI10): `{ "config": { "behavioral_baseline": false, "anomaly_detection": false, "agent_inventory": false, "revocation_capability": false } }`.</question>
+    <tools>altais_audit_rogue_agents</tools>
+    <answer>altais_audit_rogue_agents reports findings for a missing behavioral baseline, missing anomaly detection, no agent inventory, and no revocation / kill capability.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an agent against ASI01 goal hijacking where every control is in place: `{ "config": { "instruction_data_separation": true, "goal_validation": true, "untrusted_tool_output_to_planner": false, "untrusted_data_to_planner": false, "system_prompt_protected": true, "plan_review": true } }`.</question>
+    <tools>altais_audit_goal_hijack</tools>
+    <answer>altais_audit_goal_hijack returns zero findings; instructions are separated from data, the goal/plan is validated, untrusted input does not reach the planner, the system prompt is protected, and plans are reviewed.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit code execution (ASI05) for a hardened agent: `{ "config": { "executes_generated_code": true, "sandboxed": true, "sandbox_type": "microvm", "allowlist_enforced": true, "network_access_in_sandbox": false, "filesystem_access_in_sandbox": false, "resource_limits": true } }`.</question>
+    <tools>altais_audit_code_execution</tools>
+    <answer>altais_audit_code_execution returns zero findings; generated code runs in an isolated microVM sandbox with an operation allowlist, no network or host filesystem access, and resource limits.</answer>
+  </qa_pair>
+</evaluation>

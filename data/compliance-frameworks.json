@@ -1,0 +1,1138 @@
+{
+  "owasp-asvs": {
+    "id": "owasp-asvs",
+    "name": "OWASP Application Security Verification Standard",
+    "version": "5.0",
+    "controls": [
+      {
+        "id": "V1.2.1",
+        "title": "Secure Architecture and Threat Modeling",
+        "family": "architecture",
+        "description": "The application is designed against a documented threat model that drives security requirements.",
+        "cwes": ["CWE-1053", "CWE-1059"],
+        "keywords": ["threat model", "architecture", "security design", "design review"]
+      },
+      {
+        "id": "V2.1.1",
+        "title": "Password Security",
+        "family": "authentication",
+        "description": "Passwords meet minimum length and complexity policy and are not silently truncated.",
+        "cwes": ["CWE-521", "CWE-261"],
+        "keywords": ["password", "credential policy", "weak password"]
+      },
+      {
+        "id": "V2.2.1",
+        "title": "General Authenticator Security",
+        "family": "authentication",
+        "description": "Anti-automation controls defend authentication against credential stuffing and brute force.",
+        "cwes": ["CWE-307", "CWE-287", "CWE-799"],
+        "keywords": ["brute force", "rate limit", "authentication", "credential stuffing", "lockout"]
+      },
+      {
+        "id": "V3.3.1",
+        "title": "Session Termination",
+        "family": "session-management",
+        "description": "Sessions are invalidated on logout and expire after an idle and absolute timeout.",
+        "cwes": ["CWE-613", "CWE-384"],
+        "keywords": ["session", "logout", "session timeout", "session fixation"]
+      },
+      {
+        "id": "V4.1.1",
+        "title": "General Access Control Design",
+        "family": "access-control",
+        "description": "Access control is enforced on a trusted server-side layer for every request.",
+        "cwes": ["CWE-284", "CWE-285", "CWE-862", "CWE-863"],
+        "keywords": ["access control", "authorization", "idor", "broken access", "missing authorization"]
+      },
+      {
+        "id": "V5.1.3",
+        "title": "Input Validation",
+        "family": "validation",
+        "description": "All untrusted input is validated against a positive specification before use.",
+        "cwes": ["CWE-20", "CWE-1284"],
+        "keywords": ["input validation", "untrusted input", "sanitize", "validate"]
+      },
+      {
+        "id": "V5.3.4",
+        "title": "Output Encoding and Injection Prevention",
+        "family": "validation",
+        "description": "Database queries use parameterization to prevent SQL and other query injection.",
+        "cwes": ["CWE-89", "CWE-564", "CWE-943"],
+        "keywords": ["sql injection", "parameterized", "query injection", "prepared statement"]
+      },
+      {
+        "id": "V5.3.3",
+        "title": "Cross-Site Scripting Prevention",
+        "family": "validation",
+        "description": "Context-aware output encoding neutralizes cross-site scripting in rendered responses.",
+        "cwes": ["CWE-79", "CWE-80", "CWE-83"],
+        "keywords": ["xss", "cross-site scripting", "output encoding", "html injection"]
+      },
+      {
+        "id": "V6.2.1",
+        "title": "Cryptographic Algorithms",
+        "family": "cryptography",
+        "description": "Cryptographic modules use approved algorithms and fail securely.",
+        "cwes": ["CWE-327", "CWE-326", "CWE-328"],
+        "keywords": ["cryptography", "weak cipher", "encryption algorithm", "hashing", "deprecated crypto"]
+      },
+      {
+        "id": "V6.3.1",
+        "title": "Random Values",
+        "family": "cryptography",
+        "description": "Security-sensitive random values are generated with a cryptographically secure generator.",
+        "cwes": ["CWE-330", "CWE-338", "CWE-331"],
+        "keywords": ["random", "entropy", "predictable", "weak rng", "insecure random"]
+      },
+      {
+        "id": "V7.1.1",
+        "title": "Log Content and Error Handling",
+        "family": "logging",
+        "description": "Errors are handled without leaking sensitive data and security events are logged.",
+        "cwes": ["CWE-209", "CWE-532", "CWE-778"],
+        "keywords": ["error handling", "logging", "sensitive data in logs", "stack trace", "audit log"]
+      },
+      {
+        "id": "V8.1.1",
+        "title": "General Data Protection",
+        "family": "data-protection",
+        "description": "Sensitive data is cached, retained, and transmitted only as strictly necessary.",
+        "cwes": ["CWE-200", "CWE-359", "CWE-524"],
+        "keywords": ["data protection", "sensitive data", "data exposure", "pii"]
+      },
+      {
+        "id": "V9.1.1",
+        "title": "Communications Security",
+        "family": "communications",
+        "description": "All inbound and outbound traffic uses authenticated, up-to-date TLS.",
+        "cwes": ["CWE-319", "CWE-311", "CWE-295"],
+        "keywords": ["tls", "transport security", "cleartext", "https", "certificate validation"]
+      },
+      {
+        "id": "V10.2.1",
+        "title": "Malicious Code Search",
+        "family": "malicious-code",
+        "description": "Application source is free of backdoors, time bombs, and unauthorized code.",
+        "cwes": ["CWE-506", "CWE-507", "CWE-510"],
+        "keywords": ["backdoor", "malicious code", "time bomb", "trojan"]
+      },
+      {
+        "id": "V12.3.1",
+        "title": "File Execution and Path Security",
+        "family": "files",
+        "description": "User-supplied filenames and paths cannot escape the intended directory.",
+        "cwes": ["CWE-22", "CWE-23", "CWE-73", "CWE-434"],
+        "keywords": ["path traversal", "directory traversal", "file upload", "path sanitization"]
+      }
+    ]
+  },
+  "owasp-samm": {
+    "id": "owasp-samm",
+    "name": "OWASP Software Assurance Maturity Model",
+    "version": "2.0",
+    "controls": [
+      {
+        "id": "G-SR-1",
+        "title": "Security Requirements",
+        "family": "governance",
+        "description": "Security requirements are captured and prioritized alongside functional requirements.",
+        "cwes": ["CWE-1059", "CWE-1053"],
+        "keywords": ["security requirements", "requirements", "governance"]
+      },
+      {
+        "id": "D-TA-1",
+        "title": "Threat Assessment",
+        "family": "design",
+        "description": "Threats and abuse cases are systematically identified during design.",
+        "cwes": ["CWE-1053"],
+        "keywords": ["threat model", "threat assessment", "abuse case", "attack surface"]
+      },
+      {
+        "id": "D-SA-1",
+        "title": "Secure Architecture",
+        "family": "design",
+        "description": "Security-by-design principles and vetted technologies are applied to the architecture.",
+        "cwes": ["CWE-1059", "CWE-284"],
+        "keywords": ["secure architecture", "security design", "defense in depth"]
+      },
+      {
+        "id": "I-SB-1",
+        "title": "Secure Build",
+        "family": "implementation",
+        "description": "Builds are automated, repeatable, and validate the security of dependencies.",
+        "cwes": ["CWE-1104", "CWE-1395"],
+        "keywords": ["secure build", "build pipeline", "dependency", "supply chain"]
+      },
+      {
+        "id": "V-ST-1",
+        "title": "Security Testing",
+        "family": "verification",
+        "description": "Automated and manual security testing is performed against the application.",
+        "cwes": ["CWE-1006"],
+        "keywords": ["security testing", "sast", "dast", "penetration test"]
+      },
+      {
+        "id": "O-IM-1",
+        "title": "Incident Management",
+        "family": "operations",
+        "description": "Security incidents are detected, triaged, and responded to with a defined process.",
+        "cwes": ["CWE-778"],
+        "keywords": ["incident", "incident response", "detection", "monitoring"]
+      }
+    ]
+  },
+  "owasp-dsomm": {
+    "id": "owasp-dsomm",
+    "name": "OWASP DevSecOps Maturity Model",
+    "version": "1.7",
+    "controls": [
+      {
+        "id": "DSOMM-BD",
+        "title": "Build and Deployment",
+        "family": "build-deployment",
+        "description": "Build and deployment pipelines are automated and produce reproducible artifacts.",
+        "cwes": ["CWE-1104"],
+        "keywords": ["build", "deployment", "pipeline", "ci/cd"]
+      },
+      {
+        "id": "DSOMM-DD",
+        "title": "Dynamic Depth for Applications",
+        "family": "test-verification",
+        "description": "Running applications are tested dynamically for security weaknesses.",
+        "cwes": ["CWE-1006"],
+        "keywords": ["dast", "dynamic testing", "security scan"]
+      },
+      {
+        "id": "DSOMM-SD",
+        "title": "Static Depth for Applications",
+        "family": "test-verification",
+        "description": "Source code is statically analyzed for security defects on each change.",
+        "cwes": ["CWE-1006"],
+        "keywords": ["sast", "static analysis", "code scan"]
+      },
+      {
+        "id": "DSOMM-IM",
+        "title": "Implementation of Patch Management",
+        "family": "infrastructure",
+        "description": "Known-vulnerable components are patched within a defined service-level window.",
+        "cwes": ["CWE-1395", "CWE-1104"],
+        "keywords": ["patch management", "vulnerable dependency", "outdated component"]
+      },
+      {
+        "id": "DSOMM-LO",
+        "title": "Logging",
+        "family": "monitoring",
+        "description": "Security-relevant events are logged centrally and monitored.",
+        "cwes": ["CWE-778", "CWE-532"],
+        "keywords": ["logging", "monitoring", "audit log", "siem"]
+      },
+      {
+        "id": "DSOMM-CU",
+        "title": "Security Culture and Training",
+        "family": "culture",
+        "description": "Teams receive ongoing secure-development training and threat awareness.",
+        "cwes": ["CWE-1059"],
+        "keywords": ["training", "security culture", "awareness"]
+      }
+    ]
+  },
+  "nist-800-53": {
+    "id": "nist-800-53",
+    "name": "NIST SP 800-53 Security and Privacy Controls",
+    "version": "Rev. 5",
+    "controls": [
+      {
+        "id": "AC-3",
+        "title": "Access Enforcement",
+        "family": "access-control",
+        "description": "The system enforces approved authorizations for logical access to resources.",
+        "cwes": ["CWE-284", "CWE-285", "CWE-862", "CWE-863", "CWE-639"],
+        "keywords": ["access control", "authorization", "access enforcement", "idor", "broken access"]
+      },
+      {
+        "id": "AC-6",
+        "title": "Least Privilege",
+        "family": "access-control",
+        "description": "The organization grants only the access required for users and processes to do their work.",
+        "cwes": ["CWE-250", "CWE-269", "CWE-732"],
+        "keywords": ["least privilege", "excessive privilege", "privilege escalation", "over-privileged"]
+      },
+      {
+        "id": "IA-2",
+        "title": "Identification and Authentication (Organizational Users)",
+        "family": "identification-authentication",
+        "description": "Users are uniquely identified and authenticated before accessing the system.",
+        "cwes": ["CWE-287", "CWE-306", "CWE-862"],
+        "keywords": ["authentication", "identification", "login", "missing authentication"]
+      },
+      {
+        "id": "IA-5",
+        "title": "Authenticator Management",
+        "family": "identification-authentication",
+        "description": "Authenticators such as passwords and keys are managed across their lifecycle.",
+        "cwes": ["CWE-798", "CWE-259", "CWE-521", "CWE-522"],
+        "keywords": ["password", "hardcoded credential", "secret", "authenticator", "api key"]
+      },
+      {
+        "id": "SC-8",
+        "title": "Transmission Confidentiality and Integrity",
+        "family": "system-communications",
+        "description": "The system protects the confidentiality and integrity of transmitted information.",
+        "cwes": ["CWE-319", "CWE-311", "CWE-295"],
+        "keywords": ["tls", "transmission", "cleartext", "encryption in transit", "https"]
+      },
+      {
+        "id": "SC-13",
+        "title": "Cryptographic Protection",
+        "family": "system-communications",
+        "description": "The system uses FIPS-validated or NSA-approved cryptography to protect information.",
+        "cwes": ["CWE-327", "CWE-326", "CWE-328", "CWE-330"],
+        "keywords": ["cryptography", "weak cipher", "encryption algorithm", "deprecated crypto", "hashing"]
+      },
+      {
+        "id": "SC-28",
+        "title": "Protection of Information at Rest",
+        "family": "system-communications",
+        "description": "The system protects the confidentiality and integrity of information at rest.",
+        "cwes": ["CWE-311", "CWE-312", "CWE-313"],
+        "keywords": ["data at rest", "encryption at rest", "cleartext storage", "unencrypted"]
+      },
+      {
+        "id": "SI-2",
+        "title": "Flaw Remediation",
+        "family": "system-integrity",
+        "description": "The organization identifies, reports, and corrects information system flaws.",
+        "cwes": ["CWE-1395", "CWE-1104"],
+        "keywords": ["flaw remediation", "patch", "vulnerable dependency", "outdated component", "cve"]
+      },
+      {
+        "id": "SI-10",
+        "title": "Information Input Validation",
+        "family": "system-integrity",
+        "description": "The system checks the validity of information inputs to prevent injection and tampering.",
+        "cwes": ["CWE-20", "CWE-89", "CWE-79", "CWE-78", "CWE-94", "CWE-1284"],
+        "keywords": ["input validation", "injection", "sql injection", "xss", "command injection", "untrusted input"]
+      },
+      {
+        "id": "SI-11",
+        "title": "Error Handling",
+        "family": "system-integrity",
+        "description": "The system handles errors without revealing information exploitable by adversaries.",
+        "cwes": ["CWE-209", "CWE-755", "CWE-754"],
+        "keywords": ["error handling", "stack trace", "information leak", "verbose error"]
+      },
+      {
+        "id": "AU-2",
+        "title": "Event Logging",
+        "family": "audit-accountability",
+        "description": "The organization logs the events necessary to support security monitoring and forensics.",
+        "cwes": ["CWE-778", "CWE-223"],
+        "keywords": ["logging", "audit log", "event logging", "missing logging"]
+      },
+      {
+        "id": "AU-9",
+        "title": "Protection of Audit Information",
+        "family": "audit-accountability",
+        "description": "Audit information and tooling are protected from unauthorized access and modification.",
+        "cwes": ["CWE-532", "CWE-117"],
+        "keywords": ["audit protection", "log injection", "sensitive data in logs", "log tampering"]
+      },
+      {
+        "id": "CM-7",
+        "title": "Least Functionality",
+        "family": "configuration-management",
+        "description": "The system is configured to provide only essential capabilities and disables unused services.",
+        "cwes": ["CWE-1188", "CWE-16", "CWE-489"],
+        "keywords": ["least functionality", "misconfiguration", "hardening", "unused service", "default configuration"]
+      },
+      {
+        "id": "RA-5",
+        "title": "Vulnerability Monitoring and Scanning",
+        "family": "risk-assessment",
+        "description": "The organization scans for vulnerabilities and remediates discovered weaknesses.",
+        "cwes": ["CWE-1395"],
+        "keywords": ["vulnerability scan", "scanning", "vulnerability monitoring"]
+      }
+    ]
+  },
+  "nist-ssdf": {
+    "id": "nist-ssdf",
+    "name": "NIST Secure Software Development Framework",
+    "version": "SP 800-218",
+    "controls": [
+      {
+        "id": "PO.1.1",
+        "title": "Define Security Requirements",
+        "family": "prepare-organization",
+        "description": "Security requirements for software development are defined and maintained.",
+        "cwes": ["CWE-1059"],
+        "keywords": ["security requirements", "requirements", "policy"]
+      },
+      {
+        "id": "PO.3.2",
+        "title": "Secure Toolchain",
+        "family": "prepare-organization",
+        "description": "Development toolchains are deployed and operated with security configurations.",
+        "cwes": ["CWE-1104", "CWE-1395"],
+        "keywords": ["toolchain", "build security", "ci/cd", "pipeline"]
+      },
+      {
+        "id": "PS.1.1",
+        "title": "Protect All Forms of Code",
+        "family": "protect-software",
+        "description": "Source code and configuration are stored with access control and integrity protection.",
+        "cwes": ["CWE-284", "CWE-922"],
+        "keywords": ["code protection", "source control", "repository access", "secret"]
+      },
+      {
+        "id": "PS.2.1",
+        "title": "Provide Mechanism to Verify Software Integrity",
+        "family": "protect-software",
+        "description": "Released software is signed or hashed so consumers can verify its integrity.",
+        "cwes": ["CWE-345", "CWE-353", "CWE-494"],
+        "keywords": ["software integrity", "signing", "code signing", "provenance", "attestation"]
+      },
+      {
+        "id": "PS.3.1",
+        "title": "Archive and Protect Each Release",
+        "family": "protect-software",
+        "description": "Each software release is archived along with its provenance data.",
+        "cwes": ["CWE-1104"],
+        "keywords": ["release archive", "sbom", "provenance"]
+      },
+      {
+        "id": "PW.4.1",
+        "title": "Reuse Secure Software Components",
+        "family": "produce-well-secured",
+        "description": "Existing well-secured components are reused instead of writing new code where feasible.",
+        "cwes": ["CWE-1395", "CWE-1104", "CWE-1357"],
+        "keywords": ["dependency", "third-party component", "supply chain", "vulnerable dependency"]
+      },
+      {
+        "id": "PW.5.1",
+        "title": "Create Source Code Adhering to Secure Practices",
+        "family": "produce-well-secured",
+        "description": "Source code is written following secure coding practices that avoid known weaknesses.",
+        "cwes": ["CWE-20", "CWE-89", "CWE-79", "CWE-78", "CWE-22", "CWE-327"],
+        "keywords": ["secure coding", "injection", "sql injection", "xss", "path traversal", "input validation"]
+      },
+      {
+        "id": "PW.6.1",
+        "title": "Configure Compilation and Build to Improve Security",
+        "family": "produce-well-secured",
+        "description": "Compilation, interpretation, and build processes are configured to harden the output.",
+        "cwes": ["CWE-1188", "CWE-16"],
+        "keywords": ["build configuration", "compiler hardening", "build security"]
+      },
+      {
+        "id": "PW.7.1",
+        "title": "Review and Analyze Human-Readable Code",
+        "family": "produce-well-secured",
+        "description": "Human-readable code is reviewed or statically analyzed to find vulnerabilities.",
+        "cwes": ["CWE-1006"],
+        "keywords": ["code review", "static analysis", "sast"]
+      },
+      {
+        "id": "PW.8.1",
+        "title": "Test Executable Code",
+        "family": "produce-well-secured",
+        "description": "Executable code is dynamically tested to identify vulnerabilities at runtime.",
+        "cwes": ["CWE-1006"],
+        "keywords": ["dynamic testing", "dast", "fuzzing", "penetration test"]
+      },
+      {
+        "id": "PW.9.1",
+        "title": "Configure Software with Secure Defaults",
+        "family": "produce-well-secured",
+        "description": "Software ships with secure default settings for deployment and use.",
+        "cwes": ["CWE-1188", "CWE-1004", "CWE-16"],
+        "keywords": ["secure defaults", "misconfiguration", "default configuration", "hardening"]
+      },
+      {
+        "id": "RV.1.1",
+        "title": "Identify and Confirm Vulnerabilities",
+        "family": "respond-to-vulnerabilities",
+        "description": "Vulnerabilities are continuously monitored, identified, and confirmed.",
+        "cwes": ["CWE-1395"],
+        "keywords": ["vulnerability monitoring", "vulnerability scan", "cve"]
+      },
+      {
+        "id": "RV.2.1",
+        "title": "Assess and Remediate Vulnerabilities",
+        "family": "respond-to-vulnerabilities",
+        "description": "Confirmed vulnerabilities are prioritized, remediated, and verified.",
+        "cwes": ["CWE-1395", "CWE-1104"],
+        "keywords": ["remediation", "patch", "fix vulnerability"]
+      }
+    ]
+  },
+  "nist-ai-rmf": {
+    "id": "nist-ai-rmf",
+    "name": "NIST AI Risk Management Framework",
+    "version": "AI 100-1",
+    "controls": [
+      {
+        "id": "GOVERN-1.1",
+        "title": "AI Governance and Accountability",
+        "family": "govern",
+        "description": "Policies and accountability structures govern the AI system across its lifecycle.",
+        "cwes": ["CWE-1059"],
+        "keywords": ["ai governance", "accountability", "ai policy"]
+      },
+      {
+        "id": "MAP-1.1",
+        "title": "AI System Context and Risk Mapping",
+        "family": "map",
+        "description": "The intended context, capabilities, and risks of the AI system are documented.",
+        "cwes": ["CWE-1053"],
+        "keywords": ["ai risk", "context", "threat model", "model risk"]
+      },
+      {
+        "id": "MEASURE-2.7",
+        "title": "AI Security and Resilience",
+        "family": "measure",
+        "description": "The AI system is evaluated for security, including prompt injection and adversarial robustness.",
+        "cwes": ["CWE-77", "CWE-1426", "CWE-20"],
+        "keywords": ["prompt injection", "adversarial", "model security", "llm", "jailbreak"]
+      },
+      {
+        "id": "MEASURE-2.10",
+        "title": "AI Data Privacy",
+        "family": "measure",
+        "description": "Privacy risks from training and inference data are evaluated and mitigated.",
+        "cwes": ["CWE-200", "CWE-359"],
+        "keywords": ["ai privacy", "training data", "data leakage", "pii"]
+      },
+      {
+        "id": "MANAGE-2.2",
+        "title": "AI Risk Treatment and Monitoring",
+        "family": "manage",
+        "description": "Identified AI risks are treated, and the system is monitored for emerging issues.",
+        "cwes": ["CWE-778"],
+        "keywords": ["ai monitoring", "risk treatment", "model monitoring"]
+      }
+    ]
+  },
+  "iso-27001": {
+    "id": "iso-27001",
+    "name": "ISO/IEC 27001 Information Security Management",
+    "version": "2022",
+    "controls": [
+      {
+        "id": "A.5.15",
+        "title": "Access Control",
+        "family": "organizational",
+        "description": "Rules to control physical and logical access to information are established and applied.",
+        "cwes": ["CWE-284", "CWE-285", "CWE-862", "CWE-863"],
+        "keywords": ["access control", "authorization", "broken access", "idor"]
+      },
+      {
+        "id": "A.8.5",
+        "title": "Secure Authentication",
+        "family": "technological",
+        "description": "Secure authentication technologies and procedures restrict access to systems.",
+        "cwes": ["CWE-287", "CWE-307", "CWE-798"],
+        "keywords": ["authentication", "login", "brute force", "credential"]
+      },
+      {
+        "id": "A.8.24",
+        "title": "Use of Cryptography",
+        "family": "technological",
+        "description": "Rules for the effective use of cryptography, including key management, are defined.",
+        "cwes": ["CWE-327", "CWE-326", "CWE-330", "CWE-320"],
+        "keywords": ["cryptography", "weak cipher", "key management", "encryption"]
+      },
+      {
+        "id": "A.8.26",
+        "title": "Application Security Requirements",
+        "family": "technological",
+        "description": "Information security requirements are identified for applications under development.",
+        "cwes": ["CWE-1059"],
+        "keywords": ["application security", "security requirements"]
+      },
+      {
+        "id": "A.8.28",
+        "title": "Secure Coding",
+        "family": "technological",
+        "description": "Secure coding principles are applied to software development to avoid vulnerabilities.",
+        "cwes": ["CWE-20", "CWE-89", "CWE-79", "CWE-78", "CWE-22"],
+        "keywords": ["secure coding", "injection", "sql injection", "xss", "input validation"]
+      },
+      {
+        "id": "A.8.16",
+        "title": "Monitoring Activities",
+        "family": "technological",
+        "description": "Networks, systems, and applications are monitored for anomalous behavior.",
+        "cwes": ["CWE-778", "CWE-223"],
+        "keywords": ["monitoring", "logging", "anomaly detection", "audit log"]
+      },
+      {
+        "id": "A.8.8",
+        "title": "Management of Technical Vulnerabilities",
+        "family": "technological",
+        "description": "Technical vulnerabilities in information systems are identified and addressed.",
+        "cwes": ["CWE-1395", "CWE-1104"],
+        "keywords": ["vulnerability management", "patch", "vulnerable dependency", "cve"]
+      }
+    ]
+  },
+  "soc2": {
+    "id": "soc2",
+    "name": "AICPA SOC 2 Trust Services Criteria",
+    "version": "2017 (rev. 2022)",
+    "controls": [
+      {
+        "id": "CC6.1",
+        "title": "Logical Access Controls",
+        "family": "common-criteria",
+        "description": "Logical access security software and infrastructure restrict access to protected assets.",
+        "cwes": ["CWE-284", "CWE-285", "CWE-862", "CWE-863"],
+        "keywords": ["access control", "authorization", "logical access", "broken access"]
+      },
+      {
+        "id": "CC6.6",
+        "title": "Boundary Protection and Encryption in Transit",
+        "family": "common-criteria",
+        "description": "The system protects information transmitted across boundaries from unauthorized access.",
+        "cwes": ["CWE-319", "CWE-311", "CWE-295"],
+        "keywords": ["encryption in transit", "tls", "boundary protection", "cleartext"]
+      },
+      {
+        "id": "CC6.7",
+        "title": "Restricting Data Transmission and Storage",
+        "family": "common-criteria",
+        "description": "Data is restricted and protected during transmission, movement, and removal.",
+        "cwes": ["CWE-311", "CWE-312", "CWE-200"],
+        "keywords": ["data protection", "encryption at rest", "data exposure", "sensitive data"]
+      },
+      {
+        "id": "CC7.1",
+        "title": "Vulnerability Detection and Monitoring",
+        "family": "common-criteria",
+        "description": "Procedures detect and monitor configuration changes and new vulnerabilities.",
+        "cwes": ["CWE-1395", "CWE-1188"],
+        "keywords": ["vulnerability detection", "monitoring", "misconfiguration", "scanning"]
+      },
+      {
+        "id": "CC7.2",
+        "title": "Security Event Monitoring",
+        "family": "common-criteria",
+        "description": "The system is monitored to detect and analyze anomalies and security events.",
+        "cwes": ["CWE-778", "CWE-223"],
+        "keywords": ["monitoring", "logging", "security event", "audit log"]
+      },
+      {
+        "id": "CC8.1",
+        "title": "Change Management",
+        "family": "common-criteria",
+        "description": "Changes to infrastructure, data, and software follow a controlled change process.",
+        "cwes": ["CWE-1104"],
+        "keywords": ["change management", "deployment", "build pipeline"]
+      }
+    ]
+  },
+  "gdpr": {
+    "id": "gdpr",
+    "name": "EU General Data Protection Regulation",
+    "version": "Regulation (EU) 2016/679",
+    "controls": [
+      {
+        "id": "Art.25",
+        "title": "Data Protection by Design and by Default",
+        "family": "principles",
+        "description": "Data protection measures are built into processing by design and applied by default.",
+        "cwes": ["CWE-1059", "CWE-1004"],
+        "keywords": ["data protection by design", "privacy by design", "secure defaults"]
+      },
+      {
+        "id": "Art.32",
+        "title": "Security of Processing",
+        "family": "security",
+        "description": "Appropriate technical measures, including encryption, ensure a level of security for personal data.",
+        "cwes": ["CWE-311", "CWE-319", "CWE-327", "CWE-200"],
+        "keywords": ["encryption", "data security", "sensitive data", "personal data", "data exposure"]
+      },
+      {
+        "id": "Art.33",
+        "title": "Notification of a Personal Data Breach",
+        "family": "breach",
+        "description": "Personal data breaches are detected and reported to the supervisory authority promptly.",
+        "cwes": ["CWE-778", "CWE-223"],
+        "keywords": ["breach notification", "logging", "incident", "monitoring"]
+      },
+      {
+        "id": "Art.5",
+        "title": "Principles Relating to Processing of Personal Data",
+        "family": "principles",
+        "description": "Personal data is processed lawfully, with integrity, confidentiality, and minimization.",
+        "cwes": ["CWE-200", "CWE-359"],
+        "keywords": ["data minimization", "confidentiality", "personal data", "pii"]
+      },
+      {
+        "id": "Art.35",
+        "title": "Data Protection Impact Assessment",
+        "family": "accountability",
+        "description": "High-risk processing is assessed for its impact on the rights of data subjects.",
+        "cwes": ["CWE-1053"],
+        "keywords": ["impact assessment", "dpia", "privacy risk"]
+      }
+    ]
+  },
+  "pci-dss": {
+    "id": "pci-dss",
+    "name": "PCI Data Security Standard",
+    "version": "4.0.1",
+    "controls": [
+      {
+        "id": "6.2.4",
+        "title": "Prevent Common Software Attacks",
+        "family": "secure-software",
+        "description": "Software-engineering techniques prevent injection, tampering, and other common attacks.",
+        "cwes": ["CWE-89", "CWE-79", "CWE-78", "CWE-94", "CWE-20", "CWE-22"],
+        "keywords": ["injection", "sql injection", "xss", "command injection", "secure coding", "input validation"]
+      },
+      {
+        "id": "6.3.3",
+        "title": "Patch Known Vulnerabilities",
+        "family": "secure-software",
+        "description": "All system components are protected from known vulnerabilities by installing security patches.",
+        "cwes": ["CWE-1395", "CWE-1104"],
+        "keywords": ["patch", "vulnerable dependency", "outdated component", "cve"]
+      },
+      {
+        "id": "4.2.1",
+        "title": "Strong Cryptography for Transmission",
+        "family": "protect-data",
+        "description": "Strong cryptography protects cardholder data during transmission over open networks.",
+        "cwes": ["CWE-319", "CWE-311", "CWE-326", "CWE-295"],
+        "keywords": ["tls", "encryption in transit", "cleartext", "strong cryptography"]
+      },
+      {
+        "id": "3.5.1",
+        "title": "Protect Stored Account Data",
+        "family": "protect-data",
+        "description": "Stored primary account numbers are rendered unreadable through strong cryptography.",
+        "cwes": ["CWE-311", "CWE-312", "CWE-327"],
+        "keywords": ["encryption at rest", "cleartext storage", "data at rest", "stored data"]
+      },
+      {
+        "id": "8.3.1",
+        "title": "Strong Authentication for Users",
+        "family": "access-control",
+        "description": "All user access is authenticated with strong authentication factors.",
+        "cwes": ["CWE-287", "CWE-521", "CWE-307", "CWE-798"],
+        "keywords": ["authentication", "password", "credential", "brute force"]
+      },
+      {
+        "id": "7.2.1",
+        "title": "Restrict Access by Need to Know",
+        "family": "access-control",
+        "description": "Access to system components and data is restricted to least privilege required by job function.",
+        "cwes": ["CWE-284", "CWE-285", "CWE-862", "CWE-250"],
+        "keywords": ["access control", "least privilege", "authorization", "need to know"]
+      },
+      {
+        "id": "10.2.1",
+        "title": "Audit Logs for Security Events",
+        "family": "monitoring",
+        "description": "Audit logs capture security events to support detection and forensic analysis.",
+        "cwes": ["CWE-778", "CWE-223"],
+        "keywords": ["audit log", "logging", "security event", "monitoring"]
+      }
+    ]
+  },
+  "nis2": {
+    "id": "nis2",
+    "name": "EU NIS2 Directive",
+    "version": "Directive (EU) 2022/2555",
+    "controls": [
+      {
+        "id": "Art.21.2.a",
+        "title": "Risk Analysis and Information System Security Policies",
+        "family": "risk-management",
+        "description": "Entities adopt policies on risk analysis and the security of information systems.",
+        "cwes": ["CWE-1053", "CWE-1059"],
+        "keywords": ["risk analysis", "security policy", "threat model"]
+      },
+      {
+        "id": "Art.21.2.b",
+        "title": "Incident Handling",
+        "family": "incident",
+        "description": "Entities maintain capabilities to detect, handle, and respond to security incidents.",
+        "cwes": ["CWE-778", "CWE-223"],
+        "keywords": ["incident handling", "incident response", "detection", "logging"]
+      },
+      {
+        "id": "Art.21.2.d",
+        "title": "Supply Chain Security",
+        "family": "supply-chain",
+        "description": "Entities address security risks in supplier relationships and the software supply chain.",
+        "cwes": ["CWE-1395", "CWE-1104", "CWE-1357"],
+        "keywords": ["supply chain", "vulnerable dependency", "third-party component", "supplier"]
+      },
+      {
+        "id": "Art.21.2.e",
+        "title": "Security in Network and Information Systems Acquisition and Development",
+        "family": "development",
+        "description": "Security is built into the acquisition, development, and maintenance of systems.",
+        "cwes": ["CWE-20", "CWE-89", "CWE-79", "CWE-22", "CWE-1059"],
+        "keywords": ["secure development", "secure coding", "injection", "vulnerability handling"]
+      },
+      {
+        "id": "Art.21.2.f",
+        "title": "Effectiveness Assessment of Cybersecurity Measures",
+        "family": "assurance",
+        "description": "Policies and procedures assess the effectiveness of cybersecurity risk-management measures.",
+        "cwes": ["CWE-1006"],
+        "keywords": ["effectiveness assessment", "security testing", "audit"]
+      },
+      {
+        "id": "Art.21.2.g",
+        "title": "Cyber Hygiene and Training",
+        "family": "awareness",
+        "description": "Basic cyber-hygiene practices and cybersecurity training are provided.",
+        "cwes": ["CWE-1188", "CWE-1059"],
+        "keywords": ["cyber hygiene", "training", "hardening", "misconfiguration"]
+      },
+      {
+        "id": "Art.21.2.h",
+        "title": "Cryptography and Encryption",
+        "family": "cryptography",
+        "description": "Policies on the use of cryptography and, where appropriate, encryption are established.",
+        "cwes": ["CWE-327", "CWE-326", "CWE-311", "CWE-319"],
+        "keywords": ["cryptography", "encryption", "weak cipher", "tls"]
+      },
+      {
+        "id": "Art.21.2.i",
+        "title": "Access Control and Asset Management",
+        "family": "access-control",
+        "description": "Human-resources security, access control policies, and asset management are enforced.",
+        "cwes": ["CWE-284", "CWE-285", "CWE-862", "CWE-863"],
+        "keywords": ["access control", "authorization", "asset management", "broken access"]
+      },
+      {
+        "id": "Art.21.2.j",
+        "title": "Multi-Factor Authentication and Secured Communications",
+        "family": "authentication",
+        "description": "Multi-factor authentication and secured communication systems are used where appropriate.",
+        "cwes": ["CWE-287", "CWE-308", "CWE-319"],
+        "keywords": ["multi-factor", "mfa", "authentication", "secure communication"]
+      },
+      {
+        "id": "Art.23",
+        "title": "Reporting Obligations",
+        "family": "incident",
+        "description": "Significant incidents are reported to the competent authority within defined deadlines.",
+        "cwes": ["CWE-778"],
+        "keywords": ["incident reporting", "notification", "logging"]
+      }
+    ]
+  },
+  "dora": {
+    "id": "dora",
+    "name": "EU Digital Operational Resilience Act",
+    "version": "Regulation (EU) 2022/2554",
+    "controls": [
+      {
+        "id": "Art.6",
+        "title": "ICT Risk Management Framework",
+        "family": "risk-management",
+        "description": "Financial entities maintain a sound ICT risk-management framework.",
+        "cwes": ["CWE-1053", "CWE-1059"],
+        "keywords": ["risk management", "ict risk", "threat model"]
+      },
+      {
+        "id": "Art.9",
+        "title": "Protection and Prevention",
+        "family": "protection",
+        "description": "ICT systems are protected with security tools, policies, and encryption.",
+        "cwes": ["CWE-327", "CWE-311", "CWE-319", "CWE-284"],
+        "keywords": ["protection", "encryption", "access control", "security controls"]
+      },
+      {
+        "id": "Art.10",
+        "title": "Detection of Anomalous Activities",
+        "family": "detection",
+        "description": "Mechanisms promptly detect anomalous activities and ICT-related incidents.",
+        "cwes": ["CWE-778", "CWE-223"],
+        "keywords": ["detection", "monitoring", "logging", "anomaly"]
+      },
+      {
+        "id": "Art.17",
+        "title": "ICT-Related Incident Management Process",
+        "family": "incident",
+        "description": "A process manages, classifies, and responds to ICT-related incidents.",
+        "cwes": ["CWE-778"],
+        "keywords": ["incident management", "incident response"]
+      },
+      {
+        "id": "Art.24",
+        "title": "Digital Operational Resilience Testing",
+        "family": "testing",
+        "description": "Entities test ICT systems and applications for operational resilience.",
+        "cwes": ["CWE-1006"],
+        "keywords": ["resilience testing", "security testing", "penetration test"]
+      },
+      {
+        "id": "Art.28",
+        "title": "ICT Third-Party Risk Management",
+        "family": "third-party",
+        "description": "Risks from ICT third-party service providers are managed throughout the relationship.",
+        "cwes": ["CWE-1395", "CWE-1104", "CWE-1357"],
+        "keywords": ["third-party", "supply chain", "vendor risk", "vulnerable dependency"]
+      }
+    ]
+  },
+  "cra": {
+    "id": "cra",
+    "name": "EU Cyber Resilience Act",
+    "version": "Regulation (EU) 2024/2847",
+    "controls": [
+      {
+        "id": "Annex-I.1.a",
+        "title": "Secure by Design and Default",
+        "family": "essential-requirements",
+        "description": "Products with digital elements are designed, developed, and produced to be secure by default.",
+        "cwes": ["CWE-1188", "CWE-1004", "CWE-1059"],
+        "keywords": ["secure by design", "secure defaults", "misconfiguration"]
+      },
+      {
+        "id": "Annex-I.1.b",
+        "title": "Delivered Without Known Exploitable Vulnerabilities",
+        "family": "essential-requirements",
+        "description": "Products are made available without known exploitable vulnerabilities.",
+        "cwes": ["CWE-1395", "CWE-1104"],
+        "keywords": ["known vulnerability", "vulnerable dependency", "cve", "patch"]
+      },
+      {
+        "id": "Annex-I.1.e",
+        "title": "Protection of Confidentiality",
+        "family": "essential-requirements",
+        "description": "Products protect the confidentiality of data through encryption at rest and in transit.",
+        "cwes": ["CWE-311", "CWE-319", "CWE-327", "CWE-200"],
+        "keywords": ["confidentiality", "encryption", "data protection", "cleartext"]
+      },
+      {
+        "id": "Annex-I.1.h",
+        "title": "Protection from Unauthorized Access",
+        "family": "essential-requirements",
+        "description": "Products protect against unauthorized access through appropriate control mechanisms.",
+        "cwes": ["CWE-284", "CWE-287", "CWE-862"],
+        "keywords": ["unauthorized access", "access control", "authentication"]
+      },
+      {
+        "id": "Annex-I.2.1",
+        "title": "Vulnerability Handling and SBOM",
+        "family": "vulnerability-handling",
+        "description": "Manufacturers identify and document vulnerabilities and components, including a software bill of materials.",
+        "cwes": ["CWE-1395", "CWE-1104"],
+        "keywords": ["sbom", "vulnerability handling", "components", "supply chain"]
+      },
+      {
+        "id": "Annex-I.2.3",
+        "title": "Security Updates",
+        "family": "vulnerability-handling",
+        "description": "Security updates are provided to address vulnerabilities without delay.",
+        "cwes": ["CWE-1395"],
+        "keywords": ["security update", "patch", "remediation"]
+      }
+    ]
+  },
+  "cisa-sbd": {
+    "id": "cisa-sbd",
+    "name": "CISA Secure by Design Principles",
+    "version": "2024",
+    "controls": [
+      {
+        "id": "SBD-1",
+        "title": "Take Ownership of Customer Security Outcomes",
+        "family": "principle",
+        "description": "Manufacturers take ownership of security outcomes rather than shifting risk to customers.",
+        "cwes": ["CWE-1059"],
+        "keywords": ["security ownership", "accountability", "secure by design"]
+      },
+      {
+        "id": "SBD-2",
+        "title": "Embrace Radical Transparency and Accountability",
+        "family": "principle",
+        "description": "Manufacturers disclose vulnerabilities with complete CWE and CVE information.",
+        "cwes": ["CWE-1395"],
+        "keywords": ["transparency", "vulnerability disclosure", "cve"]
+      },
+      {
+        "id": "SBD-3",
+        "title": "Build Organizational Structure for Secure by Design",
+        "family": "principle",
+        "description": "Leadership establishes structures that prioritize security across development.",
+        "cwes": ["CWE-1059"],
+        "keywords": ["organizational structure", "leadership", "secure by design"]
+      },
+      {
+        "id": "SBD-MEMORY-SAFETY",
+        "title": "Eliminate Memory Safety Vulnerabilities",
+        "family": "secure-by-design",
+        "description": "Products adopt memory-safe languages and patterns to eliminate memory-safety defects.",
+        "cwes": ["CWE-119", "CWE-787", "CWE-125", "CWE-416", "CWE-476"],
+        "keywords": ["memory safety", "buffer overflow", "use after free", "out of bounds"]
+      },
+      {
+        "id": "SBD-PARAMETERIZED",
+        "title": "Use Parameterized Queries",
+        "family": "secure-by-design",
+        "description": "Database access uses parameterized queries to eliminate SQL injection by construction.",
+        "cwes": ["CWE-89", "CWE-943"],
+        "keywords": ["parameterized", "sql injection", "prepared statement", "query injection"]
+      },
+      {
+        "id": "SBD-INPUT-SANITIZATION",
+        "title": "Sanitize and Validate Inputs",
+        "family": "secure-by-design",
+        "description": "All inputs are validated and output is encoded to eliminate injection classes.",
+        "cwes": ["CWE-20", "CWE-79", "CWE-78", "CWE-94", "CWE-1284"],
+        "keywords": ["input validation", "sanitize", "xss", "command injection", "injection"]
+      },
+      {
+        "id": "SBD-DEFAULT-MFA",
+        "title": "Enable Multi-Factor Authentication by Default",
+        "family": "secure-by-design",
+        "description": "Multi-factor authentication is provided and enabled by default for users.",
+        "cwes": ["CWE-308", "CWE-287", "CWE-1390"],
+        "keywords": ["multi-factor", "mfa", "authentication", "default authentication"]
+      },
+      {
+        "id": "SBD-NO-DEFAULT-PASSWORDS",
+        "title": "Eliminate Default Passwords",
+        "family": "secure-by-design",
+        "description": "Products ship without shared default passwords and require unique credentials.",
+        "cwes": ["CWE-798", "CWE-1392", "CWE-1393"],
+        "keywords": ["default password", "hardcoded credential", "shared credential"]
+      },
+      {
+        "id": "SBD-SECURE-LOGGING",
+        "title": "Provide Secure Logging at No Extra Charge",
+        "family": "secure-by-design",
+        "description": "Detailed security logs are available to customers without an additional licensing fee.",
+        "cwes": ["CWE-778", "CWE-223"],
+        "keywords": ["logging", "audit log", "security logging", "monitoring"]
+      },
+      {
+        "id": "SBD-PATCH-ABILITY",
+        "title": "Reduce the Burden of Security Patches",
+        "family": "secure-by-design",
+        "description": "Products make security updates easy to apply and reduce the cost of patching.",
+        "cwes": ["CWE-1395", "CWE-1104"],
+        "keywords": ["patch", "security update", "vulnerable dependency", "remediation"]
+      },
+      {
+        "id": "SBD-VULN-DISCLOSURE",
+        "title": "Establish a Vulnerability Disclosure Program",
+        "family": "secure-by-design",
+        "description": "A coordinated vulnerability-disclosure program allows researchers to report issues.",
+        "cwes": ["CWE-1395"],
+        "keywords": ["vulnerability disclosure", "cvd", "bug bounty"]
+      },
+      {
+        "id": "SBD-CWE-TRENDS",
+        "title": "Track and Reduce Recurring Vulnerability Classes",
+        "family": "secure-by-design",
+        "description": "Manufacturers analyze CWE trends to eliminate entire classes of vulnerabilities.",
+        "cwes": ["CWE-1006", "CWE-1395"],
+        "keywords": ["cwe trends", "root cause", "vulnerability class"]
+      }
+    ]
+  },
+  "eo-14028": {
+    "id": "eo-14028",
+    "name": "US Executive Order 14028 on Improving the Nation's Cybersecurity",
+    "version": "2021",
+    "controls": [
+      {
+        "id": "Sec.4.e.i",
+        "title": "Secure Software Development Environments",
+        "family": "supply-chain",
+        "description": "Software is developed in administratively separate, secured build environments.",
+        "cwes": ["CWE-1104", "CWE-284"],
+        "keywords": ["build environment", "secure development", "pipeline security"]
+      },
+      {
+        "id": "Sec.4.e.iii",
+        "title": "Automated Vulnerability Detection",
+        "family": "supply-chain",
+        "description": "Automated tools maintain trusted source code and check for known vulnerabilities.",
+        "cwes": ["CWE-1395", "CWE-1006"],
+        "keywords": ["automated tools", "vulnerability detection", "code scanning"]
+      },
+      {
+        "id": "Sec.4.e.vi",
+        "title": "Provide a Software Bill of Materials",
+        "family": "supply-chain",
+        "description": "Producers provide a software bill of materials for each product.",
+        "cwes": ["CWE-1104", "CWE-1357"],
+        "keywords": ["sbom", "bill of materials", "components", "supply chain"]
+      },
+      {
+        "id": "Sec.4.e.ix",
+        "title": "Attestation of Conformity to Secure Practices",
+        "family": "supply-chain",
+        "description": "Software producers attest to conformity with secure software-development practices.",
+        "cwes": ["CWE-345", "CWE-494"],
+        "keywords": ["attestation", "provenance", "code signing", "integrity"]
+      },
+      {
+        "id": "Sec.3.d",
+        "title": "Adopt Multi-Factor Authentication and Encryption",
+        "family": "modernization",
+        "description": "Multi-factor authentication and encryption for data at rest and in transit are adopted.",
+        "cwes": ["CWE-287", "CWE-311", "CWE-319", "CWE-308"],
+        "keywords": ["multi-factor", "mfa", "encryption", "tls"]
+      }
+    ]
+  },
+  "fda-524b": {
+    "id": "fda-524b",
+    "name": "FDA Section 524B Cybersecurity in Medical Devices",
+    "version": "2023",
+    "controls": [
+      {
+        "id": "524B-SPDF",
+        "title": "Secure Product Development Framework",
+        "family": "design",
+        "description": "A secure product development framework governs the device's cybersecurity over its lifecycle.",
+        "cwes": ["CWE-1059", "CWE-1053"],
+        "keywords": ["secure development", "spdf", "threat model", "lifecycle"]
+      },
+      {
+        "id": "524B-SBOM",
+        "title": "Software Bill of Materials",
+        "family": "transparency",
+        "description": "The device is accompanied by a software bill of materials covering commercial and open-source components.",
+        "cwes": ["CWE-1104", "CWE-1357", "CWE-1395"],
+        "keywords": ["sbom", "components", "supply chain", "vulnerable dependency"]
+      },
+      {
+        "id": "524B-MONITORING",
+        "title": "Postmarket Vulnerability Monitoring",
+        "family": "postmarket",
+        "description": "Postmarket processes monitor, identify, and address device vulnerabilities and exploits.",
+        "cwes": ["CWE-1395", "CWE-778"],
+        "keywords": ["postmarket", "vulnerability monitoring", "patch", "logging"]
+      },
+      {
+        "id": "524B-PATCH",
+        "title": "Coordinated Vulnerability Disclosure and Patching",
+        "family": "postmarket",
+        "description": "A coordinated disclosure process and timely updates remediate device vulnerabilities.",
+        "cwes": ["CWE-1395"],
+        "keywords": ["vulnerability disclosure", "patch", "security update"]
+      },
+      {
+        "id": "524B-CONTROLS",
+        "title": "Cybersecurity Controls and Encryption",
+        "family": "design",
+        "description": "The device implements access control, authentication, and encryption to protect health data.",
+        "cwes": ["CWE-284", "CWE-287", "CWE-311", "CWE-319", "CWE-327"],
+        "keywords": ["access control", "authentication", "encryption", "health data"]
+      }
+    ]
+  }
+}

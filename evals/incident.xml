@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="incident">
+  <qa_pair>
+    <question>Audit logging completeness for this config: `{ "config": { "has_audit_log": false, "logs_authentication": false, "tamper_protection": false } }`.</question>
+    <tools>altais_audit_logging</tools>
+    <answer>altais_audit_logging reports findings for the missing audit log, missing authentication-event logging (CWE-778), and no tamper protection.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit logging in this code that concatenates user input into a log call: `logger.info("login from " + req.body.username);`</question>
+    <tools>altais_audit_logging</tools>
+    <answer>altais_audit_logging reports a log-injection finding (CWE-117) for the user-controlled input concatenated into the log message.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an incident-response playbook for a ransomware incident.</question>
+    <tools>altais_generate_playbook</tools>
+    <answer>altais_generate_playbook returns a ransomware playbook organized along the six NIST SP 800-61 lifecycle phases (preparation; detection &amp; analysis; containment; eradication; recovery; post-incident activity) with concrete steps and roles.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an incident-response playbook for a data-breach scenario.</question>
+    <tools>altais_generate_playbook</tools>
+    <answer>altais_generate_playbook returns a data-breach playbook structured across the six NIST SP 800-61 phases with breach-specific steps, response roles, and communication guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an RFC 9116 security.txt with contact `mailto:security@example.com` and a policy URL `https://example.com/security-policy`.</question>
+    <tools>altais_generate_security_txt</tools>
+    <answer>altais_generate_security_txt returns a security.txt body with a `Contact:` field, a future-dated `Expires:` field, the `Policy:` field, and a placement note for `/.well-known/security.txt`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Draft a GHSA-style security advisory titled "Authentication bypass in admin API", severity high, affected versions "&gt;= 2.0.0, &lt; 2.4.1", patched version "2.4.1".</question>
+    <tools>altais_draft_advisory</tools>
+    <answer>altais_draft_advisory returns a markdown advisory in GHSA format with a summary, the high severity rating, affected and patched versions, impact, remediation, references, and a disclosure timeline.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Assess deception-control coverage: `{ "config": { "canary_tokens_deployed": false, "honeypots_deployed": false, "alerting_enabled": false } }`.</question>
+    <tools>altais_check_canary</tools>
+    <answer>altais_check_canary reports findings for no canary tokens deployed (CWE-778), no honeypots deployed, and no alerting on triggers.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Assess canary coverage where canary tokens and honeypots are deployed across database, credentials, and cloud, with alerting enabled and routed to an on-call channel. Confirm it is clean.</question>
+    <tools>altais_check_canary</tools>
+    <answer>altais_check_canary returns zero or only informational findings when deception controls are deployed across the sensitive areas, alerting is enabled, and alerts are routed.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Recommend SIEM integration steps for a Splunk deployment that has only `firewall` onboarded as a log source.</question>
+    <tools>altais_recommend_siem</tools>
+    <answer>altais_recommend_siem returns Splunk-tailored guidance: recommended additional log sources to onboard (excluding `firewall`), priority detection use-cases, recommended dashboards, and alerting guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a vulnerability-disclosure program for the organization "Acme Corp" with reporting contact `security@acme.example` and a 5-day acknowledgment SLA.</question>
+    <tools>altais_generate_disclosure_program</tools>
+    <answer>altais_generate_disclosure_program returns a markdown VDP policy with an introduction, in/out-of-scope definitions, reporting instructions, the acknowledgment SLA, researcher expectations, a safe-harbor clause, and references.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an incident-response playbook for an account-takeover scenario.</question>
+    <tools>altais_generate_playbook</tools>
+    <answer>altais_generate_playbook returns an account-takeover playbook spanning the six NIST SP 800-61 phases with takeover-specific containment and eradication steps.</answer>
+  </qa_pair>
+</evaluation>

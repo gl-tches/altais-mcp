@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="runtime">
+  <qa_pair>
+    <question>Generate ModSecurity WAF rules that block SQL injection and XSS: `{ "config": { "platform": "modsecurity", "protect_against": ["sql-injection", "xss"] } }`.</question>
+    <tools>altais_generate_waf_rules</tools>
+    <answer>altais_generate_waf_rules returns ModSecurity SecRules covering SQL injection and XSS, with a deployment note and a recommendation to run in detection mode before enforcing.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate Cloudflare WAF rules covering path traversal and RCE scoped to `/api/*`.</question>
+    <tools>altais_generate_waf_rules</tools>
+    <answer>altais_generate_waf_rules returns a Cloudflare ruleset expression covering path traversal and RCE, scoped to the `/api/*` path, with a deployment note.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an AWS WAF rule set protecting against scanner traffic and request-rate abuse: `{ "config": { "platform": "aws-waf", "protect_against": ["scanner", "rate-abuse"] } }`.</question>
+    <tools>altais_generate_waf_rules</tools>
+    <answer>altais_generate_waf_rules returns an AWS WAFv2 rule JSON document covering scanner traffic and rate abuse, with platform-specific deployment guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate NGINX/NAXSI WAF directives protecting against SSRF: `{ "config": { "platform": "nginx-naxsi", "protect_against": ["ssrf"] } }`.</question>
+    <tools>altais_generate_waf_rules</tools>
+    <answer>altais_generate_waf_rules returns NGINX/NAXSI directives covering SSRF, with a deployment note and a detection-mode recommendation.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Recommend a RASP configuration for a Java Spring Boot app deployed in containers with low risk tolerance.</question>
+    <tools>altais_recommend_rasp</tools>
+    <answer>altais_recommend_rasp returns the RASP product category, the protections to enable (unsafe deserialization, command injection, SQL injection, path traversal, SSRF) with block-vs-monitor recommendations favoring aggressive blocking at low risk tolerance, plus Spring Boot instrumentation and container performance guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Recommend a RASP configuration for a Python Django app on serverless with high risk tolerance.</question>
+    <tools>altais_recommend_rasp</tools>
+    <answer>altais_recommend_rasp returns RASP guidance for Python/Django on serverless, with monitor-first recommendations reflecting the high risk tolerance and serverless-specific performance considerations.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit monitoring coverage: `{ "config": { "logs_authentication": false, "logs_authorization_failures": false, "logs_input_validation_failures": false, "logs_admin_actions": false, "alerting_enabled": false, "alert_routing": false, "siem_integrated": false, "metrics_collected": false, "anomaly_detection": false, "dashboards": false, "on_call": false, "mean_time_to_detect_minutes": 600 } }`.</question>
+    <tools>altais_audit_monitoring</tools>
+    <answer>altais_audit_monitoring emits one finding per gap: missing security-event logging, no alerting, unrouted alerts, no SIEM integration, no anomaly detection, missing metrics/dashboards, no on-call, and a slow mean time to detect — each with CWE references.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit monitoring where authentication and admin actions are logged but there is no alerting and no SIEM: `{ "config": { "logs_authentication": true, "logs_authorization_failures": true, "logs_input_validation_failures": true, "logs_admin_actions": true, "alerting_enabled": false, "alert_routing": false, "siem_integrated": false, "metrics_collected": true, "anomaly_detection": false, "dashboards": true, "on_call": true, "mean_time_to_detect_minutes": 30 } }`.</question>
+    <tools>altais_audit_monitoring</tools>
+    <answer>altais_audit_monitoring reports findings for the disabled alerting, unrouted alerts, missing SIEM integration, and absent anomaly detection, but no findings for the logging that is in place.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit monitoring for a fully instrumented application: `{ "config": { "logs_authentication": true, "logs_authorization_failures": true, "logs_input_validation_failures": true, "logs_admin_actions": true, "alerting_enabled": true, "alert_routing": true, "siem_integrated": true, "metrics_collected": true, "anomaly_detection": true, "dashboards": true, "on_call": true, "mean_time_to_detect_minutes": 5 } }`.</question>
+    <tools>altais_audit_monitoring</tools>
+    <answer>altais_audit_monitoring returns zero findings; every security-event log, alerting, routing, SIEM, anomaly detection, metrics, dashboards, and on-call control is present with a fast MTTD.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a WAF rule set for ModSecurity covering every attack class: sql-injection, xss, path-traversal, rce, ssrf, scanner, and rate-abuse.</question>
+    <tools>altais_generate_waf_rules</tools>
+    <answer>altais_generate_waf_rules returns a ModSecurity SecRules set with rule definitions for all seven requested attack classes plus a deployment note.</answer>
+  </qa_pair>
+</evaluation>

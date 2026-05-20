@@ -1,0 +1,460 @@
+{
+  "web_top_10_2025": [
+    {
+      "id": "A01:2025",
+      "name": "Broken Access Control",
+      "description": "Failures in enforcing the actions a user is permitted to perform. The 2025 edition folds Server-Side Request Forgery (SSRF) into this category alongside path traversal, IDOR, and missing function-level access control.",
+      "cwes": ["CWE-22", "CWE-23", "CWE-35", "CWE-200", "CWE-201", "CWE-284", "CWE-285", "CWE-639", "CWE-732", "CWE-862", "CWE-863", "CWE-918"],
+      "detection_hints": [
+        "IDOR: numeric identifiers in URLs that fetch records without an ownership check",
+        "Missing role/permission checks on privileged endpoints",
+        "Path traversal in file operations (../ segments, absolute paths)",
+        "SSRF: outbound HTTP from user-controlled URLs reaching internal IPs"
+      ],
+      "remediation": "Default-deny in route-level middleware. Tie every record to an owner; verify on every read and write. Allowlist outbound destinations and reject link-local / loopback / RFC1918 ranges after DNS resolution."
+    },
+    {
+      "id": "A02:2025",
+      "name": "Cryptographic Failures",
+      "description": "Failures related to cryptography (or absence thereof) that lead to exposure of sensitive data — at rest, in transit, or in error paths.",
+      "cwes": ["CWE-261", "CWE-296", "CWE-310", "CWE-311", "CWE-319", "CWE-321", "CWE-325", "CWE-326", "CWE-327", "CWE-328", "CWE-329", "CWE-330", "CWE-338", "CWE-347", "CWE-916"],
+      "detection_hints": [
+        "Use of broken hashes/ciphers (MD5, SHA-1, DES, RC4)",
+        "PRNG used for security tokens (Math.random, mt_rand)",
+        "Cleartext transmission (http://) for sensitive data",
+        "Hard-coded keys / certificates in source"
+      ],
+      "remediation": "Use AEAD (AES-GCM, ChaCha20-Poly1305), strong KDFs (Argon2id, scrypt), and Ed25519 / ECDSA P-256 signatures. Load keys from a managed KMS. Enforce TLS 1.2+ everywhere."
+    },
+    {
+      "id": "A03:2025",
+      "name": "Software Supply Chain Failures",
+      "description": "Risks from the dependencies, build pipelines, and distribution channels feeding the application. The 2025 edition promotes supply-chain risk from A06 to A03 reflecting incident frequency since 2021.",
+      "cwes": ["CWE-345", "CWE-353", "CWE-494", "CWE-829", "CWE-1104", "CWE-1357", "CWE-1395"],
+      "detection_hints": [
+        "Unpinned dependencies / no lockfile / version ranges in production",
+        "Dependencies from registries without 2FA on maintainers",
+        "Typosquatted package names; dependency-confusion paths",
+        "Build artifacts not signed / not verified before deploy"
+      ],
+      "remediation": "Pin by hash; mirror dependencies internally. Verify Sigstore / cosign signatures. Generate and consume SBOMs. Apply SLSA Build Track L2+ to production builds."
+    },
+    {
+      "id": "A04:2025",
+      "name": "Insecure Design",
+      "description": "Risks that derive from missing or ineffective control design, regardless of implementation quality.",
+      "cwes": ["CWE-73", "CWE-183", "CWE-209", "CWE-256", "CWE-501", "CWE-522", "CWE-602", "CWE-840", "CWE-841", "CWE-1021"],
+      "detection_hints": [
+        "Business logic relies on client-side state (cart prices, role)",
+        "Trust boundaries crossed without authentication",
+        "No rate limiting on operations with real-world side effects",
+        "Workflows with no abuse-case test coverage"
+      ],
+      "remediation": "Threat-model every feature. Use STRIDE / DREAD. Build secure-by-default templates and reusable libraries. Test abuse cases alongside happy paths."
+    },
+    {
+      "id": "A05:2025",
+      "name": "Security Misconfiguration",
+      "description": "Default-permissive configurations, exposed admin interfaces, verbose error pages, and similar deployment-level mistakes.",
+      "cwes": ["CWE-2", "CWE-11", "CWE-13", "CWE-15", "CWE-16", "CWE-260", "CWE-315", "CWE-520", "CWE-526", "CWE-537", "CWE-541", "CWE-547", "CWE-611", "CWE-614", "CWE-756", "CWE-776", "CWE-942", "CWE-1004", "CWE-1032", "CWE-1174"],
+      "detection_hints": [
+        "Default credentials / sample apps left enabled",
+        "Verbose error pages or stack traces in responses",
+        "Missing security headers (CSP, HSTS, X-Content-Type-Options)",
+        "Open object storage buckets / overly permissive CORS"
+      ],
+      "remediation": "Harden the baseline: deny by default, remove sample/admin code, set all standard security headers, and continuously scan for drift."
+    },
+    {
+      "id": "A06:2025",
+      "name": "Injection",
+      "description": "User-supplied data interpreted as code or commands by a downstream interpreter (SQL, NoSQL, OS shell, LDAP, ORM, ExpressionLanguage).",
+      "cwes": ["CWE-20", "CWE-74", "CWE-77", "CWE-78", "CWE-79", "CWE-89", "CWE-90", "CWE-91", "CWE-93", "CWE-94", "CWE-95", "CWE-98", "CWE-113", "CWE-117", "CWE-184", "CWE-470", "CWE-471", "CWE-564", "CWE-643", "CWE-652", "CWE-917", "CWE-943", "CWE-1336"],
+      "detection_hints": [
+        "String concatenation into SQL / shell / template / LDAP filter",
+        "f-string / template-literal interpolation into queries",
+        "`eval` / `new Function` / Python `exec`",
+        "Server-side template injection (Jinja2, FreeMarker, Velocity)"
+      ],
+      "remediation": "Use parameterized queries, argv arrays for subprocesses, contextual output encoding for HTML. Validate inputs against schemas at trust boundaries."
+    },
+    {
+      "id": "A07:2025",
+      "name": "Identification and Authentication Failures",
+      "description": "Bypassable or weak identity verification, including credential stuffing, weak password storage, and broken session management.",
+      "cwes": ["CWE-255", "CWE-259", "CWE-287", "CWE-288", "CWE-290", "CWE-294", "CWE-295", "CWE-297", "CWE-300", "CWE-302", "CWE-304", "CWE-306", "CWE-307", "CWE-346", "CWE-384", "CWE-521", "CWE-613", "CWE-620", "CWE-640", "CWE-798", "CWE-940", "CWE-1216", "CWE-1390"],
+      "detection_hints": [
+        "Missing authentication on privileged endpoints",
+        "JWT algorithm confusion (alg: none / HS256 with public key)",
+        "No rate limit on login / password-reset endpoints",
+        "Session IDs not rotated on authentication"
+      ],
+      "remediation": "Enforce MFA (prefer WebAuthn / passkeys). Use Argon2id for password hashing. Pin JWT algorithms. Rate-limit per-account and per-IP."
+    },
+    {
+      "id": "A08:2025",
+      "name": "Software and Data Integrity Failures",
+      "description": "Assumptions of integrity that hold only when verified — missing signatures on artifacts, insecure deserialization, lack of update integrity checks.",
+      "cwes": ["CWE-345", "CWE-353", "CWE-426", "CWE-494", "CWE-502", "CWE-565", "CWE-784", "CWE-829", "CWE-830", "CWE-915"],
+      "detection_hints": [
+        "Deserialization of untrusted data (pickle, Java ObjectInputStream)",
+        "Auto-update fetching code without signature verification",
+        "Trust in cookie-driven state (e.g. cookie role flag)",
+        "Mass-assignment endpoints"
+      ],
+      "remediation": "Use data-only formats with schemas. Sign and verify artifacts (Sigstore / cosign). Validate signatures before executing or trusting payloads."
+    },
+    {
+      "id": "A09:2025",
+      "name": "Security Logging and Monitoring Failures",
+      "description": "Insufficient logging, alerting, and incident response capability — detection gaps that let attackers persist.",
+      "cwes": ["CWE-117", "CWE-223", "CWE-532", "CWE-778"],
+      "detection_hints": [
+        "State-changing operations not logged",
+        "Logs missing user / source-IP / request-ID context",
+        "No alerts on auth failures or admin-action spikes",
+        "Logs ship to a host the application can modify"
+      ],
+      "remediation": "Structured logs with consistent fields. Ship to an append-only off-host store. Alert on auth and authz anomalies. Run incident-response game days."
+    },
+    {
+      "id": "A10:2025",
+      "name": "Mishandling of Exceptional Conditions",
+      "description": "New for 2025: failure to anticipate or correctly handle unusual conditions — empty catches, fail-open paths, stack-trace leaks, race conditions, integer overflows.",
+      "cwes": ["CWE-209", "CWE-248", "CWE-252", "CWE-273", "CWE-280", "CWE-362", "CWE-367", "CWE-388", "CWE-390", "CWE-391", "CWE-392", "CWE-393", "CWE-394", "CWE-395", "CWE-396", "CWE-397", "CWE-460", "CWE-544", "CWE-636", "CWE-703", "CWE-704", "CWE-754", "CWE-755"],
+      "detection_hints": [
+        "Empty catch / `except: pass` blocks",
+        "Catch blocks that return `true` or another success indicator",
+        "Stack traces returned in HTTP responses",
+        "Unchecked return values from security-relevant calls"
+      ],
+      "remediation": "Catch specific exceptions, default to the safe state on error, surface failures with logging + correlation IDs. Generic error envelopes to clients."
+    }
+  ],
+  "api_top_10_2023": [
+    {
+      "id": "API1:2023",
+      "name": "Broken Object Level Authorization",
+      "description": "API endpoints that accept an object identifier as input do not properly verify that the caller is authorized to access that specific object.",
+      "cwes": ["CWE-285", "CWE-639"],
+      "detection_hints": ["Sequential IDs in URLs", "Per-object authorization missing from middleware", "Bulk operations not iterating per-record checks"],
+      "remediation": "Tie every object to an owner / tenant. Enforce object-level authorization on every fetch and mutation. Prefer indirect references."
+    },
+    {
+      "id": "API2:2023",
+      "name": "Broken Authentication",
+      "description": "Misimplemented authentication mechanisms allow attackers to compromise tokens or assume other users' identities.",
+      "cwes": ["CWE-287", "CWE-294", "CWE-307", "CWE-347", "CWE-384", "CWE-521", "CWE-798", "CWE-1390"],
+      "detection_hints": ["JWT validation skipped or `alg: none`", "Token stored in localStorage exposed to XSS", "Refresh tokens never rotated"],
+      "remediation": "Pin signing algorithms; rotate refresh tokens; require MFA for high-value access. Rate-limit auth endpoints."
+    },
+    {
+      "id": "API3:2023",
+      "name": "Broken Object Property Level Authorization",
+      "description": "Even when object-level access is correct, endpoints expose or accept properties the caller should not see or modify.",
+      "cwes": ["CWE-915"],
+      "detection_hints": ["Mass-assignment endpoints", "GET endpoints returning sensitive fields the UI does not show", "PATCH endpoints accepting `role` / `isAdmin`"],
+      "remediation": "Use explicit input/output schemas. Allowlist returnable and updatable fields per endpoint."
+    },
+    {
+      "id": "API4:2023",
+      "name": "Unrestricted Resource Consumption",
+      "description": "API endpoints lack limits on the resources they consume per request or per caller, enabling DoS or cost exhaustion.",
+      "cwes": ["CWE-400", "CWE-770"],
+      "detection_hints": ["No max body size / array length", "Expensive queries without pagination", "Webhooks without per-tenant quotas"],
+      "remediation": "Enforce per-endpoint limits on body size, array length, pagination, and per-tenant rate quotas. Use bounded worker pools."
+    },
+    {
+      "id": "API5:2023",
+      "name": "Broken Function Level Authorization",
+      "description": "Authorization is implemented per-function but enforcement is inconsistent — admin endpoints reachable by ordinary users.",
+      "cwes": ["CWE-285", "CWE-862", "CWE-863"],
+      "detection_hints": ["Admin routes share auth middleware with public routes", "Role checks scattered in handlers", "OPTIONS / methods bypass auth"],
+      "remediation": "Centralize authorization. Default-deny per route; require explicit `requires_role` annotation."
+    },
+    {
+      "id": "API6:2023",
+      "name": "Unrestricted Access to Sensitive Business Flows",
+      "description": "Business flows (e.g., bulk purchase, automated reservation) can be abused at scale because the API treats each request as legitimate.",
+      "cwes": ["CWE-840", "CWE-799"],
+      "detection_hints": ["No anti-automation on flows with real-world impact", "Coupon abuse / inventory hoarding paths", "Account-creation flow allows mass signups"],
+      "remediation": "Identify business flows with abuse value; add anti-automation (CAPTCHAs, device fingerprints, rate quotas), per-flow."
+    },
+    {
+      "id": "API7:2023",
+      "name": "Server Side Request Forgery",
+      "description": "API endpoints that fetch user-supplied URLs can be coerced into reaching internal services or cloud-metadata endpoints.",
+      "cwes": ["CWE-918"],
+      "detection_hints": ["Webhook configurators that accept user-supplied URLs", "PDF/HTML rendering services that load external resources", "URL fetchers without DNS allowlists"],
+      "remediation": "Allowlist hosts; resolve DNS and reject internal ranges before connecting; disable redirects."
+    },
+    {
+      "id": "API8:2023",
+      "name": "Security Misconfiguration",
+      "description": "API stacks frequently expose verbose defaults, wide CORS, missing security headers, or default credentials.",
+      "cwes": ["CWE-2", "CWE-16", "CWE-209", "CWE-942"],
+      "detection_hints": ["Wide CORS with credentials", "Verbose error envelopes", "Trailing slash / case-confusion bypasses", "Default admin endpoints accessible"],
+      "remediation": "Harden defaults; document required security headers; audit CORS for every endpoint."
+    },
+    {
+      "id": "API9:2023",
+      "name": "Improper Inventory Management",
+      "description": "Stale versions, undocumented endpoints, and abandoned services are reachable but unmonitored.",
+      "cwes": ["CWE-1059", "CWE-1104"],
+      "detection_hints": ["Old API versions still routable", "Internal endpoints reachable from the internet", "Test/staging endpoints in production"],
+      "remediation": "Maintain an API inventory; sunset old versions on a schedule; segment internal/test endpoints by network and authentication."
+    },
+    {
+      "id": "API10:2023",
+      "name": "Unsafe Consumption of APIs",
+      "description": "When an API consumes a third-party API, weaknesses in the third party can become weaknesses in the consumer (SSRF, injection, malicious responses).",
+      "cwes": ["CWE-20", "CWE-200", "CWE-918"],
+      "detection_hints": ["Trusting third-party responses without validation", "No timeout / retry budget on outbound calls", "Following redirects without validation"],
+      "remediation": "Validate responses against schemas. Pin TLS / certificates for sensitive integrations. Cap outbound timeouts and retry budgets."
+    }
+  ],
+  "mobile_top_10_2024": [
+    {
+      "id": "M1:2024",
+      "name": "Improper Credential Usage",
+      "description": "Hard-coded credentials, insecure transmission of credentials, or insecure local storage of credentials in mobile apps.",
+      "cwes": ["CWE-256", "CWE-259", "CWE-261", "CWE-319", "CWE-798"],
+      "detection_hints": ["Credentials in app binary or resources", "Credentials sent over HTTP", "Tokens stored in shared preferences without encryption"],
+      "remediation": "Use platform Keychain / Keystore for secrets. Authenticate via short-lived tokens issued by a backend."
+    },
+    {
+      "id": "M2:2024",
+      "name": "Inadequate Supply Chain Security",
+      "description": "Risks from third-party SDKs, ad networks, and build tools that ship within mobile apps.",
+      "cwes": ["CWE-829", "CWE-1104", "CWE-1395"],
+      "detection_hints": ["Outdated SDKs", "Ad / analytics SDKs with broad permissions", "No build-artifact verification"],
+      "remediation": "Inventory all SDKs; pin versions; audit permissions requested. Verify signed artifacts."
+    },
+    {
+      "id": "M3:2024",
+      "name": "Insecure Authentication/Authorization",
+      "description": "Client-side authentication, predictable session identifiers, or trust in client-supplied identity claims.",
+      "cwes": ["CWE-287", "CWE-302", "CWE-639"],
+      "detection_hints": ["Client decides whether user is authenticated", "Session validation skipped server-side", "Bypassable biometric checks"],
+      "remediation": "Authenticate server-side. Treat biometrics as a UX layer over a server-issued token."
+    },
+    {
+      "id": "M4:2024",
+      "name": "Insufficient Input/Output Validation",
+      "description": "Mobile apps that fail to validate data from intent / deep-link / IPC sources, or fail to sanitize output rendered as HTML.",
+      "cwes": ["CWE-20", "CWE-79"],
+      "detection_hints": ["Deep links accepted without origin checks", "Cross-app intent data trusted", "WebView loads untrusted HTML"],
+      "remediation": "Validate intent data; restrict WebView privileges; sanitize before rendering as HTML."
+    },
+    {
+      "id": "M5:2024",
+      "name": "Insecure Communication",
+      "description": "Network channels that do not use TLS, do not pin certificates for sensitive integrations, or accept invalid certificates.",
+      "cwes": ["CWE-295", "CWE-297", "CWE-319"],
+      "detection_hints": ["allowsArbitraryLoads in iOS ATS", "Custom TrustManager that accepts all certificates on Android", "HTTP endpoints declared in NSAppTransportSecurity exceptions"],
+      "remediation": "Enforce ATS / network-security-config. Pin certificates / public keys for sensitive servers."
+    },
+    {
+      "id": "M6:2024",
+      "name": "Inadequate Privacy Controls",
+      "description": "Apps that collect, transmit, or share PII beyond the user's expectation or applicable law.",
+      "cwes": ["CWE-200", "CWE-359"],
+      "detection_hints": ["Location / contacts / IDFA collected with no clear purpose", "Data shared with third-party SDKs without consent", "Sensitive data in clipboard / logs"],
+      "remediation": "Minimize collection; document purpose. Disclose third-party data sharing; honor user opt-outs."
+    },
+    {
+      "id": "M7:2024",
+      "name": "Insufficient Binary Protections",
+      "description": "App binaries lack code-signing or anti-tamper / anti-debug controls appropriate to the threat model.",
+      "cwes": ["CWE-353", "CWE-693"],
+      "detection_hints": ["No code obfuscation in release builds", "Easy to repackage / re-sign", "No root / jailbreak detection where appropriate"],
+      "remediation": "Apply platform-appropriate hardening: Play Integrity / DeviceCheck, code obfuscation, root/jailbreak signals for fraud risk."
+    },
+    {
+      "id": "M8:2024",
+      "name": "Security Misconfiguration",
+      "description": "Insecure defaults: debug builds shipped, exported components, world-readable storage.",
+      "cwes": ["CWE-16", "CWE-732", "CWE-1188"],
+      "detection_hints": ["Debug flag enabled in release", "Exported activities / services with no permission", "Backup not disabled (`android:allowBackup=true`)"],
+      "remediation": "Disable debug in release. Mark components as non-exported unless required. Disable platform-level backup of sensitive data."
+    },
+    {
+      "id": "M9:2024",
+      "name": "Insecure Data Storage",
+      "description": "Sensitive data persisted on the device in a form that other apps or extraction tools can read.",
+      "cwes": ["CWE-311", "CWE-312", "CWE-313", "CWE-922"],
+      "detection_hints": ["Tokens in plaintext shared preferences", "PII in unencrypted SQLite", "Sensitive data in app caches / logs"],
+      "remediation": "Encrypt at rest with Keystore-backed keys. Avoid persistence; if required, expire data on logout."
+    },
+    {
+      "id": "M10:2024",
+      "name": "Insufficient Cryptography",
+      "description": "Use of weak algorithms, short keys, or static IVs; misuse of platform crypto APIs.",
+      "cwes": ["CWE-326", "CWE-327", "CWE-330", "CWE-338"],
+      "detection_hints": ["MD5 / SHA-1 for security", "Static IV in CBC mode", "Custom crypto primitives"],
+      "remediation": "Use platform AEAD primitives. Generate IVs with the platform CSPRNG. Avoid custom crypto."
+    }
+  ],
+  "serverless_top_10": [
+    {
+      "id": "SAS-1",
+      "name": "Function Event Data Injection",
+      "description": "Trigger event payloads (S3, SQS, API Gateway, EventBridge) flow into function logic without validation, enabling injection.",
+      "cwes": ["CWE-20", "CWE-78", "CWE-89", "CWE-94"],
+      "detection_hints": ["Event fields used in shell / SQL / template strings", "No schema validation on event records"],
+      "remediation": "Validate every event field against a schema before use. Pass arguments via argv arrays."
+    },
+    {
+      "id": "SAS-2",
+      "name": "Broken Authentication",
+      "description": "Stateless function authentication patterns leave gaps: anonymous public functions, weak custom authorizers, JWT issues.",
+      "cwes": ["CWE-287", "CWE-307", "CWE-347"],
+      "detection_hints": ["Function exposed via API Gateway with `authorization: NONE`", "Custom authorizer logic missing claim checks", "No rate-limit per caller"],
+      "remediation": "Use the platform authorizer (IAM, Cognito, OIDC). Pin JWT algorithms. Apply Web Application Firewall rate limits."
+    },
+    {
+      "id": "SAS-3",
+      "name": "Insecure Serverless Deployment Configuration",
+      "description": "Permissive default configurations: public functions, debug logging, unbounded memory / timeout, insecure environment variables.",
+      "cwes": ["CWE-16", "CWE-1188"],
+      "detection_hints": ["IaC declares public function URL", "Function timeout at platform max", "Env vars hold secrets in plaintext"],
+      "remediation": "Default-deny on triggers. Set tight timeouts. Use managed secret references (SSM, Secret Manager) for env vars."
+    },
+    {
+      "id": "SAS-4",
+      "name": "Over-Privileged Function Permissions",
+      "description": "Function execution roles grant access far beyond what the function needs.",
+      "cwes": ["CWE-269", "CWE-732"],
+      "detection_hints": ["Wildcards in IAM policies (`s3:*`)", "Roles shared across functions", "Admin-managed roles attached to runtime"],
+      "remediation": "Scope IAM policies to specific resources and actions. One role per function."
+    },
+    {
+      "id": "SAS-5",
+      "name": "Inadequate Function Monitoring and Logging",
+      "description": "Default platform logging is insufficient — short retention, no structured fields, no business-level events.",
+      "cwes": ["CWE-117", "CWE-532", "CWE-778"],
+      "detection_hints": ["Logs only contain platform metrics", "No correlation across services", "No alerts on auth / authz anomalies"],
+      "remediation": "Centralize logs into an append-only store. Emit business-event records. Alert on auth/authz anomalies."
+    },
+    {
+      "id": "SAS-6",
+      "name": "Insecure 3rd Party Dependencies",
+      "description": "Serverless deploys often include packaged dependencies and layers with the same risks as traditional apps.",
+      "cwes": ["CWE-829", "CWE-1104", "CWE-1395"],
+      "detection_hints": ["Layers from unverified sources", "Bundled dependencies not pinned", "Build pipeline lacking SCA"],
+      "remediation": "Pin layers by version + hash. Run SCA on every deploy. Mirror dependencies internally."
+    },
+    {
+      "id": "SAS-7",
+      "name": "Insecure Application Secrets Storage",
+      "description": "Secrets in environment variables (visible in dashboards) or hard-coded in function source / event templates.",
+      "cwes": ["CWE-260", "CWE-321", "CWE-798"],
+      "detection_hints": ["Env vars named `*_KEY` or `*_SECRET`", "Secrets in IaC templates committed to git", "Hard-coded keys in handler source"],
+      "remediation": "Use a managed secret store with at-runtime resolution. Rotate via automation."
+    },
+    {
+      "id": "SAS-8",
+      "name": "Denial of Service & Financial Resource Exhaustion",
+      "description": "Pay-per-invocation pricing makes DoS into bill-of-service. Concurrency without quotas amplifies impact.",
+      "cwes": ["CWE-400", "CWE-770"],
+      "detection_hints": ["No reserved-concurrency or quota limits", "Fan-out without throttling", "Synchronous chains without circuit breakers"],
+      "remediation": "Set reserved-concurrency caps; per-tenant quotas; budgets + alarms on cost."
+    },
+    {
+      "id": "SAS-9",
+      "name": "Serverless Business Logic Manipulation",
+      "description": "Event-driven flows that depend on event ordering, idempotency, or single-execution semantics can be abused.",
+      "cwes": ["CWE-362", "CWE-841"],
+      "detection_hints": ["Handlers assume at-most-once delivery", "No idempotency keys", "Replay-vulnerable workflows (e.g., refund)"],
+      "remediation": "Treat all event delivery as at-least-once. Implement idempotency keys; serialize state changes through a single arbiter."
+    },
+    {
+      "id": "SAS-10",
+      "name": "Improper Exception Handling and Verbose Error Messages",
+      "description": "Function errors propagate to clients with stack traces, internal IDs, and runtime detail.",
+      "cwes": ["CWE-209", "CWE-755"],
+      "detection_hints": ["Errors returned as raw JSON from the runtime", "Verbose Lambda error envelopes reaching clients", "No catch-all on API Gateway integrations"],
+      "remediation": "Centralize error formatting at the API edge. Log full errors with correlation IDs; return generic envelopes."
+    }
+  ],
+  "asvs": {
+    "version": "4.0.3",
+    "controls": [
+      { "id": "V1.1.1", "section": "V1", "section_name": "Architecture, Design and Threat Modeling", "level": 1, "description": "Verify the use of a secure software development lifecycle that addresses security in all stages of development." },
+      { "id": "V1.2.2", "section": "V1", "section_name": "Architecture, Design and Threat Modeling", "level": 2, "description": "Verify that communications between application components, including APIs, are authenticated." },
+      { "id": "V1.4.1", "section": "V1", "section_name": "Architecture, Design and Threat Modeling", "level": 2, "description": "Verify that trusted enforcement points such as access control gateways, servers, and serverless functions enforce access controls; never enforce them on the client." },
+      { "id": "V1.4.4", "section": "V1", "section_name": "Architecture, Design and Threat Modeling", "level": 3, "description": "Verify the application uses a single and well-vetted access control mechanism for accessing protected data and resources." },
+
+      { "id": "V2.1.1", "section": "V2", "section_name": "Authentication", "level": 1, "description": "Verify that user-set passwords are at least 12 characters in length." },
+      { "id": "V2.1.7", "section": "V2", "section_name": "Authentication", "level": 1, "description": "Verify that passwords submitted during account registration, login, and password change are checked against a set of breached passwords." },
+      { "id": "V2.2.1", "section": "V2", "section_name": "Authentication", "level": 1, "description": "Verify that anti-automation controls are effective at mitigating breached credential testing, brute force, and account lockout attacks." },
+      { "id": "V2.3.1", "section": "V2", "section_name": "Authentication", "level": 1, "description": "Verify system-generated initial passwords or activation codes are securely randomly generated, at least 6 characters long, and time-limited." },
+      { "id": "V2.5.4", "section": "V2", "section_name": "Authentication", "level": 1, "description": "Verify shared or default accounts are not present (e.g. 'root', 'admin', 'sa')." },
+      { "id": "V2.7.2", "section": "V2", "section_name": "Authentication", "level": 2, "description": "Verify that out-of-band authenticator (such as SMS / push) lookup secrets are single-use, have a defined lifetime, and are presented over an authenticated channel." },
+      { "id": "V2.10.4", "section": "V2", "section_name": "Authentication", "level": 3, "description": "Verify that passwords, integrations with databases and third-party systems, seeds and internal secrets, and API keys are managed securely and not included in source code or stored within source code repositories." },
+
+      { "id": "V3.1.1", "section": "V3", "section_name": "Session Management", "level": 1, "description": "Verify the application never reveals session tokens in URL parameters." },
+      { "id": "V3.2.1", "section": "V3", "section_name": "Session Management", "level": 1, "description": "Verify the application generates a new session token on user authentication." },
+      { "id": "V3.3.1", "section": "V3", "section_name": "Session Management", "level": 1, "description": "Verify that logout and expiration invalidate the session token, such that the back button or a downstream relying party does not resume an authenticated session, including across relying parties." },
+      { "id": "V3.4.1", "section": "V3", "section_name": "Session Management", "level": 1, "description": "Verify that cookie-based session tokens have the 'Secure' attribute set." },
+      { "id": "V3.4.2", "section": "V3", "section_name": "Session Management", "level": 1, "description": "Verify that cookie-based session tokens have the 'HttpOnly' attribute set." },
+      { "id": "V3.4.3", "section": "V3", "section_name": "Session Management", "level": 1, "description": "Verify that cookie-based session tokens utilize the 'SameSite' attribute to limit exposure to cross-site request forgery attacks." },
+      { "id": "V3.7.1", "section": "V3", "section_name": "Session Management", "level": 2, "description": "Verify the application ensures a full, valid login session or requires re-authentication or secondary verification before allowing any sensitive transactions or account modifications." },
+
+      { "id": "V4.1.1", "section": "V4", "section_name": "Access Control", "level": 1, "description": "Verify that the application enforces access control rules on a trusted service layer, especially if client-side access control is present and could be bypassed." },
+      { "id": "V4.1.3", "section": "V4", "section_name": "Access Control", "level": 1, "description": "Verify that the principle of least privilege exists — users should only be able to access functions, data files, URLs, controllers, services, and other resources, for which they possess specific authorization." },
+      { "id": "V4.1.5", "section": "V4", "section_name": "Access Control", "level": 1, "description": "Verify that access controls fail securely including when an exception occurs." },
+      { "id": "V4.2.1", "section": "V4", "section_name": "Access Control", "level": 1, "description": "Verify that sensitive data and APIs are protected against Insecure Direct Object Reference (IDOR) attacks targeting creation, reading, updating, and deletion of records." },
+      { "id": "V4.3.2", "section": "V4", "section_name": "Access Control", "level": 2, "description": "Verify that access to administrative interfaces utilizes multi-factor authentication." },
+
+      { "id": "V5.1.3", "section": "V5", "section_name": "Validation, Sanitization and Encoding", "level": 1, "description": "Verify that all input (HTML form fields, REST requests, URL parameters, HTTP headers, cookies, batch files, RSS feeds, etc.) is validated using positive validation (allowlists)." },
+      { "id": "V5.2.1", "section": "V5", "section_name": "Validation, Sanitization and Encoding", "level": 1, "description": "Verify that all untrusted HTML input from WYSIWYG editors or similar is properly sanitized with an HTML sanitizer library or framework feature." },
+      { "id": "V5.3.4", "section": "V5", "section_name": "Validation, Sanitization and Encoding", "level": 1, "description": "Verify that data selection or database queries (e.g., SQL, HQL, ORM, NoSQL) use parameterized queries, ORMs, entity frameworks, or are otherwise protected from database injection attacks." },
+      { "id": "V5.3.6", "section": "V5", "section_name": "Validation, Sanitization and Encoding", "level": 1, "description": "Verify that the application protects against JSON injection attacks, JSON eval attacks, and JavaScript expression evaluation." },
+      { "id": "V5.3.7", "section": "V5", "section_name": "Validation, Sanitization and Encoding", "level": 1, "description": "Verify that the application protects against LDAP injection vulnerabilities, or that specific security controls to prevent LDAP injection have been implemented." },
+      { "id": "V5.3.8", "section": "V5", "section_name": "Validation, Sanitization and Encoding", "level": 1, "description": "Verify that the application protects against OS command injection and that operating system calls use parameterized OS queries or use contextual command line output encoding." },
+      { "id": "V5.5.2", "section": "V5", "section_name": "Validation, Sanitization and Encoding", "level": 2, "description": "Verify that the application restricts the XML parser to only use the most restrictive configuration possible and to ensure that unsafe features such as resolving external entities are disabled to prevent XML eXternal Entity (XXE) attacks." },
+
+      { "id": "V6.1.1", "section": "V6", "section_name": "Stored Cryptography", "level": 2, "description": "Verify that regulated private data is stored encrypted while at rest, such as personally identifiable information (PII)." },
+      { "id": "V6.2.1", "section": "V6", "section_name": "Stored Cryptography", "level": 1, "description": "Verify that all cryptographic modules fail securely, and errors are handled in a way that does not enable Padding Oracle attacks." },
+      { "id": "V6.2.2", "section": "V6", "section_name": "Stored Cryptography", "level": 2, "description": "Verify that industry proven or government approved cryptographic algorithms, modes, and libraries are used instead of custom coded cryptography." },
+      { "id": "V6.2.3", "section": "V6", "section_name": "Stored Cryptography", "level": 2, "description": "Verify that encryption initialization vector, cipher configuration, and block modes are configured securely using the latest advice." },
+      { "id": "V6.3.1", "section": "V6", "section_name": "Stored Cryptography", "level": 2, "description": "Verify that all random numbers, random file names, random GUIDs, and random strings are generated using the cryptographic module's approved cryptographically secure random number generator (CSPRNG)." },
+
+      { "id": "V7.1.1", "section": "V7", "section_name": "Error Handling and Logging", "level": 1, "description": "Verify that the application does not log credentials or payment details. Session tokens should only be stored in logs in an irreversible, hashed form." },
+      { "id": "V7.1.2", "section": "V7", "section_name": "Error Handling and Logging", "level": 1, "description": "Verify that the application does not log other sensitive data as defined under local privacy laws or relevant security policy." },
+      { "id": "V7.2.1", "section": "V7", "section_name": "Error Handling and Logging", "level": 2, "description": "Verify that all authentication decisions are logged, without storing sensitive session tokens or passwords. This should include requests with relevant metadata needed for security investigations." },
+      { "id": "V7.3.1", "section": "V7", "section_name": "Error Handling and Logging", "level": 2, "description": "Verify that all logging components appropriately encode data to prevent log injection." },
+      { "id": "V7.4.1", "section": "V7", "section_name": "Error Handling and Logging", "level": 1, "description": "Verify that a generic message is shown when an unexpected or security sensitive error occurs, potentially with a unique ID which support personnel can use to investigate." },
+
+      { "id": "V8.1.1", "section": "V8", "section_name": "Data Protection", "level": 2, "description": "Verify the application protects sensitive data from being cached in server components such as load balancers and application caches." },
+      { "id": "V8.2.1", "section": "V8", "section_name": "Data Protection", "level": 1, "description": "Verify the application sets sufficient anti-caching headers so that sensitive data is not cached in modern browsers." },
+      { "id": "V8.3.1", "section": "V8", "section_name": "Data Protection", "level": 1, "description": "Verify that sensitive data is sent to the server in the HTTP message body or headers, and that query string parameters from any HTTP verb do not contain sensitive data." },
+
+      { "id": "V9.1.1", "section": "V9", "section_name": "Communication", "level": 1, "description": "Verify that secured TLS is used for all client connectivity, and does not fall back to insecure or unencrypted communications." },
+      { "id": "V9.1.2", "section": "V9", "section_name": "Communication", "level": 1, "description": "Verify using up-to-date TLS testing tools that only strong cipher suites are enabled, with the strongest cipher suites set as preferred." },
+      { "id": "V9.2.1", "section": "V9", "section_name": "Communication", "level": 2, "description": "Verify that connections to and from the server use trusted TLS certificates. Where internally generated or self-signed certificates are used, the server must be configured to only trust specific internal CAs and specific self-signed certificates." },
+
+      { "id": "V10.2.1", "section": "V10", "section_name": "Malicious Code", "level": 2, "description": "Verify that the application source code and third-party libraries do not contain time bombs or other malicious logic." },
+      { "id": "V10.3.2", "section": "V10", "section_name": "Malicious Code", "level": 1, "description": "Verify that the application employs integrity protections, such as code signing or sub-resource integrity. The application must not load or execute code from untrusted sources." },
+
+      { "id": "V11.1.1", "section": "V11", "section_name": "Business Logic", "level": 1, "description": "Verify the application will only process business logic flows for the same user in sequential step order and without skipping steps." },
+      { "id": "V11.1.4", "section": "V11", "section_name": "Business Logic", "level": 1, "description": "Verify that the application has anti-automation controls to protect against excessive calls such as mass data exfiltration, business logic requests, file uploads or denial of service attacks." },
+      { "id": "V11.1.5", "section": "V11", "section_name": "Business Logic", "level": 1, "description": "Verify the application has business logic limits or validation to protect against likely business risks or threats." },
+
+      { "id": "V12.1.1", "section": "V12", "section_name": "Files and Resources", "level": 1, "description": "Verify that the application will not accept large files that could fill up storage or cause a denial of service." },
+      { "id": "V12.3.1", "section": "V12", "section_name": "Files and Resources", "level": 1, "description": "Verify that user-submitted filename metadata is not used directly by system or framework filesystems and that a URL API is used to protect against path traversal." },
+      { "id": "V12.6.1", "section": "V12", "section_name": "Files and Resources", "level": 1, "description": "Verify that the web or application server is configured with an allowlist of resources or systems to which the server can send requests or load data/files from." },
+
+      { "id": "V13.1.1", "section": "V13", "section_name": "API and Web Service", "level": 1, "description": "Verify that all application components use the same encodings and parsers to avoid parsing attacks that exploit different URI or file parsing behavior." },
+      { "id": "V13.2.1", "section": "V13", "section_name": "API and Web Service", "level": 1, "description": "Verify that enabled RESTful HTTP methods are a valid choice for the user or action, such as preventing normal users using DELETE or PUT on protected API or resources." },
+      { "id": "V13.2.3", "section": "V13", "section_name": "API and Web Service", "level": 1, "description": "Verify that RESTful web services that utilize cookies are protected from Cross-Site Request Forgery via the use of at least one or more of the following: triple or double submit cookie pattern, CSRF nonces, or ORIGIN request header checks." },
+
+      { "id": "V14.1.1", "section": "V14", "section_name": "Configuration", "level": 2, "description": "Verify that the application build and deployment processes are performed in a secure and repeatable way, such as CI / CD automation, automated configuration management, and automated deployment scripts." },
+      { "id": "V14.2.1", "section": "V14", "section_name": "Configuration", "level": 1, "description": "Verify that all components are up to date, preferably using a dependency checker during build or compile time." },
+      { "id": "V14.3.2", "section": "V14", "section_name": "Configuration", "level": 1, "description": "Verify that web or application server and framework error messages are configured to deliver user actionable, customized responses to eliminate any unintended security disclosures." },
+      { "id": "V14.4.1", "section": "V14", "section_name": "Configuration", "level": 1, "description": "Verify that every HTTP response contains a Content-Type header. text/*, */*+xml and application/xml content types should also specify a safe character set (e.g., UTF-8, ISO-8859-1)." },
+      { "id": "V14.4.3", "section": "V14", "section_name": "Configuration", "level": 1, "description": "Verify that a Content Security Policy (CSP) response header is in place that helps mitigate impact for XSS attacks like HTML, DOM, JSON, and JavaScript injection vulnerabilities." }
+    ]
+  }
+}

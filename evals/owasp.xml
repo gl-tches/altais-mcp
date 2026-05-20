@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="owasp">
+  <qa_pair>
+    <question>Map this finding to the OWASP Top 10:2025 (Web): `{ "module": "scan", "rule": "sql-injection", "severity": "high", "cwe": ["CWE-89"] }`.</question>
+    <tools>altais_check_owasp_web</tools>
+    <answer>altais_check_owasp_web maps the SQL-injection / CWE-89 finding to the Injection category (A03) of the OWASP Top 10:2025 and returns a coverage report.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an OWASP Top 10:2025 (Web) coverage report from this finding: `{ "module": "scan", "rule": "broken-access-control", "severity": "high", "cwe": ["CWE-284"] }`.</question>
+    <tools>altais_check_owasp_web</tools>
+    <answer>altais_check_owasp_web maps the finding to A01 Broken Access Control and returns per-category coverage for the 2025 Web Top 10.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Run an OWASP Web Top 10:2025 coverage report with `use_session_findings: true` and no supplied findings on a session with nothing scanned yet.</question>
+    <tools>altais_check_owasp_web</tools>
+    <answer>altais_check_owasp_web returns a coverage report where every A01–A10 category has zero matched findings, reflecting an empty session FindingStore.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Map this finding to the OWASP API Security Top 10 (2023): `{ "module": "api", "rule": "broken-object-level-authorization", "severity": "high", "title": "BOLA on /orders/{id}" }`.</question>
+    <tools>altais_check_owasp_api</tools>
+    <answer>altais_check_owasp_api maps the finding to the BOLA (Broken Object Level Authorization) category of the API Top 10:2023 and returns a coverage report.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Produce an OWASP API Top 10 (2023) coverage report for a finding `{ "module": "api", "rule": "unrestricted-resource-consumption", "severity": "medium" }`.</question>
+    <tools>altais_check_owasp_api</tools>
+    <answer>altais_check_owasp_api maps the finding to the Unrestricted Resource Consumption category and returns the API:2023 coverage breakdown.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Map a mobile finding to the OWASP Mobile Top 10 (2024): `{ "module": "secrets", "rule": "hardcoded-credential", "severity": "high", "cwe": ["CWE-798"] }`.</question>
+    <tools>altais_check_owasp_mobile</tools>
+    <answer>altais_check_owasp_mobile maps the hardcoded-credential finding to the Insecure Credential Usage category of the Mobile Top 10:2024 coverage report.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an OWASP Mobile Top 10 (2024) coverage report for a finding about insecure local data storage.</question>
+    <tools>altais_check_owasp_mobile</tools>
+    <answer>altais_check_owasp_mobile maps the finding to the Insecure Data Storage category and returns the Mobile:2024 coverage breakdown.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Map this finding to the OWASP Serverless Top 10: `{ "module": "iac", "rule": "over-privileged-execution-role", "severity": "high", "cwe": ["CWE-269"] }`.</question>
+    <tools>altais_check_owasp_serverless</tools>
+    <answer>altais_check_owasp_serverless maps the finding to the over-privileged execution-role category and returns the Serverless Top 10 coverage report.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a Serverless Top 10 coverage report for a finding about event-data injection.</question>
+    <tools>altais_check_owasp_serverless</tools>
+    <answer>altais_check_owasp_serverless maps the finding to the event-data-injection category and returns the Serverless coverage breakdown.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>List the OWASP ASVS Level 1 controls applicable as a baseline.</question>
+    <tools>altais_check_asvs</tools>
+    <answer>altais_check_asvs with `level: 1` returns the ASVS Level 1 (baseline) controls, each annotated with any related findings from the session.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>List the OWASP ASVS Level 2 controls but filter to section V2 only.</question>
+    <tools>altais_check_asvs</tools>
+    <answer>altais_check_asvs with `level: 2` and `section: "V2"` returns the ASVS controls at levels 1-2 restricted to section V2 (authentication).</answer>
+  </qa_pair>
+</evaluation>

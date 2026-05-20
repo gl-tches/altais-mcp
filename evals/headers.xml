@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="headers">
+  <qa_pair>
+    <question>Audit these HTML-app response headers — they are missing security headers: `{ "Content-Type": "text/html" }`.</question>
+    <tools>altais_audit_headers</tools>
+    <answer>altais_audit_headers returns findings for the missing Content-Security-Policy, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, and Permissions-Policy headers.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit these headers for a missing HSTS header on an HTML app: `{ "Content-Security-Policy": "default-src 'self'", "X-Content-Type-Options": "nosniff", "X-Frame-Options": "DENY" }`.</question>
+    <tools>altais_audit_headers</tools>
+    <answer>altais_audit_headers reports a missing Strict-Transport-Security (HSTS) finding while not flagging the CSP, X-Content-Type-Options, or X-Frame-Options headers that are present.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Flag the unsafe CSP in these headers: `{ "Content-Security-Policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval'" }`.</question>
+    <tools>altais_audit_headers</tools>
+    <answer>altais_audit_headers reports a finding that the CSP allows `'unsafe-inline'` / `'unsafe-eval'`, which defeats XSS protection.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Set-Cookie header — it lacks Secure and HttpOnly: `{ "Set-Cookie": "session=abc123; Path=/" }`.</question>
+    <tools>altais_audit_headers</tools>
+    <answer>altais_audit_headers reports findings that the session cookie is missing the Secure and HttpOnly attributes.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit these headers for a server-identity leak: `{ "Server": "Apache/2.4.49 (Unix)", "X-Powered-By": "PHP/7.4.3" }`.</question>
+    <tools>altais_audit_headers</tools>
+    <answer>altais_audit_headers reports server-identity / version-disclosure findings for the `Server` and `X-Powered-By` headers.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a well-configured API response with context `api`: `{ "Content-Security-Policy": "default-src 'none'", "Strict-Transport-Security": "max-age=31536000; includeSubDomains", "X-Content-Type-Options": "nosniff" }`.</question>
+    <tools>altais_audit_headers</tools>
+    <answer>altais_audit_headers with `context: "api"` returns zero or only informational findings, since the required headers for an API context are present.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a strict Content-Security-Policy for an app that loads scripts from `https://cdn.example.com` and connects to `https://api.example.com`.</question>
+    <tools>altais_generate_csp</tools>
+    <answer>altais_generate_csp with `mode: "strict"` returns a CSP using `default-src 'none'` plus `script-src https://cdn.example.com` and `connect-src https://api.example.com`, and never emits `'unsafe-inline'` or `'unsafe-eval'`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a CSP for an app that requires inline scripts (`requires_inline_scripts: true`). What does it recommend?</question>
+    <tools>altais_generate_csp</tools>
+    <answer>altais_generate_csp does not emit `'unsafe-inline'`; instead it returns a `recommendations` array suggesting a nonce- or hash-based alternative for the inline scripts.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Validate this CORS config: `{ "reflect_origin": true, "allow_credentials": true }`.</question>
+    <tools>altais_check_cors</tools>
+    <answer>altais_check_cors reports a high-severity finding: origin reflection combined with `allow_credentials` lets any origin make credentialed cross-origin requests.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check these CORS headers for a wildcard-with-credentials issue: `{ "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials": "true" }`.</question>
+    <tools>altais_check_cors</tools>
+    <answer>altais_check_cors flags the invalid / unsafe combination of a wildcard `Access-Control-Allow-Origin` with `Access-Control-Allow-Credentials: true`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Validate a safe CORS config: `{ "allowed_origins": ["https://app.example.com"], "allow_credentials": true, "vary_origin": true }`.</question>
+    <tools>altais_check_cors</tools>
+    <answer>altais_check_cors returns zero findings for an explicit allowlist origin with credentials and `Vary: Origin` set — there is no wildcard, no reflection, and no missing Vary.</answer>
+  </qa_pair>
+</evaluation>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="container">
+  <qa_pair>
+    <question>Audit this Dockerfile — it has no USER directive so it runs as root: `FROM ubuntu:22.04\nRUN apt-get update\nCMD ["./server"]`.</question>
+    <tools>altais_audit_dockerfile</tools>
+    <answer>altais_audit_dockerfile returns a `dockerfile-runs-as-root` finding at high severity because no non-root USER is set.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Dockerfile that pins a mutable tag: `FROM node:latest\nCOPY . .\nCMD ["node", "index.js"]`.</question>
+    <tools>altais_audit_dockerfile</tools>
+    <answer>altais_audit_dockerfile reports a finding for the mutable `latest` base image tag and a finding for the whole-context `COPY .`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Dockerfile for a remote script piped into a shell: `RUN curl -sSL https://example.com/install.sh | bash`.</question>
+    <tools>altais_audit_dockerfile</tools>
+    <answer>altais_audit_dockerfile reports a finding that a remote script is fetched and piped directly into a shell, an unverified supply-chain risk.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Dockerfile for credentials baked into the image: `ARG AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`.</question>
+    <tools>altais_audit_dockerfile</tools>
+    <answer>altais_audit_dockerfile reports a finding that a credential is baked into an ENV/ARG instruction.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Dockerfile for a world-writable chmod: `RUN chmod 777 /app/data`.</question>
+    <tools>altais_audit_dockerfile</tools>
+    <answer>altais_audit_dockerfile reports a finding for the world-writable `chmod 777` instruction.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a well-formed Dockerfile that pins a digest, sets a non-root user, and adds a HEALTHCHECK: `FROM node:20-alpine@sha256:abc123\nUSER node\nHEALTHCHECK CMD curl -f http://localhost/health\nCMD ["node","app.js"]`.</question>
+    <tools>altais_audit_dockerfile</tools>
+    <answer>altais_audit_dockerfile returns no runs-as-root, no mutable-tag, and no missing-HEALTHCHECK findings; the file follows the audited best practices.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Docker Compose service for privileged mode: `services:\n  app:\n    image: myapp:1.0\n    privileged: true`.</question>
+    <tools>altais_audit_compose</tools>
+    <answer>altais_audit_compose reports a finding that the service runs in privileged mode.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Compose file for a mounted Docker socket: `volumes:\n  - /var/run/docker.sock:/var/run/docker.sock`.</question>
+    <tools>altais_audit_compose</tools>
+    <answer>altais_audit_compose reports a finding that the Docker socket is mounted into the container, which grants host-level control.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Compose service that shares the host network: `services:\n  web:\n    image: nginx:1.25\n    network_mode: host`.</question>
+    <tools>altais_audit_compose</tools>
+    <answer>altais_audit_compose reports a finding that the service shares the host network namespace.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check the base image `node:latest` for pinning and hygiene issues.</question>
+    <tools>altais_check_base_image</tools>
+    <answer>altais_check_base_image reports a finding for the missing version pinning (`latest`) and a finding for the missing digest pinning.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check the base image `ubuntu:24.04` for image bloat and recommend a smaller variant.</question>
+    <tools>altais_check_base_image</tools>
+    <answer>altais_check_base_image reports a finding that a full-OS image is used and recommends a `-slim`, `-alpine`, or distroless variant to reduce attack surface.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check the base image `node:20-alpine@sha256:abc123def456` — confirm it has no pinning findings.</question>
+    <tools>altais_check_base_image</tools>
+    <answer>altais_check_base_image returns no missing-version-pin or missing-digest-pin finding; the image is pinned to a tag and a digest.</answer>
+  </qa_pair>
+</evaluation>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="api">
+  <qa_pair>
+    <question>Audit this OpenAPI 3.x JSON spec that defines no security scheme: `{"openapi":"3.0.0","info":{"title":"x","version":"1"},"paths":{"/users":{"get":{"responses":{"200":{"description":"ok"}}}}}}`.</question>
+    <tools>altais_audit_openapi_spec</tools>
+    <answer>altais_audit_openapi_spec reports findings that no security scheme is defined and that the operation has no security requirement.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an OpenAPI spec whose server URL is `http://api.example.com` (cleartext).</question>
+    <tools>altais_audit_openapi_spec</tools>
+    <answer>altais_audit_openapi_spec reports a finding for the cleartext `http://` server URL.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an OpenAPI request schema that sets `additionalProperties: true`, allowing mass assignment.</question>
+    <tools>altais_audit_openapi_spec</tools>
+    <answer>altais_audit_openapi_spec reports a finding that the request schema allows arbitrary extra properties (mass-assignment risk).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an OpenAPI operation whose only documented response is `200` — it has no 4xx/5xx error responses and no documented 429.</question>
+    <tools>altais_audit_openapi_spec</tools>
+    <answer>altais_audit_openapi_spec reports findings for the missing 4xx/5xx error responses and no documented rate-limiting `429` response.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>I passed `spec: "not valid json"` to the OpenAPI auditor. What happens?</question>
+    <tools>altais_audit_openapi_spec</tools>
+    <answer>altais_audit_openapi_spec returns an error result because the input is not a parseable JSON OpenAPI document.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this rate-limiting config: `{ "config": { "enabled": false } }`.</question>
+    <tools>altais_audit_rate_limiting</tools>
+    <answer>altais_audit_rate_limiting reports a finding that rate limiting is disabled or absent.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a rate-limiting config that does not throttle auth endpoints: `{ "config": { "enabled": true, "strategy": "token_bucket", "scope": "per_ip", "applies_to_auth_endpoints": false } }`.</question>
+    <tools>altais_audit_rate_limiting</tools>
+    <answer>altais_audit_rate_limiting reports a finding that authentication endpoints are left unthrottled (credential-stuffing / brute-force risk).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a rate-limiting config that returns no 429 and no Retry-After: `{ "config": { "enabled": true, "strategy": "sliding_window", "scope": "per_user", "returns_429": false, "has_retry_after_header": false } }`.</question>
+    <tools>altais_audit_rate_limiting</tools>
+    <answer>altais_audit_rate_limiting reports findings for the missing `429` response and the missing `Retry-After` header.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this API gateway config: `{ "config": { "authentication_enabled": false, "tls_enabled": false, "waf_enabled": false, "logging_enabled": false } }`.</question>
+    <tools>altais_audit_api_gateway</tools>
+    <answer>altais_audit_api_gateway reports findings for disabled authentication, disabled TLS, no WAF, and disabled access logging.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an API gateway with wildcard CORS and credentials: `{ "config": { "cors": { "allow_all_origins": true, "allow_credentials": true }, "backend_tls": false } }`.</question>
+    <tools>altais_audit_api_gateway</tools>
+    <answer>altais_audit_api_gateway reports findings for the wildcard CORS origin combined with credentials and for cleartext gateway-to-backend traffic.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a hardened API gateway: `{ "config": { "authentication_enabled": true, "authorization_enabled": true, "tls_enabled": true, "min_tls_version": "1.2", "waf_enabled": true, "request_validation": true, "rate_limiting_enabled": true, "logging_enabled": true, "backend_tls": true } }`.</question>
+    <tools>altais_audit_api_gateway</tools>
+    <answer>altais_audit_api_gateway returns zero findings; all of the audited gateway controls are enabled and TLS is at least 1.2.</answer>
+  </qa_pair>
+</evaluation>

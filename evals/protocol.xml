@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="protocol">
+  <qa_pair>
+    <question>Audit this TLS config against RFC 9325: `{ "config": { "min_version": "TLSv1.0", "enabled_versions": ["TLSv1.0", "TLSv1.2"], "forward_secrecy": false } }`.</question>
+    <tools>altais_audit_tls_config</tools>
+    <answer>altais_audit_tls_config reports findings for the deprecated TLS 1.0, the absence of TLS 1.3, and missing forward secrecy.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a TLS config where mTLS is enabled but the client certificate is not required: `{ "config": { "mtls_enabled": true, "client_cert_required": false } }`.</question>
+    <tools>altais_audit_tls_config</tools>
+    <answer>altais_audit_tls_config reports a finding that mutual TLS is enabled but the client certificate is not actually required, defeating the mTLS guarantee.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Verify webhook handling: `{ "config": { "signature_verified": false, "secret_source": "hardcoded" } }`.</question>
+    <tools>altais_check_webhook</tools>
+    <answer>altais_check_webhook reports findings that the inbound signature is not verified and that the signing secret is hardcoded.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Verify webhook handling that compares signatures with `===`: `{ "config": { "signature_verified": true, "constant_time_comparison": false, "hash_algorithm": "sha256" } }`.</question>
+    <tools>altais_check_webhook</tools>
+    <answer>altais_check_webhook reports a finding that the signature is not compared in constant time (timing-attack risk).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit email authentication: `{ "config": { "spf_record": "v=spf1 +all", "dkim_enabled": false, "dmarc_policy": "none" } }`.</question>
+    <tools>altais_audit_email_security</tools>
+    <answer>altais_audit_email_security reports findings for the SPF record ending in `+all`, missing DKIM, and the permissive `p=none` DMARC policy.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a domain's email config that is fully hardened: `{ "config": { "spf_record": "v=spf1 include:_spf.example.com -all", "dkim_enabled": true, "dmarc_record": "v=DMARC1; p=reject; rua=mailto:dmarc@example.com", "dmarc_policy": "reject", "mta_sts": true, "dnssec": true } }`.</question>
+    <tools>altais_audit_email_security</tools>
+    <answer>altais_audit_email_security returns zero findings; SPF ends in `-all`, DKIM is configured, DMARC is `p=reject` with `rua`, and MTA-STS and DNSSEC are enabled.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a WebSocket endpoint: `{ "config": { "tls": false, "origin_validation": false, "authentication": false } }`.</question>
+    <tools>altais_audit_websocket</tools>
+    <answer>altais_audit_websocket reports findings for plaintext `ws://`, no Origin validation (Cross-Site WebSocket Hijacking), and no authentication.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a GraphQL API in production: `{ "config": { "introspection_enabled": true, "query_depth_limit": false, "query_complexity_limit": false, "production": true } }`.</question>
+    <tools>altais_audit_graphql</tools>
+    <answer>altais_audit_graphql reports findings for introspection enabled in production, no query-depth limit, and no complexity/cost limit.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a gRPC service: `{ "config": { "tls_enabled": false, "insecure_channel": true, "auth_interceptor": false, "reflection_enabled": true, "production": true } }`.</question>
+    <tools>altais_audit_grpc</tools>
+    <answer>altais_audit_grpc reports findings for the insecure plaintext channel with no TLS, no authentication interceptor, and server reflection enabled in production.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a Server-Sent Events endpoint: `{ "config": { "origin_validation": false, "authentication": false, "tls": false } }`.</question>
+    <tools>altais_audit_sse</tools>
+    <answer>altais_audit_sse reports findings for no Origin validation, missing authentication, and plaintext `http://` on the event-stream endpoint.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a WebSocket endpoint that is fully hardened: `{ "config": { "tls": true, "origin_validation": true, "authentication": true, "message_size_limit": true, "rate_limiting": true } }`.</question>
+    <tools>altais_audit_websocket</tools>
+    <answer>altais_audit_websocket returns zero findings; the endpoint uses `wss://`, validates Origin, authenticates, bounds message size, and rate-limits.</answer>
+  </qa_pair>
+</evaluation>

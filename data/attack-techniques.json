@@ -1,0 +1,410 @@
+[
+  {
+    "id": "T1190",
+    "name": "Exploit Public-Facing Application",
+    "tactic": "Initial Access",
+    "description": "Adversaries exploit a weakness in an Internet-facing host or system to gain initial access, often abusing software bugs, misconfigurations, or unpatched vulnerabilities in web servers, databases, and network services.",
+    "related_cwes": ["CWE-89", "CWE-78", "CWE-94", "CWE-22", "CWE-79", "CWE-918", "CWE-434", "CWE-502", "CWE-611"],
+    "keywords": ["public-facing", "internet-facing", "web application", "unauthenticated", "remote exploit", "exposed service", "exploit"]
+  },
+  {
+    "id": "T1059",
+    "name": "Command and Scripting Interpreter",
+    "tactic": "Execution",
+    "description": "Adversaries abuse command and script interpreters to execute commands, scripts, or binaries, interacting with shells such as bash, PowerShell, and cmd to control a system.",
+    "related_cwes": ["CWE-78", "CWE-77", "CWE-94", "CWE-917"],
+    "keywords": ["command injection", "shell", "interpreter", "powershell", "bash", "cmd", "script execution", "arbitrary command"]
+  },
+  {
+    "id": "T1059.001",
+    "name": "PowerShell",
+    "tactic": "Execution",
+    "description": "Adversaries abuse PowerShell to execute commands and scripts, leveraging its access to the Windows API and ability to download and run code in memory.",
+    "related_cwes": ["CWE-78", "CWE-94"],
+    "keywords": ["powershell", "windows scripting", "encoded command", "fileless"]
+  },
+  {
+    "id": "T1059.004",
+    "name": "Unix Shell",
+    "tactic": "Execution",
+    "description": "Adversaries abuse Unix shell commands and scripts for execution, often via sh or bash to control a system and run other software.",
+    "related_cwes": ["CWE-78", "CWE-77"],
+    "keywords": ["unix shell", "bash", "sh", "shell script", "shellshock"]
+  },
+  {
+    "id": "T1059.007",
+    "name": "JavaScript",
+    "tactic": "Execution",
+    "description": "Adversaries abuse JavaScript engines and runtimes to execute behaviors, including server-side Node.js execution and browser-side script in cross-site scripting attacks.",
+    "related_cwes": ["CWE-79", "CWE-94", "CWE-1336"],
+    "keywords": ["javascript", "node", "eval", "cross-site scripting", "xss", "template injection"]
+  },
+  {
+    "id": "T1203",
+    "name": "Exploitation for Client Execution",
+    "tactic": "Execution",
+    "description": "Adversaries exploit software vulnerabilities in client applications such as browsers and document readers to execute code, typically after a user opens malicious content.",
+    "related_cwes": ["CWE-787", "CWE-125", "CWE-416", "CWE-122", "CWE-94"],
+    "keywords": ["client execution", "browser exploit", "document", "memory corruption", "buffer overflow", "use after free"]
+  },
+  {
+    "id": "T1068",
+    "name": "Exploitation for Privilege Escalation",
+    "tactic": "Privilege Escalation",
+    "description": "Adversaries exploit software vulnerabilities to elevate privileges, abusing programming errors in a program, service, or the operating-system kernel to run code in a higher-privileged context.",
+    "related_cwes": ["CWE-269", "CWE-787", "CWE-416", "CWE-362", "CWE-364", "CWE-250"],
+    "keywords": ["privilege escalation", "elevation of privilege", "local exploit", "root", "system", "kernel", "suid"]
+  },
+  {
+    "id": "T1212",
+    "name": "Exploitation for Credential Access",
+    "tactic": "Credential Access",
+    "description": "Adversaries exploit software vulnerabilities to collect credentials, abusing programming errors to expose or extract credential material from memory or storage.",
+    "related_cwes": ["CWE-200", "CWE-125", "CWE-522", "CWE-294"],
+    "keywords": ["credential access", "credential exposure", "memory disclosure", "hash leak"]
+  },
+  {
+    "id": "T1211",
+    "name": "Exploitation for Defense Evasion",
+    "tactic": "Defense Evasion",
+    "description": "Adversaries exploit a system or application vulnerability to bypass security features, disabling or circumventing defensive controls to evade detection.",
+    "related_cwes": ["CWE-693", "CWE-295", "CWE-345"],
+    "keywords": ["defense evasion", "bypass security", "disable protection", "signature spoofing"]
+  },
+  {
+    "id": "T1210",
+    "name": "Exploitation of Remote Services",
+    "tactic": "Lateral Movement",
+    "description": "Adversaries exploit remote services to move laterally inside a network, abusing unpatched services such as SMB, RDP, and database servers to gain access to other internal systems.",
+    "related_cwes": ["CWE-787", "CWE-416", "CWE-20", "CWE-306"],
+    "keywords": ["lateral movement", "remote services", "smb", "rdp", "internal exploit", "worm"]
+  },
+  {
+    "id": "T1505.003",
+    "name": "Web Shell",
+    "tactic": "Persistence",
+    "description": "Adversaries deploy a web shell on a compromised web server to establish persistent access, using a script that allows arbitrary command execution through web requests.",
+    "related_cwes": ["CWE-434", "CWE-94", "CWE-78"],
+    "keywords": ["web shell", "webshell", "file upload", "backdoor script", "persistence on server"]
+  },
+  {
+    "id": "T1078",
+    "name": "Valid Accounts",
+    "tactic": "Defense Evasion",
+    "description": "Adversaries obtain and abuse credentials of existing accounts to gain initial access, persistence, privilege escalation, or defense evasion, blending in with legitimate activity.",
+    "related_cwes": ["CWE-798", "CWE-287", "CWE-306", "CWE-521", "CWE-1392"],
+    "keywords": ["valid accounts", "stolen credentials", "default credentials", "authentication bypass", "account takeover"]
+  },
+  {
+    "id": "T1552",
+    "name": "Unsecured Credentials",
+    "tactic": "Credential Access",
+    "description": "Adversaries search compromised systems for insecurely stored credentials, including those in files, environment variables, registry keys, and source code.",
+    "related_cwes": ["CWE-798", "CWE-256", "CWE-312", "CWE-522", "CWE-532", "CWE-540"],
+    "keywords": ["unsecured credentials", "hardcoded credentials", "secrets in code", "plaintext password", "credentials in environment"]
+  },
+  {
+    "id": "T1552.001",
+    "name": "Credentials In Files",
+    "tactic": "Credential Access",
+    "description": "Adversaries search local file systems and remote file shares for files containing insecurely stored credentials, such as configuration files and source code.",
+    "related_cwes": ["CWE-312", "CWE-256", "CWE-538"],
+    "keywords": ["credentials in files", "config file secret", "password file", "key file"]
+  },
+  {
+    "id": "T1552.004",
+    "name": "Private Keys",
+    "tactic": "Credential Access",
+    "description": "Adversaries search for private key certificate files on compromised systems for insecurely stored credentials, enabling decryption, signing, or authentication as the victim.",
+    "related_cwes": ["CWE-321", "CWE-312", "CWE-522"],
+    "keywords": ["private key", "certificate", "ssh key", "signing key", "key exposure"]
+  },
+  {
+    "id": "T1552.006",
+    "name": "Group Policy Preferences",
+    "tactic": "Credential Access",
+    "description": "Adversaries retrieve passwords embedded in Group Policy Preferences XML files, which were historically encrypted with a publicly known key.",
+    "related_cwes": ["CWE-321", "CWE-326"],
+    "keywords": ["group policy", "gpp password", "weak encryption key"]
+  },
+  {
+    "id": "T1040",
+    "name": "Network Sniffing",
+    "tactic": "Credential Access",
+    "description": "Adversaries sniff network traffic to capture information, including credentials transmitted over cleartext or weakly encrypted protocols.",
+    "related_cwes": ["CWE-319", "CWE-311", "CWE-326", "CWE-327"],
+    "keywords": ["network sniffing", "cleartext", "unencrypted traffic", "man in the middle", "packet capture", "interception"]
+  },
+  {
+    "id": "T1557",
+    "name": "Adversary-in-the-Middle",
+    "tactic": "Credential Access",
+    "description": "Adversaries position themselves between two networked devices to support follow-on behaviors such as transmitted-data manipulation and credential interception.",
+    "related_cwes": ["CWE-300", "CWE-295", "CWE-319", "CWE-345", "CWE-297"],
+    "keywords": ["adversary in the middle", "man in the middle", "mitm", "tls downgrade", "certificate validation", "interception"]
+  },
+  {
+    "id": "T1110",
+    "name": "Brute Force",
+    "tactic": "Credential Access",
+    "description": "Adversaries use brute-force techniques to gain access to accounts when passwords are unknown or when password hashes are obtained, including password guessing and credential stuffing.",
+    "related_cwes": ["CWE-307", "CWE-521", "CWE-262", "CWE-308"],
+    "keywords": ["brute force", "password guessing", "credential stuffing", "missing rate limit", "weak password policy"]
+  },
+  {
+    "id": "T1212.001",
+    "name": "Forge Web Credentials",
+    "tactic": "Credential Access",
+    "description": "Adversaries forge credential material such as session cookies and authentication tokens to gain access to web applications and services.",
+    "related_cwes": ["CWE-347", "CWE-384", "CWE-294", "CWE-330"],
+    "keywords": ["forge token", "session forgery", "jwt", "predictable token", "session fixation"]
+  },
+  {
+    "id": "T1556",
+    "name": "Modify Authentication Process",
+    "tactic": "Credential Access",
+    "description": "Adversaries modify authentication mechanisms and processes to access credentials or enable unwarranted access to accounts, bypassing intended authentication controls.",
+    "related_cwes": ["CWE-287", "CWE-288", "CWE-290", "CWE-306"],
+    "keywords": ["authentication bypass", "modify authentication", "auth bypass", "logon process"]
+  },
+  {
+    "id": "T1499",
+    "name": "Endpoint Denial of Service",
+    "tactic": "Impact",
+    "description": "Adversaries perform endpoint denial-of-service attacks to degrade or block the availability of services, exhausting the resources of the system hosting the service.",
+    "related_cwes": ["CWE-400", "CWE-770", "CWE-835", "CWE-674", "CWE-1333"],
+    "keywords": ["denial of service", "dos", "resource exhaustion", "infinite loop", "uncontrolled resource consumption", "redos"]
+  },
+  {
+    "id": "T1498",
+    "name": "Network Denial of Service",
+    "tactic": "Impact",
+    "description": "Adversaries perform network denial-of-service attacks to degrade or block the availability of targeted resources by exhausting network bandwidth.",
+    "related_cwes": ["CWE-400", "CWE-770"],
+    "keywords": ["network denial of service", "flood", "amplification", "bandwidth exhaustion"]
+  },
+  {
+    "id": "T1213",
+    "name": "Data from Information Repositories",
+    "tactic": "Collection",
+    "description": "Adversaries leverage information repositories such as wikis, code repositories, and ticketing systems to mine valuable information, including credentials and sensitive data.",
+    "related_cwes": ["CWE-200", "CWE-863", "CWE-522", "CWE-1230"],
+    "keywords": ["information repository", "code repository", "wiki", "sensitive data exposure", "information disclosure"]
+  },
+  {
+    "id": "T1005",
+    "name": "Data from Local System",
+    "tactic": "Collection",
+    "description": "Adversaries search local system sources such as file systems and configuration files to find sensitive files of interest prior to exfiltration.",
+    "related_cwes": ["CWE-200", "CWE-22", "CWE-552", "CWE-732"],
+    "keywords": ["data from local system", "file access", "local files", "sensitive file"]
+  },
+  {
+    "id": "T1083",
+    "name": "File and Directory Discovery",
+    "tactic": "Discovery",
+    "description": "Adversaries enumerate files and directories or search specific locations of a host or network share for specific information within a file system.",
+    "related_cwes": ["CWE-22", "CWE-23", "CWE-548", "CWE-200"],
+    "keywords": ["file discovery", "directory listing", "path traversal", "directory traversal", "file enumeration"]
+  },
+  {
+    "id": "T1083.001",
+    "name": "Path Traversal Discovery",
+    "tactic": "Discovery",
+    "description": "Adversaries abuse path traversal sequences to escape an intended directory and read files outside the application's scope.",
+    "related_cwes": ["CWE-22", "CWE-23", "CWE-73"],
+    "keywords": ["path traversal", "directory traversal", "dot dot slash", "arbitrary file read", "lfi"]
+  },
+  {
+    "id": "T1565",
+    "name": "Data Manipulation",
+    "tactic": "Impact",
+    "description": "Adversaries insert, delete, or manipulate data to influence outcomes, hide activity, or affect the integrity of business processes and decisions.",
+    "related_cwes": ["CWE-345", "CWE-353", "CWE-471", "CWE-915"],
+    "keywords": ["data manipulation", "integrity violation", "tampering", "mass assignment"]
+  },
+  {
+    "id": "T1485",
+    "name": "Data Destruction",
+    "tactic": "Impact",
+    "description": "Adversaries destroy data and files on specific systems or in large numbers to interrupt availability of systems, services, and network resources.",
+    "related_cwes": ["CWE-732", "CWE-284"],
+    "keywords": ["data destruction", "wipe", "delete data", "destructive"]
+  },
+  {
+    "id": "T1486",
+    "name": "Data Encrypted for Impact",
+    "tactic": "Impact",
+    "description": "Adversaries encrypt data on target systems or on large numbers of systems in a network to interrupt availability, as performed by ransomware.",
+    "related_cwes": ["CWE-284", "CWE-862"],
+    "keywords": ["ransomware", "data encrypted", "encryption for impact", "extortion"]
+  },
+  {
+    "id": "T1195",
+    "name": "Supply Chain Compromise",
+    "tactic": "Initial Access",
+    "description": "Adversaries manipulate products or product delivery mechanisms prior to receipt by a final consumer for the purpose of data or system compromise.",
+    "related_cwes": ["CWE-1357", "CWE-1395", "CWE-506", "CWE-829", "CWE-494"],
+    "keywords": ["supply chain", "dependency", "third-party", "compromised package", "backdoor", "tampered build"]
+  },
+  {
+    "id": "T1195.001",
+    "name": "Compromise Software Dependencies and Development Tools",
+    "tactic": "Initial Access",
+    "description": "Adversaries manipulate software dependencies and development tools prior to receipt by a final consumer, embedding malicious code in upstream packages.",
+    "related_cwes": ["CWE-1357", "CWE-1395", "CWE-506", "CWE-829"],
+    "keywords": ["software dependency", "compromised dependency", "malicious package", "typosquat", "dependency confusion"]
+  },
+  {
+    "id": "T1195.002",
+    "name": "Compromise Software Supply Chain",
+    "tactic": "Initial Access",
+    "description": "Adversaries manipulate application software prior to receipt by a final consumer for the purpose of data or system compromise, inserting backdoors into legitimate products.",
+    "related_cwes": ["CWE-506", "CWE-494", "CWE-1357"],
+    "keywords": ["software supply chain", "trojanized software", "build compromise", "signed malware"]
+  },
+  {
+    "id": "T1525",
+    "name": "Implant Internal Image",
+    "tactic": "Persistence",
+    "description": "Adversaries implant cloud or container images with malicious code to establish persistence after gaining access to an environment.",
+    "related_cwes": ["CWE-1357", "CWE-829", "CWE-506"],
+    "keywords": ["container image", "implant image", "malicious image", "registry"]
+  },
+  {
+    "id": "T1610",
+    "name": "Deploy Container",
+    "tactic": "Execution",
+    "description": "Adversaries deploy a container into an environment to facilitate execution or evade defenses, sometimes deploying images configured without network rules or security tooling.",
+    "related_cwes": ["CWE-269", "CWE-668", "CWE-1357"],
+    "keywords": ["deploy container", "container escape", "privileged container", "docker"]
+  },
+  {
+    "id": "T1611",
+    "name": "Escape to Host",
+    "tactic": "Privilege Escalation",
+    "description": "Adversaries break out of a container to gain access to the underlying host, abusing misconfigurations or vulnerabilities in the container runtime.",
+    "related_cwes": ["CWE-269", "CWE-668", "CWE-403", "CWE-250"],
+    "keywords": ["container escape", "escape to host", "breakout", "runc", "privileged container"]
+  },
+  {
+    "id": "T1071",
+    "name": "Application Layer Protocol",
+    "tactic": "Command and Control",
+    "description": "Adversaries communicate using OSI application-layer protocols such as HTTP and DNS to blend command-and-control traffic with existing network activity.",
+    "related_cwes": ["CWE-918", "CWE-441"],
+    "keywords": ["application layer protocol", "command and control", "c2", "http tunnel"]
+  },
+  {
+    "id": "T1041",
+    "name": "Exfiltration Over C2 Channel",
+    "tactic": "Exfiltration",
+    "description": "Adversaries steal data by exfiltrating it over an existing command-and-control channel, encoding stolen data into normal communications.",
+    "related_cwes": ["CWE-200", "CWE-201"],
+    "keywords": ["exfiltration", "data theft", "c2 channel", "stolen data"]
+  },
+  {
+    "id": "T1027",
+    "name": "Obfuscated Files or Information",
+    "tactic": "Defense Evasion",
+    "description": "Adversaries make an executable or file difficult to discover or analyze by encrypting, encoding, or otherwise obfuscating its contents.",
+    "related_cwes": ["CWE-506", "CWE-656"],
+    "keywords": ["obfuscation", "encoded payload", "packed", "hidden code"]
+  },
+  {
+    "id": "T1140",
+    "name": "Deobfuscate/Decode Files or Information",
+    "tactic": "Defense Evasion",
+    "description": "Adversaries use obfuscated or encoded information that is decoded at runtime to evade static analysis and detection.",
+    "related_cwes": ["CWE-506", "CWE-494"],
+    "keywords": ["deobfuscate", "decode at runtime", "staged payload"]
+  },
+  {
+    "id": "T1574",
+    "name": "Hijack Execution Flow",
+    "tactic": "Persistence",
+    "description": "Adversaries execute their own malicious payloads by hijacking the way operating systems run programs, abusing search-order and path weaknesses.",
+    "related_cwes": ["CWE-427", "CWE-426", "CWE-470", "CWE-114"],
+    "keywords": ["hijack execution", "dll hijacking", "search order", "untrusted search path", "library injection"]
+  },
+  {
+    "id": "T1505",
+    "name": "Server Software Component",
+    "tactic": "Persistence",
+    "description": "Adversaries abuse legitimate extensible development features of servers to establish persistent access to systems, installing malicious components.",
+    "related_cwes": ["CWE-94", "CWE-434", "CWE-829"],
+    "keywords": ["server software component", "malicious plugin", "extension", "module backdoor"]
+  },
+  {
+    "id": "T1219",
+    "name": "Remote Access Software",
+    "tactic": "Command and Control",
+    "description": "Adversaries use legitimate remote-access tools to establish an interactive command-and-control channel within a network.",
+    "related_cwes": ["CWE-284", "CWE-306"],
+    "keywords": ["remote access", "remote desktop", "rdp", "remote tool"]
+  },
+  {
+    "id": "T1136",
+    "name": "Create Account",
+    "tactic": "Persistence",
+    "description": "Adversaries create an account to maintain access to victim systems, establishing persistence without requiring persistent remote-access tools.",
+    "related_cwes": ["CWE-284", "CWE-269", "CWE-862"],
+    "keywords": ["create account", "rogue account", "unauthorized admin", "account creation"]
+  },
+  {
+    "id": "T1548",
+    "name": "Abuse Elevation Control Mechanism",
+    "tactic": "Privilege Escalation",
+    "description": "Adversaries circumvent mechanisms designed to control elevated privileges to gain higher-level permissions, abusing sudo, setuid binaries, and similar controls.",
+    "related_cwes": ["CWE-269", "CWE-250", "CWE-732"],
+    "keywords": ["elevation control", "sudo", "setuid", "uac bypass", "privilege control"]
+  },
+  {
+    "id": "T1112",
+    "name": "Modify Registry",
+    "tactic": "Defense Evasion",
+    "description": "Adversaries interact with the Windows Registry to hide configuration information, remove information as part of cleanup, or as part of other techniques.",
+    "related_cwes": ["CWE-732", "CWE-15"],
+    "keywords": ["modify registry", "registry key", "windows registry"]
+  },
+  {
+    "id": "T1499.004",
+    "name": "Application or System Exploitation",
+    "tactic": "Impact",
+    "description": "Adversaries exploit software vulnerabilities that can cause an application or system to crash and deny the availability of services.",
+    "related_cwes": ["CWE-400", "CWE-476", "CWE-835", "CWE-674"],
+    "keywords": ["crash", "null pointer", "stack exhaustion", "denial of service exploit"]
+  },
+  {
+    "id": "T1592",
+    "name": "Gather Victim Host Information",
+    "tactic": "Reconnaissance",
+    "description": "Adversaries gather information about the victim's hosts that can be used during targeting, including details exposed through verbose errors and banners.",
+    "related_cwes": ["CWE-200", "CWE-209", "CWE-497"],
+    "keywords": ["reconnaissance", "host information", "verbose error", "information leak", "stack trace"]
+  },
+  {
+    "id": "T1213.003",
+    "name": "Code Repositories",
+    "tactic": "Collection",
+    "description": "Adversaries leverage code repositories to collect valuable information, including credentials and proprietary source code committed in plaintext.",
+    "related_cwes": ["CWE-540", "CWE-532", "CWE-200", "CWE-798"],
+    "keywords": ["code repository", "git", "leaked secret", "source code leak"]
+  },
+  {
+    "id": "T1539",
+    "name": "Steal Web Session Cookie",
+    "tactic": "Credential Access",
+    "description": "Adversaries steal web application or service session cookies and use them to gain access to applications or Internet services as an authenticated user without needing credentials.",
+    "related_cwes": ["CWE-79", "CWE-614", "CWE-1004", "CWE-384"],
+    "keywords": ["session cookie", "cookie theft", "session hijacking", "missing httponly", "missing secure flag"]
+  },
+  {
+    "id": "T1546",
+    "name": "Event Triggered Execution",
+    "tactic": "Persistence",
+    "description": "Adversaries establish persistence using system mechanisms that trigger execution based on specific events, abusing deserialization and callback handlers.",
+    "related_cwes": ["CWE-502", "CWE-913"],
+    "keywords": ["event triggered", "deserialization gadget", "callback", "trigger execution"]
+  }
+]

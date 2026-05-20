@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="supply_chain">
+  <qa_pair>
+    <question>Audit this npm lockfile for known vulnerabilities. It pins `lodash@4.17.4` (a version with a prototype-pollution advisory). Pass `filename: "package-lock.json"`.</question>
+    <tools>altais_audit_deps</tools>
+    <answer>altais_audit_deps parses the npm lockfile and returns a finding for the vulnerable `lodash@4.17.4` package matched against the bundled OSV snapshot.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a Cargo lockfile where every dependency is on a current, non-vulnerable version. Pass `kind: "cargo"`.</question>
+    <tools>altais_audit_deps</tools>
+    <answer>altais_audit_deps returns zero vulnerability findings because no (name, version) pair matches an advisory in the bundled OSV snapshot.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a CycloneDX SBOM from this npm lockfile for project `my-app` version `1.0.0`.</question>
+    <tools>altais_generate_sbom</tools>
+    <answer>altais_generate_sbom returns a CycloneDX 1.5 SBOM document listing every dependency with PURLs and any hashes the lockfile carries.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an SPDX-format SBOM from a poetry lockfile (`format: "spdx"`, `kind: "poetry"`).</question>
+    <tools>altais_generate_sbom</tools>
+    <answer>altais_generate_sbom returns an SPDX 2.3 software bill of materials enumerating the poetry packages with PURLs.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check the licenses in this npm lockfile — one dependency declares `GPL-3.0`. Use the default allow/warn/deny lists.</question>
+    <tools>altais_check_licenses</tools>
+    <answer>altais_check_licenses classifies the `GPL-3.0` dependency as denied (strong copyleft) and returns a finding for it.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check licenses in a lockfile where one package declares no license at all.</question>
+    <tools>altais_check_licenses</tools>
+    <answer>altais_check_licenses returns an `unknown` license finding for the package with no declared license.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Detect typosquatted dependencies in this npm lockfile that includes a package named `reqeusts` and one named `expresss`.</question>
+    <tools>altais_detect_typosquat</tools>
+    <answer>altais_detect_typosquat flags `reqeusts` and `expresss` as likely typosquats — both are within edit-distance 1-2 of popular packages in the same ecosystem.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Detect typosquats in an npm lockfile whose dependencies are all exact, correctly spelled popular package names. Confirm nothing is flagged.</question>
+    <tools>altais_detect_typosquat</tools>
+    <answer>altais_detect_typosquat returns zero findings because no dependency name is within typosquat edit distance of a known popular package.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Structurally verify this SLSA provenance — a DSSE envelope JSON that is missing the `builder.id` field.</question>
+    <tools>altais_verify_slsa</tools>
+    <answer>altais_verify_slsa parses the attestation and returns a finding that the required `builder.id` field is missing from the provenance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Inspect this signature metadata: an ASCII-armored GPG signature block (`-----BEGIN PGP SIGNATURE-----`).</question>
+    <tools>altais_verify_signatures</tools>
+    <answer>altais_verify_signatures classifies the payload as a GPG signature, reports its metadata, and flags any missing or weak fields without performing live cryptographic verification.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check for dependency confusion: an npm lockfile contains a package `@acme/internal-utils` resolved from the public registry, and `internal_scopes: ["@acme"]`.</question>
+    <tools>altais_check_dependency_confusion</tools>
+    <answer>altais_check_dependency_confusion flags `@acme/internal-utils` as a dependency-confusion risk because it matches the internal `@acme` scope but resolved from a public registry.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an OpenVEX document with one statement: vulnerability `CVE-2021-44228`, product identifier `pkg:npm/my-app@1.0.0`, status `not_affected`, justification `vulnerable_code_not_present`.</question>
+    <tools>altais_generate_vex</tools>
+    <answer>altais_generate_vex returns an OpenVEX 0.2.0 document containing the `not_affected` statement for CVE-2021-44228 with the supplied justification.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this GitHub Actions workflow for tamper vectors — it uses `actions/checkout@main` and has `permissions: write-all`.</question>
+    <tools>altais_check_build_integrity</tools>
+    <answer>altais_check_build_integrity reports findings for the action pinned by a mutable branch (`@main`) and for the over-broad `permissions: write-all`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this `.npmrc` registry config: `registry=http://npm.internal.example.com/` and `//npm.internal.example.com/:_authToken=plaintexttoken123`.</question>
+    <tools>altais_audit_registry</tools>
+    <answer>altais_audit_registry reports findings for the plaintext-HTTP registry URL and the plaintext auth token in the configuration file.</answer>
+  </qa_pair>
+</evaluation>

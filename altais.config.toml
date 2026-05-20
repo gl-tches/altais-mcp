@@ -1,0 +1,88 @@
+# altais-mcp configuration
+#
+# All values shown here are defaults. The server runs with this entire file
+# missing — every section and key has a default baked into the config schema.
+
+[server]
+name = "altais-mcp"
+transport = "stdio"       # "stdio" | "http"
+port = 3100               # only used with http transport
+log_level = "info"        # "debug" | "info" | "warn" | "error"
+
+[modules]
+# Core framework is always loaded and cannot be disabled.
+
+# Default modules (enabled out of the box).
+scan = true
+threat_model = true
+owasp = true
+secrets = true
+headers = true
+supply_chain = true       # formerly "deps", expanded per OWASP A03:2025
+auth = true
+
+# Opt-in modules (disabled by default).
+crypto = false
+container = false
+code = false
+data = false
+compliance = false
+infra = false
+protocol = false
+incident = false
+testing = false
+vuln_db = false
+ml_security = false
+sdlc = false
+iac = false
+agentic = false
+api = false
+runtime = false
+
+[scan]
+max_file_size_kb = 512
+exclude_patterns = ["node_modules", "dist", ".git", "vendor"]
+languages = ["typescript", "javascript", "python", "rust", "go"]
+# Root directory altais_scan_file may read from. Empty = server CWD at startup.
+# Absolute paths only; paths resolving outside this root are rejected.
+scan_root = ""
+# Cap on inline source passed to altais_scan_code / altais_scan_diff (bytes).
+max_source_bytes = 2097152
+
+[secrets]
+# Bits-per-character thresholds for the altais_scan_entropy tool.
+entropy_min_hex = 4.5
+entropy_min_base64 = 5.0
+min_token_length = 20
+
+[supply_chain]
+check_licenses = true
+cvss_threshold = 7.0
+sbom_format = "cyclonedx"      # "cyclonedx" | "spdx"
+slsa_level = 2                  # SLSA v1.2 Build Track level (1-3)
+verify_signatures = true
+max_dependency_age_days = 30
+
+[compliance]
+frameworks = ["owasp-asvs", "nist-800-53", "nist-ssdf", "cisa-sbd", "nis2"]
+
+[severity]
+critical_cvss_min = 9.0
+high_cvss_min = 7.0
+medium_cvss_min = 4.0
+
+[iac]
+providers = ["terraform", "kubernetes", "docker-compose"]
+k8s_pod_security_level = "restricted"   # "baseline" | "restricted" | "privileged"
+
+[agentic]
+check_goal_hijack = true        # ASI01
+check_tool_misuse = true        # ASI02
+check_identity_abuse = true     # ASI03
+check_supply_chain = true       # ASI04
+check_code_execution = true     # ASI05
+check_memory_poisoning = true   # ASI06
+check_inter_agent = true        # ASI07
+check_cascading = true          # ASI08
+check_trust_exploitation = true # ASI09
+check_rogue_agents = true       # ASI10

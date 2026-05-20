@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="iac">
+  <qa_pair>
+    <question>Audit this Terraform — a security group opens SSH to the world: `resource "aws_security_group" "sg" { ingress { from_port = 22, to_port = 22, protocol = "tcp", cidr_blocks = ["0.0.0.0/0"] } }`.</question>
+    <tools>altais_audit_terraform</tools>
+    <answer>altais_audit_terraform reports a finding that SSH (port 22) ingress is open to `0.0.0.0/0`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Terraform for a public S3 bucket: `resource "aws_s3_bucket_acl" "b" { acl = "public-read" }`.</question>
+    <tools>altais_audit_terraform</tools>
+    <answer>altais_audit_terraform reports a finding for the `public-read` ACL exposing the object storage bucket publicly.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Terraform IAM policy for wildcards: `policy = jsonencode({ Statement = [{ Effect = "Allow", Action = "*", Resource = "*" }] })`.</question>
+    <tools>altais_audit_terraform</tools>
+    <answer>altais_audit_terraform reports a finding for the IAM `*` action and `*` resource wildcards (over-permissive policy).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Kubernetes manifest for a privileged container: `spec:\n  containers:\n  - name: app\n    image: app:1.0\n    securityContext:\n      privileged: true`.</question>
+    <tools>altais_audit_k8s_manifest</tools>
+    <answer>altais_audit_k8s_manifest reports a finding that the container runs in privileged mode, violating the Pod Security Standards.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Kubernetes manifest that uses a mutable image tag and shares the host network: `spec:\n  hostNetwork: true\n  containers:\n  - name: web\n    image: nginx:latest`.</question>
+    <tools>altais_audit_k8s_manifest</tools>
+    <answer>altais_audit_k8s_manifest reports findings for the shared host network namespace and the mutable `:latest` image tag.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a Kubernetes Pod manifest with no securityContext and no resource limits: `spec:\n  containers:\n  - name: job\n    image: job:2.1`.</question>
+    <tools>altais_audit_k8s_manifest</tools>
+    <answer>altais_audit_k8s_manifest reports findings for the missing security context and the missing CPU/memory resource limits.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this Helm values.yaml: `image:\n  tag: latest\nsecurityContext:\n  enabled: false\nadminPassword: "admin123"`.</question>
+    <tools>altais_audit_helm_chart</tools>
+    <answer>altais_audit_helm_chart reports findings for the `latest` image tag, the disabled security context, and the hardcoded/default password.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a Helm values.yaml that exposes the service publicly: `service:\n  type: LoadBalancer\nrbac:\n  create: false`.</question>
+    <tools>altais_audit_helm_chart</tools>
+    <answer>altais_audit_helm_chart reports findings for the publicly exposing `LoadBalancer` service type and the disabled RBAC creation.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check this OPA/Rego policy for an insecure default: `package authz\ndefault allow = true`.</question>
+    <tools>altais_check_policy_as_code</tools>
+    <answer>altais_check_policy_as_code with `policy_type: "rego"` reports a finding for the insecure `default allow = true`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check this Kyverno policy in audit mode: `spec:\n  validationFailureAction: Audit\n  background: false`.</question>
+    <tools>altais_check_policy_as_code</tools>
+    <answer>altais_check_policy_as_code with `policy_type: "kyverno"` reports findings that `validationFailureAction: Audit` should be `Enforce` and that background scanning is disabled.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a Terraform file that encrypts resources, blocks public S3 access, and uses scoped IAM actions. Confirm it is clean of the audited misconfigurations.</question>
+    <tools>altais_audit_terraform</tools>
+    <answer>altais_audit_terraform returns no open-ingress, no public-storage, no unencrypted-resource, and no IAM-wildcard findings for a properly hardened configuration.</answer>
+  </qa_pair>
+</evaluation>

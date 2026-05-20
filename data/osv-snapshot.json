@@ -1,0 +1,453 @@
+{
+  "_meta": {
+    "format_version": 1,
+    "description": "Curated snapshot of high-impact advisories used by altais_audit_deps. Replace with a fresh OSV export to keep current. This bundled set is intentionally small (~50 entries across npm/cargo/pypi/go) and is not authoritative.",
+    "source": "Hand-curated from public OSV / GHSA / CVE entries",
+    "as_of": "2026-05-19"
+  },
+  "vulnerabilities": [
+    {
+      "id": "GHSA-jf85-cpcp-j695",
+      "summary": "Prototype Pollution in lodash",
+      "ecosystem": "npm",
+      "package": "lodash",
+      "affected_range": { "fixed": "4.17.12" },
+      "severity": "critical",
+      "cvss": 9.1,
+      "cwe": ["CWE-1321"],
+      "references": ["https://github.com/advisories/GHSA-jf85-cpcp-j695"]
+    },
+    {
+      "id": "GHSA-p6mc-m468-83gw",
+      "summary": "Prototype Pollution in lodash (defaultsDeep / merge)",
+      "ecosystem": "npm",
+      "package": "lodash",
+      "affected_range": { "fixed": "4.17.20" },
+      "severity": "high",
+      "cvss": 7.4,
+      "cwe": ["CWE-1321"],
+      "references": ["https://github.com/advisories/GHSA-p6mc-m468-83gw"]
+    },
+    {
+      "id": "GHSA-29mw-wpgm-hmr9",
+      "summary": "Regular Expression Denial of Service in lodash",
+      "ecosystem": "npm",
+      "package": "lodash",
+      "affected_range": { "fixed": "4.17.21" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-1333"],
+      "references": ["https://github.com/advisories/GHSA-29mw-wpgm-hmr9"]
+    },
+    {
+      "id": "GHSA-w573-4hg7-7wgq",
+      "summary": "Prototype Pollution in minimist",
+      "ecosystem": "npm",
+      "package": "minimist",
+      "affected_range": { "fixed": "0.2.1" },
+      "severity": "critical",
+      "cvss": 9.8,
+      "cwe": ["CWE-1321"],
+      "references": ["https://github.com/advisories/GHSA-w573-4hg7-7wgq"]
+    },
+    {
+      "id": "GHSA-xvch-5gv4-984h",
+      "summary": "Prototype Pollution in minimist (additional vectors)",
+      "ecosystem": "npm",
+      "package": "minimist",
+      "affected_range": { "introduced": "1.0.0", "fixed": "1.2.6" },
+      "severity": "critical",
+      "cvss": 9.8,
+      "cwe": ["CWE-1321"],
+      "references": ["https://github.com/advisories/GHSA-xvch-5gv4-984h"]
+    },
+    {
+      "id": "GHSA-x5rq-j2xg-h7qm",
+      "summary": "Cross-realm prototype pollution in ws / qs",
+      "ecosystem": "npm",
+      "package": "qs",
+      "affected_range": { "fixed": "6.5.3" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-1321"],
+      "references": ["https://github.com/advisories/GHSA-hrpp-h998-j3pp"]
+    },
+    {
+      "id": "GHSA-93q8-gq69-wqmw",
+      "summary": "Prototype pollution in immer",
+      "ecosystem": "npm",
+      "package": "immer",
+      "affected_range": { "fixed": "9.0.6" },
+      "severity": "critical",
+      "cvss": 9.8,
+      "cwe": ["CWE-1321"],
+      "references": ["https://github.com/advisories/GHSA-93q8-gq69-wqmw"]
+    },
+    {
+      "id": "GHSA-rv95-896h-c2vc",
+      "summary": "ReDoS in axios",
+      "ecosystem": "npm",
+      "package": "axios",
+      "affected_range": { "fixed": "0.21.2" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-1333"],
+      "references": ["https://github.com/advisories/GHSA-cph5-m8f7-6c5x"]
+    },
+    {
+      "id": "GHSA-4w2v-q235-vp99",
+      "summary": "Server-Side Request Forgery in axios",
+      "ecosystem": "npm",
+      "package": "axios",
+      "affected_range": { "fixed": "1.7.4" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-918"],
+      "references": ["https://github.com/advisories/GHSA-8hc4-vh64-cxmj"]
+    },
+    {
+      "id": "GHSA-c2qf-rxjj-qqgw",
+      "summary": "Regular Expression Denial of Service in semver",
+      "ecosystem": "npm",
+      "package": "semver",
+      "affected_range": { "fixed": "7.5.2" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-1333"],
+      "references": ["https://github.com/advisories/GHSA-c2qf-rxjj-qqgw"]
+    },
+    {
+      "id": "GHSA-pxg6-pf52-xh8x",
+      "summary": "Open Redirect in cookie",
+      "ecosystem": "npm",
+      "package": "cookie",
+      "affected_range": { "fixed": "0.7.0" },
+      "severity": "low",
+      "cvss": 4.0,
+      "cwe": ["CWE-601"],
+      "references": ["https://github.com/advisories/GHSA-pxg6-pf52-xh8x"]
+    },
+    {
+      "id": "GHSA-c9rw-rw2f-mj4x",
+      "summary": "Path traversal in fastify-static",
+      "ecosystem": "npm",
+      "package": "fastify-static",
+      "affected_range": { "fixed": "2.7.0" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-22"],
+      "references": ["https://github.com/advisories/GHSA-c9rw-rw2f-mj4x"]
+    },
+    {
+      "id": "GHSA-3rfm-jhwj-7488",
+      "summary": "Prototype pollution in async",
+      "ecosystem": "npm",
+      "package": "async",
+      "affected_range": { "introduced": "3.0.0", "fixed": "3.2.2" },
+      "severity": "high",
+      "cvss": 7.8,
+      "cwe": ["CWE-1321"],
+      "references": ["https://github.com/advisories/GHSA-fwr7-v2mv-hh25"]
+    },
+    {
+      "id": "GHSA-93xj-8mrv-444m",
+      "summary": "Inefficient regular expression complexity in postcss",
+      "ecosystem": "npm",
+      "package": "postcss",
+      "affected_range": { "fixed": "8.4.31" },
+      "severity": "medium",
+      "cvss": 5.3,
+      "cwe": ["CWE-1333"],
+      "references": ["https://github.com/advisories/GHSA-7fh5-64p2-3v2j"]
+    },
+    {
+      "id": "GHSA-mhpp-875w-9cpv",
+      "summary": "Cross-Site Scripting in jquery",
+      "ecosystem": "npm",
+      "package": "jquery",
+      "affected_range": { "fixed": "3.5.0" },
+      "severity": "medium",
+      "cvss": 6.1,
+      "cwe": ["CWE-79"],
+      "references": ["https://github.com/advisories/GHSA-jpcq-cgw6-v4j6"]
+    },
+    {
+      "id": "GHSA-q42p-pg8m-cqh6",
+      "summary": "Prototype pollution in jquery (jQuery.extend deep)",
+      "ecosystem": "npm",
+      "package": "jquery",
+      "affected_range": { "fixed": "3.4.0" },
+      "severity": "medium",
+      "cvss": 6.1,
+      "cwe": ["CWE-1321"],
+      "references": ["https://github.com/advisories/GHSA-6c3j-c64m-qhgq"]
+    },
+    {
+      "id": "GHSA-4vvj-4cpr-p986",
+      "summary": "Arbitrary File Upload in formidable",
+      "ecosystem": "npm",
+      "package": "formidable",
+      "affected_range": { "fixed": "2.1.0" },
+      "severity": "high",
+      "cvss": 8.1,
+      "cwe": ["CWE-434"],
+      "references": ["https://github.com/advisories/GHSA-32rw-3qfh-3hjf"]
+    },
+    {
+      "id": "GHSA-wm7h-9275-46v2",
+      "summary": "Inefficient regex in tough-cookie",
+      "ecosystem": "npm",
+      "package": "tough-cookie",
+      "affected_range": { "fixed": "4.1.3" },
+      "severity": "medium",
+      "cvss": 6.5,
+      "cwe": ["CWE-1321"],
+      "references": ["https://github.com/advisories/GHSA-72xf-g2v4-qvf3"]
+    },
+
+    {
+      "id": "RUSTSEC-2020-0071",
+      "summary": "Type confusion in time crate (time::OffsetDateTime)",
+      "ecosystem": "cargo",
+      "package": "time",
+      "affected_range": { "introduced": "0.2.7", "fixed": "0.2.23" },
+      "severity": "medium",
+      "cvss": 6.2,
+      "cwe": ["CWE-562"],
+      "references": ["https://rustsec.org/advisories/RUSTSEC-2020-0071"]
+    },
+    {
+      "id": "RUSTSEC-2023-0034",
+      "summary": "Heap-buffer-overflow in h2 crate",
+      "ecosystem": "cargo",
+      "package": "h2",
+      "affected_range": { "fixed": "0.3.17" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-122"],
+      "references": ["https://rustsec.org/advisories/RUSTSEC-2023-0034"]
+    },
+    {
+      "id": "RUSTSEC-2024-0006",
+      "summary": "shlex unquoted argument injection",
+      "ecosystem": "cargo",
+      "package": "shlex",
+      "affected_range": { "fixed": "1.3.0" },
+      "severity": "high",
+      "cvss": 8.4,
+      "cwe": ["CWE-78"],
+      "references": ["https://rustsec.org/advisories/RUSTSEC-2024-0006"]
+    },
+    {
+      "id": "RUSTSEC-2024-0003",
+      "summary": "h2: Resource exhaustion / CONTINUATION frame flood",
+      "ecosystem": "cargo",
+      "package": "h2",
+      "affected_range": { "fixed": "0.3.26" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-400"],
+      "references": ["https://rustsec.org/advisories/RUSTSEC-2024-0003"]
+    },
+    {
+      "id": "RUSTSEC-2023-0044",
+      "summary": "rustls: Network-reachable assertion failure in ChaCha20-Poly1305",
+      "ecosystem": "cargo",
+      "package": "rustls",
+      "affected_range": { "introduced": "0.20.0", "fixed": "0.20.9" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-617"],
+      "references": ["https://rustsec.org/advisories/RUSTSEC-2023-0053"]
+    },
+    {
+      "id": "RUSTSEC-2022-0040",
+      "summary": "owning_ref: incorrect Send/Sync bounds — undefined behavior",
+      "ecosystem": "cargo",
+      "package": "owning_ref",
+      "affected_range": {},
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-119"],
+      "references": ["https://rustsec.org/advisories/RUSTSEC-2022-0040"]
+    },
+
+    {
+      "id": "PYSEC-2022-43012",
+      "summary": "PyYAML allows arbitrary code execution when loading untrusted YAML",
+      "ecosystem": "pypi",
+      "package": "pyyaml",
+      "affected_range": { "fixed": "5.4" },
+      "severity": "critical",
+      "cvss": 9.8,
+      "cwe": ["CWE-20", "CWE-502"],
+      "references": ["https://github.com/advisories/GHSA-8q59-q68h-6hv4"]
+    },
+    {
+      "id": "PYSEC-2023-227",
+      "summary": "requests sends Proxy-Authorization on cross-origin redirect",
+      "ecosystem": "pypi",
+      "package": "requests",
+      "affected_range": { "fixed": "2.32.0" },
+      "severity": "medium",
+      "cvss": 5.6,
+      "cwe": ["CWE-200"],
+      "references": ["https://github.com/advisories/GHSA-9wx4-h78v-vm56"]
+    },
+    {
+      "id": "PYSEC-2023-117",
+      "summary": "urllib3 redirect behavior leaks Authorization headers cross-origin",
+      "ecosystem": "pypi",
+      "package": "urllib3",
+      "affected_range": { "fixed": "1.26.17" },
+      "severity": "medium",
+      "cvss": 6.1,
+      "cwe": ["CWE-200"],
+      "references": ["https://github.com/advisories/GHSA-v845-jxx5-vc9f"]
+    },
+    {
+      "id": "PYSEC-2022-43043",
+      "summary": "Cryptography: NULL-pointer dereference parsing certain TLS certs",
+      "ecosystem": "pypi",
+      "package": "cryptography",
+      "affected_range": { "fixed": "39.0.1" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-476"],
+      "references": ["https://github.com/advisories/GHSA-w7pp-m8wf-vj6r"]
+    },
+    {
+      "id": "PYSEC-2023-228",
+      "summary": "Django: SQL injection in QuerySet.values() / annotate() through column aliases",
+      "ecosystem": "pypi",
+      "package": "django",
+      "affected_range": { "introduced": "4.2.0", "fixed": "4.2.7" },
+      "severity": "critical",
+      "cvss": 9.8,
+      "cwe": ["CWE-89"],
+      "references": ["https://github.com/advisories/GHSA-7mrh-x6c5-3rwx"]
+    },
+    {
+      "id": "PYSEC-2023-187",
+      "summary": "Flask: open redirect via leading-slash bypass",
+      "ecosystem": "pypi",
+      "package": "flask",
+      "affected_range": { "fixed": "2.3.2" },
+      "severity": "medium",
+      "cvss": 6.1,
+      "cwe": ["CWE-601"],
+      "references": ["https://github.com/advisories/GHSA-m2qf-hxjv-5gpq"]
+    },
+    {
+      "id": "PYSEC-2021-141",
+      "summary": "Jinja2: SSTI via the from_string sandbox bypass",
+      "ecosystem": "pypi",
+      "package": "jinja2",
+      "affected_range": { "fixed": "2.11.3" },
+      "severity": "medium",
+      "cvss": 5.4,
+      "cwe": ["CWE-1336"],
+      "references": ["https://github.com/advisories/GHSA-g3rq-g295-4j3m"]
+    },
+    {
+      "id": "PYSEC-2021-457",
+      "summary": "Werkzeug: Open redirect via SafeRedirectMiddleware",
+      "ecosystem": "pypi",
+      "package": "werkzeug",
+      "affected_range": { "fixed": "2.2.3" },
+      "severity": "medium",
+      "cvss": 5.4,
+      "cwe": ["CWE-601"],
+      "references": ["https://github.com/advisories/GHSA-xg9f-g7g7-2323"]
+    },
+    {
+      "id": "PYSEC-2024-225",
+      "summary": "tornado: DoS via large Content-Length on multipart parsing",
+      "ecosystem": "pypi",
+      "package": "tornado",
+      "affected_range": { "fixed": "6.4.2" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-400"],
+      "references": ["https://github.com/advisories/GHSA-7cx3-6m66-7c5m"]
+    },
+
+    {
+      "id": "GHSA-fv92-fjc5-jj9h",
+      "summary": "Go gin: improper handling of multipart form values causes panic",
+      "ecosystem": "go",
+      "package": "github.com/gin-gonic/gin",
+      "affected_range": { "fixed": "1.9.1" },
+      "severity": "medium",
+      "cvss": 6.5,
+      "cwe": ["CWE-755"],
+      "references": ["https://github.com/advisories/GHSA-3vp4-m3rf-835h"]
+    },
+    {
+      "id": "GHSA-m425-mq94-257g",
+      "summary": "Go yaml.v2 / v3: DoS via deeply nested anchors",
+      "ecosystem": "go",
+      "package": "gopkg.in/yaml.v3",
+      "affected_range": { "fixed": "3.0.1" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-400"],
+      "references": ["https://github.com/advisories/GHSA-fmrf-rrqx-3h2m"]
+    },
+    {
+      "id": "GHSA-6vqw-3v5j-54x4",
+      "summary": "go-jose: improper signature validation accepts arbitrary algs",
+      "ecosystem": "go",
+      "package": "gopkg.in/square/go-jose.v2",
+      "affected_range": { "fixed": "2.6.0" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-347"],
+      "references": ["https://github.com/advisories/GHSA-3pp3-jxh5-3jh2"]
+    },
+    {
+      "id": "GHSA-mvff-h3cj-wj9c",
+      "summary": "golang.org/x/net: HTTP/2 rapid reset DoS",
+      "ecosystem": "go",
+      "package": "golang.org/x/net",
+      "affected_range": { "fixed": "0.17.0" },
+      "severity": "high",
+      "cvss": 7.5,
+      "cwe": ["CWE-400"],
+      "references": ["https://github.com/advisories/GHSA-qppj-fm5r-hxr3"]
+    },
+    {
+      "id": "GHSA-3vqj-43w4-2q58",
+      "summary": "etcd: improper authorization on lease checks",
+      "ecosystem": "go",
+      "package": "go.etcd.io/etcd",
+      "affected_range": { "fixed": "3.4.23" },
+      "severity": "medium",
+      "cvss": 6.5,
+      "cwe": ["CWE-285"],
+      "references": ["https://github.com/advisories/GHSA-3jq3-jv5q-x4w5"]
+    },
+    {
+      "id": "GHSA-7jwh-3vrq-q3m8",
+      "summary": "containerd: race condition in user-namespace setup",
+      "ecosystem": "go",
+      "package": "github.com/containerd/containerd",
+      "affected_range": { "fixed": "1.6.21" },
+      "severity": "high",
+      "cvss": 7.0,
+      "cwe": ["CWE-362"],
+      "references": ["https://github.com/advisories/GHSA-7jwh-3vrq-q3m8"]
+    },
+    {
+      "id": "GHSA-9wx4-rcw3-c4mh",
+      "summary": "kubernetes/client-go: improper TLS verification for impersonate path",
+      "ecosystem": "go",
+      "package": "k8s.io/client-go",
+      "affected_range": { "fixed": "0.26.0" },
+      "severity": "high",
+      "cvss": 7.4,
+      "cwe": ["CWE-295"],
+      "references": ["https://github.com/advisories/GHSA-9wx4-rcw3-c4mh"]
+    }
+  ]
+}

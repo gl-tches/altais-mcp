@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="vuln_db">
+  <qa_pair>
+    <question>Look up CVE-2021-44228 and tell me its description, CVSS score, and related CWEs.</question>
+    <tools>altais_lookup_cve</tools>
+    <answer>altais_lookup_cve returns the Log4Shell entry: the description, the CVSS v3.1 vector and a 10.0 / critical score, related CWEs, affected versions, and remediation guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Look up CVE-2014-0160 from the bundled snapshot.</question>
+    <tools>altais_lookup_cve</tools>
+    <answer>altais_lookup_cve returns the Heartbleed entry with its description, CVSS score, related CWEs, affected OpenSSL versions, and references.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Look up CVE-2099-99999, an identifier not in the snapshot. What is returned?</question>
+    <tools>altais_lookup_cve</tools>
+    <answer>altais_lookup_cve returns an error result indicating the CVE is not found in the bundled offline snapshot.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Look up CWE-89 in the full taxonomy and include its related weaknesses.</question>
+    <tools>altais_lookup_cwe</tools>
+    <answer>altais_lookup_cwe returns the CWE-89 (SQL Injection) entry with name, description, examples, remediation, references, and a list of related (parent/child/peer) CWEs.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Look up CWE using the bare id `787`.</question>
+    <tools>altais_lookup_cwe</tools>
+    <answer>altais_lookup_cwe accepts the bare numeric id and returns the CWE-787 (Out-of-bounds Write) entry with its description and related weaknesses.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Calculate the score for the CVSS v3.1 vector `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`.</question>
+    <tools>altais_calculate_cvss</tools>
+    <answer>altais_calculate_cvss returns version 3.1, a base score of 9.8, and a Critical qualitative severity.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Calculate the score for the CVSS v4.0 vector `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`.</question>
+    <tools>altais_calculate_cvss</tools>
+    <answer>altais_calculate_cvss parses the v4.0 metric groups, derives the MacroVector, and returns version 4.0 with a high/critical score computed via the FIRST CVSS v4.0 lookup-table algorithm.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Calculate a CVSS score for the malformed vector `CVSS:3.1/AV:Z/AC:L`. What happens?</question>
+    <tools>altais_calculate_cvss</tools>
+    <answer>altais_calculate_cvss returns an error result because `AV:Z` is not a valid metric value per the FIRST CVSS specification.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Map CWE-89 to MITRE ATT&amp;CK techniques and return the top ranked techniques.</question>
+    <tools>altais_map_attack</tools>
+    <answer>altais_map_attack returns ranked ATT&amp;CK techniques whose related weaknesses include CWE-89 (e.g. Exploit Public-Facing Application), each with id, name, tactic, confidence, and match reasons.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Map the description "attacker brute-forces user passwords against the login endpoint" to MITRE ATT&amp;CK techniques, limited to 5 results.</question>
+    <tools>altais_map_attack</tools>
+    <answer>altais_map_attack matches description keywords to ATT&amp;CK techniques (e.g. Brute Force / Credential Access) and returns up to 5 ranked techniques with confidence scores.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Call altais_map_attack with neither a `cwe` nor a `description`. What happens?</question>
+    <tools>altais_map_attack</tools>
+    <answer>altais_map_attack returns an input-validation error because at least one of `cwe` or `description` must be provided.</answer>
+  </qa_pair>
+</evaluation>

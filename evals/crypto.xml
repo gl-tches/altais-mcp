@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="crypto">
+  <qa_pair>
+    <question>Audit cryptographic algorithm usage in this code: `const hash = crypto.createHash('md5').update(data).digest('hex');`</question>
+    <tools>altais_audit_crypto</tools>
+    <answer>altais_audit_crypto reports a finding that MD5, a broken/deprecated hash, is in use.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this algorithm inventory: `{ "config": { "algorithms": [{ "name": "AES", "purpose": "encryption", "key_size_bits": 256 }] } }`.</question>
+    <tools>altais_audit_crypto</tools>
+    <answer>altais_audit_crypto reports zero weak-algorithm findings; AES-256 for encryption is a current, acceptable choice.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit TLS config: `{ "config": { "min_version": "TLSv1.0", "enabled_versions": ["TLSv1.0", "TLSv1.1", "TLSv1.2"] } }`.</question>
+    <tools>altais_audit_tls</tools>
+    <answer>altais_audit_tls reports findings for the deprecated TLS 1.0 and TLS 1.1 protocols and a too-low minimum version.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this TLS client code for disabled certificate verification: `const agent = new https.Agent({ rejectUnauthorized: false });`</question>
+    <tools>altais_audit_tls</tools>
+    <answer>altais_audit_tls reports a finding that certificate verification is disabled (`rejectUnauthorized: false`), enabling man-in-the-middle attacks.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit randomness in this code: `const token = Math.random().toString(36).slice(2);` used to generate a session token.</question>
+    <tools>altais_audit_randomness</tools>
+    <answer>altais_audit_randomness reports a high-severity finding because `Math.random()`, a non-cryptographic PRNG, is used near a security keyword (`token`).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit randomness in this code that uses a secure generator: `const id = crypto.randomBytes(16).toString('hex');` — confirm no finding.</question>
+    <tools>altais_audit_randomness</tools>
+    <answer>altais_audit_randomness returns zero findings; `crypto.randomBytes` is a cryptographically secure source.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit key management for this inventory: `{ "keys": [{ "name": "root-signing-key", "type": "root_ca", "storage": "repo" }] }`.</question>
+    <tools>altais_audit_key_mgmt</tools>
+    <answer>altais_audit_key_mgmt reports a finding that a high-value root CA key is stored insecurely in the repo rather than an HSM/KMS.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Assess post-quantum readiness for `{ "config": { "algorithms": ["RSA-2048", "ECDSA-P256"], "data_retention_years": 25, "uses_hybrid": false } }`.</question>
+    <tools>altais_assess_pq_readiness</tools>
+    <answer>altais_assess_pq_readiness flags RSA and ECDSA as quantum-vulnerable, raises a harvest-now-decrypt-later concern for the 25-year retention, and notes no hybrid key exchange is in use.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit Certificate Transparency monitoring: `{ "config": { "monitoring_enabled": false, "owned_domains": ["example.com"], "alerting_enabled": false } }`.</question>
+    <tools>altais_audit_ct_logs</tools>
+    <answer>altais_audit_ct_logs reports findings that CT log monitoring is disabled for the owned domain and that mis-issuance alerting is not configured.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit certificate pinning: `{ "config": { "pinning_enabled": true, "pin_type": "leaf_certificate", "has_backup_pin": false } }`.</question>
+    <tools>altais_audit_cert_pinning</tools>
+    <answer>altais_audit_cert_pinning reports findings for leaf-certificate pinning (vs. SPKI) and for pinning with no backup pin (brick risk).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit ACME config: `{ "config": { "auto_renewal": false, "challenge_type": "http-01", "wildcard": true, "caa_configured": false } }`.</question>
+    <tools>altais_audit_acme</tools>
+    <answer>altais_audit_acme reports findings for missing renewal automation, http-01 used for a wildcard certificate (which requires dns-01), and missing CAA records.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Assess cryptographic agility: `{ "config": { "algorithm_from_config": false, "versioned_ciphertext": false, "abstraction_layer": false, "inventory_exists": false } }`.</question>
+    <tools>altais_assess_crypto_agility</tools>
+    <answer>altais_assess_crypto_agility reports findings for hardcoded algorithm names, ciphertext with no version identifier, no abstraction layer, and no cryptographic inventory (CBOM).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit this code for ECB mode and a static IV: `cipher = AES.new(key, AES.MODE_ECB)` and `iv = b'0000000000000000'`.</question>
+    <tools>altais_audit_crypto</tools>
+    <answer>altais_audit_crypto reports findings for AES-ECB mode usage and for a hardcoded/static IV.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit TLS config that is hardened: `{ "config": { "min_version": "TLSv1.2", "enabled_versions": ["TLSv1.2", "TLSv1.3"], "verify_certificates": true, "compression": false, "hsts": true } }`.</question>
+    <tools>altais_audit_tls</tools>
+    <answer>altais_audit_tls returns zero findings; the configuration enables only TLS 1.2/1.3, verifies certificates, disables compression, and sends HSTS.</answer>
+  </qa_pair>
+</evaluation>

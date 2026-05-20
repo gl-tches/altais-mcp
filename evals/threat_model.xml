@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="threat_model">
+  <qa_pair>
+    <question>Run a STRIDE analysis for this architecture: one component named `api-gateway` of type `web_service` that authenticates clients.</question>
+    <tools>altais_stride</tools>
+    <answer>altais_stride returns a per-component STRIDE breakdown for `api-gateway`, listing typical Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, and Elevation of Privilege threats for a web-service component type.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Produce a STRIDE breakdown for an architecture with a `users-db` component of type `database` that handles PII.</question>
+    <tools>altais_stride</tools>
+    <answer>altais_stride returns STRIDE threats for the `users-db` database component, emphasizing Information Disclosure and Tampering categories appropriate to a PII-handling datastore.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>DREAD-score this threat: "SQL injection in the login form" with damage 9, reproducibility 8, exploitability 7, affected_users 9, discoverability 6.</question>
+    <tools>altais_dread</tools>
+    <answer>altais_dread returns a total of 39 (sum of the five ratings), an average of 7.8, and a high qualitative rating.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>DREAD-score a low-impact threat: "verbose 404 page" with damage 1, reproducibility 2, exploitability 1, affected_users 1, discoverability 3.</question>
+    <tools>altais_dread</tools>
+    <answer>altais_dread returns a total of 8, an average of 1.6, and a low qualitative rating.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>DREAD-score a worst-case threat where every metric is 10: "remote code execution on the auth server".</question>
+    <tools>altais_dread</tools>
+    <answer>altais_dread returns the maximum total of 50, an average of 10, and a critical/high qualitative rating.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an attack tree for the attacker goal "account takeover" targeting the customer portal.</question>
+    <tools>altais_attack_tree</tools>
+    <answer>altais_attack_tree matches the account-takeover template and returns a structured tree of attack paths (credential stuffing, phishing, session hijacking, etc.) each with mitigations and CWE references.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Build an attack tree for the goal "data exfiltration" of the customer database.</question>
+    <tools>altais_attack_tree</tools>
+    <answer>altais_attack_tree matches the data-exfiltration template and returns an attack tree of exfiltration paths with mitigations and CWE references for the `customer database` asset.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an attack tree for the unusual goal "deface the marketing blog homepage" that matches no built-in template.</question>
+    <tools>altais_attack_tree</tools>
+    <answer>altais_attack_tree finds no matching template and falls back to a generic STRIDE-shaped attack tree for the stated goal.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Analyze trust boundaries in this architecture: components `browser` (external_client) and `api` (web_service), with a data flow from `browser` to `api` sending an "auth token" over a flow marked `encrypted: false`.</question>
+    <tools>altais_trust_boundaries</tools>
+    <answer>altais_trust_boundaries emits a finding for the cleartext (unencrypted) trust-boundary crossing carrying an auth token from the external client to the service.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Identify trust-boundary crossings where a data flow from `partner-system` to `internal-api` has no `auth` set.</question>
+    <tools>altais_trust_boundaries</tools>
+    <answer>altais_trust_boundaries emits a finding for the unauthenticated trust-boundary crossing and flags the ingress point as needing explicit input validation.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Analyze trust boundaries for an architecture where the single data flow between two components in the same trust zone is encrypted and authenticated. Confirm nothing is flagged for that flow.</question>
+    <tools>altais_trust_boundaries</tools>
+    <answer>altais_trust_boundaries reports no cleartext or unauthenticated crossing finding for a flow that stays within one trust zone and is both encrypted and authenticated.</answer>
+  </qa_pair>
+</evaluation>

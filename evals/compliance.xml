@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="compliance">
+  <qa_pair>
+    <question>Map this finding to PCI-DSS controls: `{ "rule": "weak-crypto", "cwe": ["CWE-327"], "title": "MD5 used for data protection", "severity": "high" }` with `framework: "pci-dss"`.</question>
+    <tools>altais_map_findings</tools>
+    <answer>altais_map_findings matches the CWE-327 finding to the PCI-DSS cryptography-related controls and returns a per-control list of matched findings plus coverage statistics.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Map a SQL-injection finding `{ "rule": "sql-injection", "cwe": ["CWE-89"], "severity": "critical" }` to OWASP ASVS controls (`framework: "owasp-asvs"`).</question>
+    <tools>altais_map_findings</tools>
+    <answer>altais_map_findings matches the CWE-89 finding to the relevant ASVS input-validation / injection controls and returns coverage statistics.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Map findings to a framework using the id `not-a-framework`. What happens?</question>
+    <tools>altais_map_findings</tools>
+    <answer>altais_map_findings returns an error result naming the valid framework ids because `not-a-framework` is not one of the 16 bundled frameworks.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Run a gap analysis against the GDPR framework (`framework: "gdpr"`) with no supplied findings on an empty session.</question>
+    <tools>altais_gap_analysis</tools>
+    <answer>altais_gap_analysis returns coverage statistics where every control is classified as a `gap` (0% coverage) and lists the gap controls, since no findings map to any control.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a gap analysis for `nist-800-53` given a single finding `{ "rule": "missing-access-control", "cwe": ["CWE-284"], "severity": "high" }`.</question>
+    <tools>altais_gap_analysis</tools>
+    <answer>altais_gap_analysis classifies access-control controls touched by the CWE-284 finding as `addressed` and the remaining controls as `gap`, returning coverage percentage and the gap-control list.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Run a gap analysis against the ISO 27001 framework (`framework: "iso-27001"`) and tell me the total number of controls reported.</question>
+    <tools>altais_gap_analysis</tools>
+    <answer>altais_gap_analysis returns a `coverage` object with `total_controls` equal to the number of ISO 27001 controls in the bundled framework, split into addressed and gap counts.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a compliance evidence pack for the SOC 2 framework (`framework: "soc2"`) covering all controls.</question>
+    <tools>altais_generate_evidence</tools>
+    <answer>altais_generate_evidence returns an evidence pack with one record per SOC 2 control, each carrying the control id/title, an addressed/gap status, the evidence findings, and a generated evidence statement.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an evidence pack for the NIST SSDF framework (`framework: "nist-ssdf"`) restricted to a control id that does not exist in that framework.</question>
+    <tools>altais_generate_evidence</tools>
+    <answer>altais_generate_evidence returns an error result listing the valid control ids because the requested `control_ids` filter matched no controls.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Map a finding to the DORA framework: `{ "rule": "no-incident-logging", "severity": "medium" }` with `framework: "dora"`.</question>
+    <tools>altais_map_findings</tools>
+    <answer>altais_map_findings matches the finding to DORA controls whose keywords appear in the rule/title and returns the per-control coverage report for DORA.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Run a gap analysis against the EU Cyber Resilience Act framework (`framework: "cra"`) with one supplied finding about an unpatched vulnerability.</question>
+    <tools>altais_gap_analysis</tools>
+    <answer>altais_gap_analysis returns the CRA coverage report classifying each control as addressed or gap, and emits a finding per gap control so unassessed areas surface in the report.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate an evidence pack for the FDA 524B framework (`framework: "fda-524b"`) for medical-device cybersecurity.</question>
+    <tools>altais_generate_evidence</tools>
+    <answer>altais_generate_evidence returns an FDA 524B evidence pack with per-control evidence records and statements, plus a summary of addressed vs. gap controls.</answer>
+  </qa_pair>
+</evaluation>

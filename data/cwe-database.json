@@ -1,0 +1,1042 @@
+[
+  {
+    "id": "CWE-20",
+    "name": "Improper Input Validation",
+    "description": "The product receives input or data but does not validate, or incorrectly validates, that the input has the properties required to safely process it.",
+    "examples": [
+      "Accepting an integer ID without bounds checking, allowing access to unrelated records.",
+      "Trusting a Content-Length header to allocate a buffer, enabling denial-of-service via huge values."
+    ],
+    "remediation": "Validate all input at trust boundaries against an allowlist of expected values, types, and ranges. Reject anything outside the schema rather than attempting to sanitize.",
+    "references": ["https://cwe.mitre.org/data/definitions/20.html", "OWASP Top 10 2025 A03"]
+  },
+  {
+    "id": "CWE-22",
+    "name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+    "description": "The product uses external input to construct a pathname intended to identify a file or directory within a restricted parent directory, but does not properly neutralize sequences such as '..' that can resolve outside that directory.",
+    "examples": [
+      "open('/uploads/' + req.query.file) where file = '../../etc/passwd'.",
+      "Unzipping an archive whose entry names contain '..' (Zip Slip)."
+    ],
+    "remediation": "Canonicalize paths with path.resolve, then verify the result is a prefix of the allowed base directory. Reject any input containing '..', null bytes, or absolute paths.",
+    "references": ["https://cwe.mitre.org/data/definitions/22.html", "OWASP Top 10 2025 A01"]
+  },
+  {
+    "id": "CWE-73",
+    "name": "External Control of File Name or Path",
+    "description": "The product allows user input to control or influence paths or filenames used in file system operations.",
+    "examples": [
+      "Saving uploads under a filename taken verbatim from the request.",
+      "Template name selected directly by an unauthenticated parameter."
+    ],
+    "remediation": "Do not pass user input into file system calls. Map external identifiers to internal, server-controlled paths using a lookup table.",
+    "references": ["https://cwe.mitre.org/data/definitions/73.html"]
+  },
+  {
+    "id": "CWE-77",
+    "name": "Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+    "description": "The product constructs a command using externally-influenced input but does not neutralize special elements that could modify the intended command when sent to a downstream component.",
+    "examples": [
+      "exec('mail ' + recipient) where recipient = 'user@example.com; rm -rf /'.",
+      "Building an SMTP command string from a form field."
+    ],
+    "remediation": "Use parameterized APIs or libraries that separate command from data. Never assemble shell commands by string concatenation.",
+    "references": ["https://cwe.mitre.org/data/definitions/77.html"]
+  },
+  {
+    "id": "CWE-78",
+    "name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+    "description": "The product constructs all or part of an OS command using externally-influenced input from an upstream component, but does not neutralize or incorrectly neutralizes special elements that could modify the intended OS command.",
+    "examples": [
+      "child_process.exec('ping ' + host) with host = '8.8.8.8; cat /etc/shadow'.",
+      "os.system(f'convert {filename} out.png') with attacker-controlled filename."
+    ],
+    "remediation": "Use execFile/spawn with an explicit argv array — never shell=True or exec with string interpolation. Validate inputs against a strict allowlist when a shell is unavoidable.",
+    "references": ["https://cwe.mitre.org/data/definitions/78.html", "OWASP Top 10 2025 A03"]
+  },
+  {
+    "id": "CWE-79",
+    "name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+    "description": "The product does not neutralize or incorrectly neutralizes user-controllable input before it is placed in output that is used as a web page that is served to other users.",
+    "examples": [
+      "innerHTML = userComment in a browser.",
+      "Reflecting query parameters into HTML without escaping.",
+      "Storing user input in a database and later rendering it without contextual encoding."
+    ],
+    "remediation": "Use a templating engine that applies contextual output encoding. Set a strict Content-Security-Policy that disallows inline script. Never sink untrusted strings into innerHTML, document.write, or eval.",
+    "references": ["https://cwe.mitre.org/data/definitions/79.html", "OWASP Top 10 2025 A03"]
+  },
+  {
+    "id": "CWE-89",
+    "name": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+    "description": "The product constructs all or part of an SQL command using externally-influenced input but does not neutralize special elements that could modify the intended SQL command.",
+    "examples": [
+      "db.query('SELECT * FROM users WHERE name = \\'' + name + '\\'').",
+      "ORM raw query with string interpolation."
+    ],
+    "remediation": "Use parameterized queries or prepared statements exclusively. Treat ORM raw escape hatches with the same suspicion as direct string concatenation.",
+    "references": ["https://cwe.mitre.org/data/definitions/89.html", "OWASP Top 10 2025 A03"]
+  },
+  {
+    "id": "CWE-90",
+    "name": "Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection')",
+    "description": "The product constructs all or part of an LDAP query using externally-influenced input but does not neutralize special elements that could modify the intended LDAP query.",
+    "examples": [
+      "filter = '(uid=' + username + ')' with username = '*)(uid=*'."
+    ],
+    "remediation": "Escape LDAP metacharacters per RFC 4515, or use an LDAP client that parameterizes filters. Validate inputs against an allowlist.",
+    "references": ["https://cwe.mitre.org/data/definitions/90.html"]
+  },
+  {
+    "id": "CWE-91",
+    "name": "XML Injection",
+    "description": "The product does not properly neutralize special elements that are used in XML, allowing attackers to modify the syntax, content, or commands of the XML before processing by a downstream component.",
+    "examples": [
+      "Building an XML document by concatenating user data into element bodies without escaping."
+    ],
+    "remediation": "Use a serializer that escapes XML metacharacters. Avoid string-building of XML.",
+    "references": ["https://cwe.mitre.org/data/definitions/91.html"]
+  },
+  {
+    "id": "CWE-93",
+    "name": "Improper Neutralization of CRLF Sequences ('CRLF Injection')",
+    "description": "The product uses CRLF sequences in input without neutralizing them, enabling injection of additional headers or content into protocol responses.",
+    "examples": [
+      "Setting an HTTP header from user input that contains \\r\\n followed by an injected header."
+    ],
+    "remediation": "Reject CR and LF characters in header values. Use HTTP libraries that enforce this at the API level.",
+    "references": ["https://cwe.mitre.org/data/definitions/93.html"]
+  },
+  {
+    "id": "CWE-94",
+    "name": "Improper Control of Generation of Code ('Code Injection')",
+    "description": "The product constructs all or part of a code segment using externally-influenced input but does not neutralize special elements that could modify the syntax or behavior of the code.",
+    "examples": [
+      "eval('var x = ' + userInput).",
+      "Function(userInput)().",
+      "Loading a Python module whose name comes from the request."
+    ],
+    "remediation": "Do not use eval, Function, vm.runInContext, or equivalents on untrusted input. Replace dynamic code with data-driven configuration.",
+    "references": ["https://cwe.mitre.org/data/definitions/94.html"]
+  },
+  {
+    "id": "CWE-113",
+    "name": "Improper Neutralization of CRLF Sequences in HTTP Headers (HTTP Response Splitting)",
+    "description": "The product receives data from a user, then uses that data as part of an HTTP response header without neutralizing CR and LF characters, enabling response splitting attacks.",
+    "examples": [
+      "res.setHeader('Location', '/p?next=' + req.query.next) where next contains CRLF."
+    ],
+    "remediation": "Validate and strip CR/LF from any user input written to response headers. Use framework APIs that reject invalid header values.",
+    "references": ["https://cwe.mitre.org/data/definitions/113.html"]
+  },
+  {
+    "id": "CWE-117",
+    "name": "Improper Output Neutralization for Logs",
+    "description": "The product does not neutralize user-controlled input before it is written to logs, enabling log forging.",
+    "examples": [
+      "log.info('login: ' + username) where username contains newlines and forged log lines."
+    ],
+    "remediation": "Use a structured logger that escapes or rejects newlines in field values. Never concatenate raw user input into log strings.",
+    "references": ["https://cwe.mitre.org/data/definitions/117.html"]
+  },
+  {
+    "id": "CWE-119",
+    "name": "Improper Restriction of Operations within the Bounds of a Memory Buffer",
+    "description": "The product performs operations on a memory buffer, but it can read from or write to a memory location that is outside of the intended boundary of the buffer.",
+    "examples": [
+      "memcpy(dst, src, len) where len exceeds the destination size."
+    ],
+    "remediation": "Use memory-safe languages or bounds-checked APIs. In C/C++, prefer std::span, gsl::span, or strlcpy-style functions and enable compiler hardening flags.",
+    "references": ["https://cwe.mitre.org/data/definitions/119.html"]
+  },
+  {
+    "id": "CWE-125",
+    "name": "Out-of-bounds Read",
+    "description": "The product reads data past the end, or before the beginning, of the intended buffer.",
+    "examples": [
+      "Reading length bytes from a packet without verifying the packet is at least length bytes long (Heartbleed pattern)."
+    ],
+    "remediation": "Validate length and offset against the actual buffer size before every read. Prefer memory-safe languages or safe-wrapper types.",
+    "references": ["https://cwe.mitre.org/data/definitions/125.html"]
+  },
+  {
+    "id": "CWE-190",
+    "name": "Integer Overflow or Wraparound",
+    "description": "The product performs a calculation that can produce an integer overflow or wraparound, leading to undefined or unexpected results.",
+    "examples": [
+      "size_t total = count * itemSize; allocate(total); where the multiplication wraps."
+    ],
+    "remediation": "Use checked arithmetic (ckd_add, __builtin_mul_overflow), saturating types, or arbitrary-precision integers for security-relevant calculations.",
+    "references": ["https://cwe.mitre.org/data/definitions/190.html"]
+  },
+  {
+    "id": "CWE-200",
+    "name": "Exposure of Sensitive Information to an Unauthorized Actor",
+    "description": "The product exposes sensitive information to an actor that is not explicitly authorized to have access to that information.",
+    "examples": [
+      "Stack traces in HTTP error responses.",
+      "Returning internal user IDs in public APIs."
+    ],
+    "remediation": "Define what counts as sensitive, then audit every output path. Strip stack traces from production responses. Use schemas to whitelist fields rather than blacklist them.",
+    "references": ["https://cwe.mitre.org/data/definitions/200.html", "OWASP Top 10 2025 A02"]
+  },
+  {
+    "id": "CWE-209",
+    "name": "Generation of Error Message Containing Sensitive Information",
+    "description": "The product generates an error message that includes sensitive information about its environment, users, or associated data.",
+    "examples": [
+      "Returning the SQL query in a database error.",
+      "Exposing absolute file paths in 500 responses."
+    ],
+    "remediation": "Catch and log full errors server-side; return a sanitized, generic message to the client with a correlation ID.",
+    "references": ["https://cwe.mitre.org/data/definitions/209.html"]
+  },
+  {
+    "id": "CWE-256",
+    "name": "Plaintext Storage of a Password",
+    "description": "Storing a password in plaintext may result in a system compromise.",
+    "examples": [
+      "user.password = req.body.password without hashing."
+    ],
+    "remediation": "Hash passwords with a memory-hard KDF (Argon2id, scrypt, bcrypt). Never store, log, or transmit passwords in cleartext.",
+    "references": ["https://cwe.mitre.org/data/definitions/256.html"]
+  },
+  {
+    "id": "CWE-269",
+    "name": "Improper Privilege Management",
+    "description": "The product does not properly assign, modify, track, or check privileges for an actor, creating an unintended sphere of control.",
+    "examples": [
+      "Failing to drop root privileges after binding a low-numbered port.",
+      "A role-change endpoint that does not re-verify authorization."
+    ],
+    "remediation": "Run with the least privileges required. Verify the caller's authority on every state change, not just at login.",
+    "references": ["https://cwe.mitre.org/data/definitions/269.html"]
+  },
+  {
+    "id": "CWE-276",
+    "name": "Incorrect Default Permissions",
+    "description": "During installation, installed file permissions are set to allow anyone to modify those files.",
+    "examples": [
+      "Creating a config file with mode 0666.",
+      "Writing temp files with world-writable permissions."
+    ],
+    "remediation": "Set umask appropriately and pass explicit, restrictive modes (0600 for secrets, 0644 for read-only). Audit umask at process startup.",
+    "references": ["https://cwe.mitre.org/data/definitions/276.html"]
+  },
+  {
+    "id": "CWE-284",
+    "name": "Improper Access Control",
+    "description": "The product does not restrict or incorrectly restricts access to a resource from an unauthorized actor.",
+    "examples": [
+      "An admin endpoint reachable without an authentication check."
+    ],
+    "remediation": "Enforce access control as a global concern (middleware), not per-handler. Default to deny.",
+    "references": ["https://cwe.mitre.org/data/definitions/284.html", "OWASP Top 10 2025 A01"]
+  },
+  {
+    "id": "CWE-285",
+    "name": "Improper Authorization",
+    "description": "The product does not perform or incorrectly performs an authorization check when an actor attempts to access a resource or perform an action.",
+    "examples": [
+      "User A can read /orders/{id} for any id (IDOR)."
+    ],
+    "remediation": "Tie every record to an owner and check ownership on every access. Prefer object-level authorization over role-only checks.",
+    "references": ["https://cwe.mitre.org/data/definitions/285.html", "OWASP Top 10 2025 A01"]
+  },
+  {
+    "id": "CWE-287",
+    "name": "Improper Authentication",
+    "description": "When an actor claims to have a given identity, the product does not prove or insufficiently proves the claim is correct.",
+    "examples": [
+      "Accepting a username without verifying a credential.",
+      "Trusting an X-User-Id header set by the client."
+    ],
+    "remediation": "Use a vetted authentication framework. Distinguish between trusted (server-signed) identity claims and untrusted client input.",
+    "references": ["https://cwe.mitre.org/data/definitions/287.html", "OWASP Top 10 2025 A07"]
+  },
+  {
+    "id": "CWE-295",
+    "name": "Improper Certificate Validation",
+    "description": "The product does not validate, or incorrectly validates, a certificate.",
+    "examples": [
+      "rejectUnauthorized: false in an HTTPS client.",
+      "Trusting any certificate signed by any CA without pinning."
+    ],
+    "remediation": "Enable full certificate validation by default. Pin certificates or CAs for high-value connections. Reject anything that fails verification.",
+    "references": ["https://cwe.mitre.org/data/definitions/295.html"]
+  },
+  {
+    "id": "CWE-297",
+    "name": "Improper Validation of Certificate with Host Mismatch",
+    "description": "The product communicates with a host that provides a certificate, but the product does not properly ensure that the certificate is actually associated with that host.",
+    "examples": [
+      "Trusting a certificate without matching its CN/SAN against the requested hostname."
+    ],
+    "remediation": "Always perform hostname verification. Use TLS libraries that enable this by default; do not override.",
+    "references": ["https://cwe.mitre.org/data/definitions/297.html"]
+  },
+  {
+    "id": "CWE-306",
+    "name": "Missing Authentication for Critical Function",
+    "description": "The product does not perform any authentication for functionality that requires a provable user identity or consumes a significant amount of resources.",
+    "examples": [
+      "An admin DELETE endpoint reachable with no credentials."
+    ],
+    "remediation": "Authenticate every privileged operation. Treat 'internal-only' endpoints with the same scrutiny as public ones if they can be reached.",
+    "references": ["https://cwe.mitre.org/data/definitions/306.html"]
+  },
+  {
+    "id": "CWE-307",
+    "name": "Improper Restriction of Excessive Authentication Attempts",
+    "description": "The product does not implement sufficient measures to prevent multiple failed authentication attempts within a short time frame.",
+    "examples": [
+      "A login endpoint with no rate limiting or account lockout."
+    ],
+    "remediation": "Apply rate limiting per account and per IP. Use exponential backoff and consider CAPTCHA after thresholds. Alert on unusual rates.",
+    "references": ["https://cwe.mitre.org/data/definitions/307.html"]
+  },
+  {
+    "id": "CWE-310",
+    "name": "Cryptographic Issues",
+    "description": "Weaknesses in this category are related to the design and implementation of data confidentiality and integrity. Frequently these deal with the use of encoding techniques, encryption libraries, and hashing algorithms.",
+    "examples": [
+      "Using ECB mode for block ciphers, leaking plaintext patterns."
+    ],
+    "remediation": "Use high-level cryptographic APIs (libsodium, AEAD constructions). Avoid implementing primitives yourself.",
+    "references": ["https://cwe.mitre.org/data/definitions/310.html"]
+  },
+  {
+    "id": "CWE-311",
+    "name": "Missing Encryption of Sensitive Data",
+    "description": "The product does not encrypt sensitive or critical information before storage or transmission.",
+    "examples": [
+      "Storing PII in plaintext columns in a shared database."
+    ],
+    "remediation": "Encrypt sensitive data at rest with a managed KMS. Enforce TLS for all transport. Document which fields are sensitive.",
+    "references": ["https://cwe.mitre.org/data/definitions/311.html", "OWASP Top 10 2025 A02"]
+  },
+  {
+    "id": "CWE-319",
+    "name": "Cleartext Transmission of Sensitive Information",
+    "description": "The product transmits sensitive or security-critical data in cleartext in a communication channel that can be sniffed by unauthorized actors.",
+    "examples": [
+      "An admin tool that POSTs credentials over plain HTTP."
+    ],
+    "remediation": "Require TLS 1.2+ everywhere. Disable HTTP entirely or redirect to HTTPS with HSTS. Mark cookies as Secure.",
+    "references": ["https://cwe.mitre.org/data/definitions/319.html"]
+  },
+  {
+    "id": "CWE-321",
+    "name": "Use of Hard-coded Cryptographic Key",
+    "description": "The use of a hard-coded cryptographic key significantly increases the possibility that encrypted data may be recovered.",
+    "examples": [
+      "const SIGNING_KEY = 'changeme' shipped in source."
+    ],
+    "remediation": "Load keys from a managed secrets store at runtime. Rotate keys on a schedule and on compromise.",
+    "references": ["https://cwe.mitre.org/data/definitions/321.html"]
+  },
+  {
+    "id": "CWE-326",
+    "name": "Inadequate Encryption Strength",
+    "description": "The product stores or transmits sensitive data using an encryption scheme that is theoretically sound, but is not strong enough for the level of protection required.",
+    "examples": [
+      "Using 1024-bit RSA in 2026.",
+      "AES-128 where the threat model requires post-quantum resilience."
+    ],
+    "remediation": "Track NIST and FIPS recommendations. Plan for crypto-agility so primitives can be upgraded without protocol changes.",
+    "references": ["https://cwe.mitre.org/data/definitions/326.html"]
+  },
+  {
+    "id": "CWE-327",
+    "name": "Use of a Broken or Risky Cryptographic Algorithm",
+    "description": "The product uses a broken or risky cryptographic algorithm or protocol.",
+    "examples": [
+      "Using MD5 or SHA1 for password hashing or signature verification.",
+      "DES, RC4, or 3DES in new code."
+    ],
+    "remediation": "Use modern primitives: SHA-256+/BLAKE3 for hashing, AES-GCM or ChaCha20-Poly1305 for AEAD, Ed25519 or ECDSA P-256 for signatures, Argon2id for password hashing.",
+    "references": ["https://cwe.mitre.org/data/definitions/327.html"]
+  },
+  {
+    "id": "CWE-330",
+    "name": "Use of Insufficiently Random Values",
+    "description": "The product uses insufficiently random numbers or values in a security context that depends on unpredictable numbers.",
+    "examples": [
+      "Generating session tokens with Math.random()."
+    ],
+    "remediation": "Use the platform's CSPRNG (crypto.randomBytes, secrets.token_urlsafe, getrandom). Treat anything else as non-secret.",
+    "references": ["https://cwe.mitre.org/data/definitions/330.html"]
+  },
+  {
+    "id": "CWE-338",
+    "name": "Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)",
+    "description": "The product uses a Pseudo-Random Number Generator that is not cryptographically secure in a security context.",
+    "examples": [
+      "Using Mersenne Twister output for password reset tokens."
+    ],
+    "remediation": "Always pull cryptographic randomness from a CSPRNG. Reserve fast PRNGs for non-security purposes only.",
+    "references": ["https://cwe.mitre.org/data/definitions/338.html"]
+  },
+  {
+    "id": "CWE-345",
+    "name": "Insufficient Verification of Data Authenticity",
+    "description": "The product does not sufficiently verify the origin or authenticity of data, in a way that causes it to accept invalid data.",
+    "examples": [
+      "Accepting a webhook payload without verifying its signature."
+    ],
+    "remediation": "Require authenticated channels (TLS + mTLS or HMAC) for any incoming data that drives state changes.",
+    "references": ["https://cwe.mitre.org/data/definitions/345.html"]
+  },
+  {
+    "id": "CWE-347",
+    "name": "Improper Verification of Cryptographic Signature",
+    "description": "The product does not verify, or improperly verifies, the cryptographic signature for data.",
+    "examples": [
+      "JWT verification with alg: 'none' accepted.",
+      "Skipping signature checks on update artifacts."
+    ],
+    "remediation": "Pin the expected algorithm. Reject tokens or artifacts whose signatures do not validate. Treat 'none' as invalid.",
+    "references": ["https://cwe.mitre.org/data/definitions/347.html"]
+  },
+  {
+    "id": "CWE-352",
+    "name": "Cross-Site Request Forgery (CSRF)",
+    "description": "The web application does not, or cannot, sufficiently verify whether a well-formed, valid, consistent request was intentionally provided by the user who submitted the request.",
+    "examples": [
+      "A state-changing POST endpoint authenticated only by a cookie, with no CSRF token or SameSite protection."
+    ],
+    "remediation": "Use SameSite=Strict or Lax cookies and CSRF tokens on state-changing requests. Prefer header-based authentication for APIs.",
+    "references": ["https://cwe.mitre.org/data/definitions/352.html"]
+  },
+  {
+    "id": "CWE-362",
+    "name": "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')",
+    "description": "The product contains a code sequence that can run concurrently with other code, and the code sequence requires temporary, exclusive access to a shared resource, but a timing window exists in which the shared resource can be modified by another code sequence operating concurrently.",
+    "examples": [
+      "Check-then-act on a balance without a transaction."
+    ],
+    "remediation": "Use atomic operations, locks, or transactional semantics. Keep critical sections small.",
+    "references": ["https://cwe.mitre.org/data/definitions/362.html"]
+  },
+  {
+    "id": "CWE-367",
+    "name": "Time-of-check Time-of-use (TOCTOU) Race Condition",
+    "description": "The product checks the state of a resource before using that resource, but the resource's state can change between the check and the use in a way that invalidates the results of the check.",
+    "examples": [
+      "stat() then open() on a path that may be replaced with a symlink in between."
+    ],
+    "remediation": "Operate on file descriptors (openat with O_NOFOLLOW) rather than re-traversing paths. Avoid check-then-use patterns on shared resources.",
+    "references": ["https://cwe.mitre.org/data/definitions/367.html"]
+  },
+  {
+    "id": "CWE-384",
+    "name": "Session Fixation",
+    "description": "Authenticating a user, or otherwise establishing a new user session, without invalidating any existing session identifier gives an attacker the opportunity to steal authenticated sessions.",
+    "examples": [
+      "Reusing the same session ID after login."
+    ],
+    "remediation": "Regenerate the session identifier on authentication and on privilege change. Invalidate the old session.",
+    "references": ["https://cwe.mitre.org/data/definitions/384.html"]
+  },
+  {
+    "id": "CWE-400",
+    "name": "Uncontrolled Resource Consumption",
+    "description": "The product does not properly control the allocation and maintenance of a limited resource, thereby enabling an actor to influence the amount of resources consumed, eventually leading to the exhaustion of available resources.",
+    "examples": [
+      "An endpoint that decompresses a user-supplied archive without size limits (zip bomb).",
+      "Unbounded recursion driven by request data."
+    ],
+    "remediation": "Apply size, time, and depth limits at every boundary. Use rate limiting and circuit breakers.",
+    "references": ["https://cwe.mitre.org/data/definitions/400.html"]
+  },
+  {
+    "id": "CWE-416",
+    "name": "Use After Free",
+    "description": "Referencing memory after it has been freed can cause a program to crash, use unexpected values, or execute code.",
+    "examples": [
+      "Holding a raw pointer past a free() call in C/C++."
+    ],
+    "remediation": "Use smart pointers and RAII in C++; migrate to memory-safe languages where feasible. Enable AddressSanitizer in tests.",
+    "references": ["https://cwe.mitre.org/data/definitions/416.html"]
+  },
+  {
+    "id": "CWE-434",
+    "name": "Unrestricted Upload of File with Dangerous Type",
+    "description": "The product allows the attacker to upload or transfer files of dangerous types that can be automatically processed within the product's environment.",
+    "examples": [
+      "Accepting .php uploads to a directory served by the web server."
+    ],
+    "remediation": "Allowlist content types based on inspection, not the client-supplied MIME. Store uploads outside the web root and serve via a controlled handler.",
+    "references": ["https://cwe.mitre.org/data/definitions/434.html"]
+  },
+  {
+    "id": "CWE-441",
+    "name": "Unintended Proxy or Intermediary ('Confused Deputy')",
+    "description": "The product receives a request, message, or directive from an upstream component, but does not sufficiently preserve the original source so that downstream components can make security decisions based on that source.",
+    "examples": [
+      "Internal services trusting an X-Forwarded-User header set by anything that can reach them."
+    ],
+    "remediation": "Authenticate internal hops (mTLS, signed tokens). Strip and reset hop-by-hop headers at trust boundaries.",
+    "references": ["https://cwe.mitre.org/data/definitions/441.html"]
+  },
+  {
+    "id": "CWE-444",
+    "name": "Inconsistent Interpretation of HTTP Requests ('HTTP Request Smuggling')",
+    "description": "When the product interprets the same HTTP request differently from another HTTP intermediary, an attacker can smuggle a request that bypasses or alters intended access controls.",
+    "examples": [
+      "A frontend uses Content-Length while a backend uses Transfer-Encoding."
+    ],
+    "remediation": "Use HTTP/2 end-to-end where possible. Configure intermediaries to reject ambiguous framing.",
+    "references": ["https://cwe.mitre.org/data/definitions/444.html"]
+  },
+  {
+    "id": "CWE-476",
+    "name": "NULL Pointer Dereference",
+    "description": "A NULL pointer dereference occurs when the application dereferences a pointer that it expects to be valid, but is NULL, typically causing a crash or exit.",
+    "examples": [
+      "Failing to check the return value of malloc before use."
+    ],
+    "remediation": "Check return values. In languages with optional types, model nullability in the type system.",
+    "references": ["https://cwe.mitre.org/data/definitions/476.html"]
+  },
+  {
+    "id": "CWE-502",
+    "name": "Deserialization of Untrusted Data",
+    "description": "The product deserializes untrusted data without sufficiently verifying that the resulting data will be valid.",
+    "examples": [
+      "Python pickle.loads on data from the network.",
+      "Java ObjectInputStream on an untrusted source."
+    ],
+    "remediation": "Use data-only formats (JSON, MessagePack with a strict schema). If a binary format is required, sign payloads and validate against a schema before deserializing.",
+    "references": ["https://cwe.mitre.org/data/definitions/502.html", "OWASP Top 10 2025 A08"]
+  },
+  {
+    "id": "CWE-521",
+    "name": "Weak Password Requirements",
+    "description": "The product does not require that users should have strong passwords, which makes it easier for attackers to compromise user accounts.",
+    "examples": [
+      "Allowing 4-character passwords."
+    ],
+    "remediation": "Follow NIST SP 800-63B: minimum 8 characters, no composition rules, screen against breached-password lists, allow long passphrases.",
+    "references": ["https://cwe.mitre.org/data/definitions/521.html"]
+  },
+  {
+    "id": "CWE-532",
+    "name": "Insertion of Sensitive Information into Log File",
+    "description": "The product writes sensitive information to a log file, which may be exposed to attackers who can read the logs.",
+    "examples": [
+      "Logging full request bodies including passwords or tokens."
+    ],
+    "remediation": "Define a redaction policy and apply it in a single log middleware. Treat logs as a sensitive data store with the same access controls as the database.",
+    "references": ["https://cwe.mitre.org/data/definitions/532.html"]
+  },
+  {
+    "id": "CWE-540",
+    "name": "Inclusion of Sensitive Information in Source Code",
+    "description": "Source code on a web server or repository often contains sensitive information.",
+    "examples": [
+      "Committing .env, API tokens, or private keys to the repo."
+    ],
+    "remediation": "Use a secrets manager. Scan history with a secret-detection tool; rotate any credential that ever touched the repo.",
+    "references": ["https://cwe.mitre.org/data/definitions/540.html"]
+  },
+  {
+    "id": "CWE-552",
+    "name": "Files or Directories Accessible to External Parties",
+    "description": "The product makes files or directories accessible to unauthorized actors, even though they should not be.",
+    "examples": [
+      "An S3 bucket with a 'public-read' ACL containing customer data."
+    ],
+    "remediation": "Default-deny on storage permissions. Audit IAM regularly. Block public access at the account level where supported.",
+    "references": ["https://cwe.mitre.org/data/definitions/552.html"]
+  },
+  {
+    "id": "CWE-601",
+    "name": "URL Redirection to Untrusted Site ('Open Redirect')",
+    "description": "The product accepts user-controlled input that specifies a link to an external site, and uses that link in a redirect.",
+    "examples": [
+      "redirect(req.query.next) without validating the target."
+    ],
+    "remediation": "Allowlist redirect targets, or pass an opaque server-issued token that maps to a known destination.",
+    "references": ["https://cwe.mitre.org/data/definitions/601.html"]
+  },
+  {
+    "id": "CWE-611",
+    "name": "Improper Restriction of XML External Entity Reference (XXE)",
+    "description": "The product processes an XML document that can contain XML entities with URIs that resolve to documents outside of the intended sphere of control.",
+    "examples": [
+      "Parsing untrusted XML with DOCTYPE processing enabled."
+    ],
+    "remediation": "Disable DOCTYPE and external entity processing in the XML parser. Prefer JSON over XML when XML is not required.",
+    "references": ["https://cwe.mitre.org/data/definitions/611.html"]
+  },
+  {
+    "id": "CWE-613",
+    "name": "Insufficient Session Expiration",
+    "description": "According to WASC, 'Insufficient Session Expiration is when a Web site permits an attacker to reuse old session credentials or session IDs for authorization.'",
+    "examples": [
+      "Session tokens with no expiry, or refresh tokens valid for years."
+    ],
+    "remediation": "Set absolute and idle timeouts. Invalidate sessions on logout and on password change. Rotate refresh tokens.",
+    "references": ["https://cwe.mitre.org/data/definitions/613.html"]
+  },
+  {
+    "id": "CWE-614",
+    "name": "Sensitive Cookie in HTTPS Session Without 'Secure' Attribute",
+    "description": "The Secure attribute for sensitive cookies in HTTPS sessions is not set, which could cause the user agent to send those cookies in plaintext over an HTTP session.",
+    "examples": [
+      "Set-Cookie: session=abc; HttpOnly (missing Secure)."
+    ],
+    "remediation": "Always set Secure on session/auth cookies. Pair with HttpOnly and SameSite.",
+    "references": ["https://cwe.mitre.org/data/definitions/614.html"]
+  },
+  {
+    "id": "CWE-639",
+    "name": "Authorization Bypass Through User-Controlled Key (IDOR)",
+    "description": "The system's authorization functionality does not prevent one user from gaining access to another user's data by modifying the key value identifying the data.",
+    "examples": [
+      "GET /api/orders/123 returns any order without checking ownership."
+    ],
+    "remediation": "Always check that the authenticated principal owns or is otherwise authorized for the requested object. Use indirect references where appropriate.",
+    "references": ["https://cwe.mitre.org/data/definitions/639.html"]
+  },
+  {
+    "id": "CWE-643",
+    "name": "Improper Neutralization of Data within XPath Expressions ('XPath Injection')",
+    "description": "The product constructs all or part of an XPath expression using externally-influenced input but does not neutralize special elements that could modify the intended XPath expression.",
+    "examples": [
+      "//user[name='\" + name + \"'] with attacker-controlled name."
+    ],
+    "remediation": "Use parameterized XPath or escape all metacharacters.",
+    "references": ["https://cwe.mitre.org/data/definitions/643.html"]
+  },
+  {
+    "id": "CWE-682",
+    "name": "Incorrect Calculation",
+    "description": "The product performs a calculation that generates incorrect or unintended results that are later used in security-critical decisions or resource management.",
+    "examples": [
+      "Off-by-one in a buffer size calculation."
+    ],
+    "remediation": "Add unit tests around edge cases. Use safe arithmetic types when overflow is possible.",
+    "references": ["https://cwe.mitre.org/data/definitions/682.html"]
+  },
+  {
+    "id": "CWE-693",
+    "name": "Protection Mechanism Failure",
+    "description": "The product does not use or incorrectly uses a protection mechanism that provides sufficient defense against directed attacks against the product.",
+    "examples": [
+      "Disabling SELinux to make a service work."
+    ],
+    "remediation": "Treat security mechanisms as non-negotiable. If a control gets in the way, fix the application rather than disabling the control.",
+    "references": ["https://cwe.mitre.org/data/definitions/693.html"]
+  },
+  {
+    "id": "CWE-703",
+    "name": "Improper Check or Handling of Exceptional Conditions",
+    "description": "The product does not properly anticipate or handle exceptional conditions that rarely occur during normal operation of the product.",
+    "examples": [
+      "Swallowing all exceptions with a bare except: pass."
+    ],
+    "remediation": "Handle errors at the right layer with appropriate granularity. Log and surface unexpected conditions; do not silently fail.",
+    "references": ["https://cwe.mitre.org/data/definitions/703.html", "OWASP Top 10 2025 A10"]
+  },
+  {
+    "id": "CWE-732",
+    "name": "Incorrect Permission Assignment for Critical Resource",
+    "description": "The product specifies permissions for a security-critical resource in a way that allows the resource to be read or modified by unintended actors.",
+    "examples": [
+      "Writing a key file with 0644.",
+      "S3 bucket policy granting s3:* to '*'."
+    ],
+    "remediation": "Restrict permissions on creation. Audit ACLs and bucket policies regularly.",
+    "references": ["https://cwe.mitre.org/data/definitions/732.html"]
+  },
+  {
+    "id": "CWE-754",
+    "name": "Improper Check for Unusual or Exceptional Conditions",
+    "description": "The product does not check or improperly checks for unusual or exceptional conditions that are not expected to occur frequently during day-to-day operation.",
+    "examples": [
+      "Ignoring the return value of a security-critical call."
+    ],
+    "remediation": "Check every return value that can fail. Use language features (Result types, exceptions) that make ignoring failures hard.",
+    "references": ["https://cwe.mitre.org/data/definitions/754.html"]
+  },
+  {
+    "id": "CWE-755",
+    "name": "Improper Handling of Exceptional Conditions",
+    "description": "The product does not handle or incorrectly handles an exceptional condition.",
+    "examples": [
+      "Crashing on malformed input instead of returning an error."
+    ],
+    "remediation": "Define explicit failure modes. Default to safe (closed) behavior on error.",
+    "references": ["https://cwe.mitre.org/data/definitions/755.html", "OWASP Top 10 2025 A10"]
+  },
+  {
+    "id": "CWE-770",
+    "name": "Allocation of Resources Without Limits or Throttling",
+    "description": "The product allocates a reusable resource or group of resources on behalf of an actor without imposing any restrictions on the size or number of resources that can be allocated, in violation of the intended security policy for that actor.",
+    "examples": [
+      "Per-request unbounded JSON parsing.",
+      "Spawning a worker thread for every connection."
+    ],
+    "remediation": "Cap allocations. Apply per-tenant quotas. Use bounded queues and worker pools.",
+    "references": ["https://cwe.mitre.org/data/definitions/770.html"]
+  },
+  {
+    "id": "CWE-787",
+    "name": "Out-of-bounds Write",
+    "description": "The product writes data past the end, or before the beginning, of the intended buffer.",
+    "examples": [
+      "strcpy(dst, src) when src is longer than dst."
+    ],
+    "remediation": "Use bounds-checked APIs. Prefer memory-safe languages or vetted safe wrappers. Enable compiler hardening (stack canaries, FORTIFY_SOURCE).",
+    "references": ["https://cwe.mitre.org/data/definitions/787.html"]
+  },
+  {
+    "id": "CWE-798",
+    "name": "Use of Hard-coded Credentials",
+    "description": "The product contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data.",
+    "examples": [
+      "const DB_PASSWORD = 'admin123' in source.",
+      "API tokens committed to git."
+    ],
+    "remediation": "Load credentials from environment variables or a secrets manager. Rotate any credential that has been committed.",
+    "references": ["https://cwe.mitre.org/data/definitions/798.html"]
+  },
+  {
+    "id": "CWE-799",
+    "name": "Improper Control of Interaction Frequency",
+    "description": "The product does not properly limit the number or frequency of interactions that it has with an actor, such as the number of incoming requests.",
+    "examples": [
+      "No rate limit on a password reset endpoint."
+    ],
+    "remediation": "Apply rate limits per identity and per IP. Use exponential backoff for failures.",
+    "references": ["https://cwe.mitre.org/data/definitions/799.html"]
+  },
+  {
+    "id": "CWE-829",
+    "name": "Inclusion of Functionality from Untrusted Control Sphere",
+    "description": "The product imports, requires, or includes executable functionality (such as a library) from a source that is outside of the intended control sphere.",
+    "examples": [
+      "Loading a script from a CDN with no integrity attribute.",
+      "Installing dependencies from a pinned-by-tag git URL."
+    ],
+    "remediation": "Pin by hash/integrity. Mirror dependencies internally. Verify signatures.",
+    "references": ["https://cwe.mitre.org/data/definitions/829.html"]
+  },
+  {
+    "id": "CWE-840",
+    "name": "Business Logic Errors",
+    "description": "Weaknesses in this category identify some of the underlying problems that commonly allow attackers to manipulate the business logic of an application.",
+    "examples": [
+      "Negative quantity in a refund endpoint crediting the attacker.",
+      "Coupon code that stacks with itself for 100% discount."
+    ],
+    "remediation": "Model invariants explicitly and assert them server-side. Threat-model each workflow.",
+    "references": ["https://cwe.mitre.org/data/definitions/840.html"]
+  },
+  {
+    "id": "CWE-862",
+    "name": "Missing Authorization",
+    "description": "The product does not perform an authorization check when an actor attempts to access a resource or perform an action.",
+    "examples": [
+      "An endpoint with @login_required but no role check on a privileged action."
+    ],
+    "remediation": "Require authorization on every privileged action. Default-deny and enumerate allowed roles.",
+    "references": ["https://cwe.mitre.org/data/definitions/862.html"]
+  },
+  {
+    "id": "CWE-863",
+    "name": "Incorrect Authorization",
+    "description": "The product performs an authorization check when an actor attempts to access a resource or perform an action, but it does not correctly perform the check.",
+    "examples": [
+      "Checking that user.role == 'admin' but allowing the client to set their own role on login."
+    ],
+    "remediation": "Centralize authorization logic. Test for privilege escalation paths explicitly.",
+    "references": ["https://cwe.mitre.org/data/definitions/863.html"]
+  },
+  {
+    "id": "CWE-915",
+    "name": "Improperly Controlled Modification of Dynamically-Determined Object Attributes",
+    "description": "The product receives input from an upstream component that specifies multiple attributes, properties, or fields that are to be initialized or updated in an object, but it does not properly control which attributes can be modified.",
+    "examples": [
+      "Object.assign(user, req.body) allowing the client to set user.isAdmin (mass assignment)."
+    ],
+    "remediation": "Allowlist the fields that can be updated per endpoint. Use schemas to deserialize, not free-form merges.",
+    "references": ["https://cwe.mitre.org/data/definitions/915.html"]
+  },
+  {
+    "id": "CWE-916",
+    "name": "Use of Password Hash With Insufficient Computational Effort",
+    "description": "The product generates a hash for a password, but it uses a scheme that does not provide a sufficient level of computational effort that would make password cracking attacks infeasible or expensive.",
+    "examples": [
+      "Hashing passwords with raw SHA-256 or MD5."
+    ],
+    "remediation": "Use Argon2id, scrypt, or bcrypt with appropriate parameters. Re-hash on parameter upgrades.",
+    "references": ["https://cwe.mitre.org/data/definitions/916.html"]
+  },
+  {
+    "id": "CWE-918",
+    "name": "Server-Side Request Forgery (SSRF)",
+    "description": "The web server receives a URL or similar request from an upstream component and retrieves the contents of this URL, but it does not sufficiently ensure that the request is being sent to the expected destination.",
+    "examples": [
+      "fetch(req.body.url) reaching the cloud metadata service (169.254.169.254).",
+      "Webhook configuration that lets the user point at internal services."
+    ],
+    "remediation": "Allowlist hostnames and resolve+verify the IP at fetch time. Block link-local, loopback, and private ranges. Disable redirects or revalidate each hop.",
+    "references": ["https://cwe.mitre.org/data/definitions/918.html", "OWASP Top 10 2025 A01"]
+  },
+  {
+    "id": "CWE-924",
+    "name": "Improper Enforcement of Message Integrity During Transmission",
+    "description": "The product establishes a communication channel with an endpoint and receives a message from that endpoint, but it does not sufficiently ensure that the message was not modified during transmission.",
+    "examples": [
+      "Trusting payloads received over plain HTTP."
+    ],
+    "remediation": "Use TLS for transport and HMAC or signatures for end-to-end integrity where intermediaries cannot be trusted.",
+    "references": ["https://cwe.mitre.org/data/definitions/924.html"]
+  },
+  {
+    "id": "CWE-1004",
+    "name": "Sensitive Cookie Without 'HttpOnly' Flag",
+    "description": "The product uses a cookie to store sensitive information, but the cookie is not marked with the HttpOnly flag.",
+    "examples": [
+      "Set-Cookie: session=abc; Secure (missing HttpOnly)."
+    ],
+    "remediation": "Set HttpOnly on session cookies and any cookie carrying authentication state.",
+    "references": ["https://cwe.mitre.org/data/definitions/1004.html"]
+  },
+  {
+    "id": "CWE-1021",
+    "name": "Improper Restriction of Rendered UI Layers or Frames",
+    "description": "The web application does not restrict or incorrectly restricts frame objects or UI layers that belong to another application or domain.",
+    "examples": [
+      "An app reachable inside an attacker's iframe with no clickjacking protection."
+    ],
+    "remediation": "Set Content-Security-Policy: frame-ancestors and X-Frame-Options: DENY (or SAMEORIGIN) as appropriate.",
+    "references": ["https://cwe.mitre.org/data/definitions/1021.html"]
+  },
+  {
+    "id": "CWE-1104",
+    "name": "Use of Unmaintained Third Party Components",
+    "description": "The product relies on third-party components that are not actively supported or maintained by the original developer or a trusted proxy for the original developer.",
+    "examples": [
+      "Depending on a package with no commits in 5+ years and known CVEs."
+    ],
+    "remediation": "Track maintenance status. Plan migrations off abandoned dependencies. Prefer libraries with active security response.",
+    "references": ["https://cwe.mitre.org/data/definitions/1104.html"]
+  },
+  {
+    "id": "CWE-1188",
+    "name": "Insecure Default Initialization of Resource",
+    "description": "The product initializes or sets a resource with a default that is intended to be changed by the administrator, but the default is not secure.",
+    "examples": [
+      "Shipping a service with a default admin password.",
+      "Default-allow firewall rules."
+    ],
+    "remediation": "Ship secure-by-default configurations. Force administrators to set credentials at first boot.",
+    "references": ["https://cwe.mitre.org/data/definitions/1188.html"]
+  },
+  {
+    "id": "CWE-1230",
+    "name": "Exposure of Sensitive Information Through Metadata",
+    "description": "The product prevents direct access to a resource containing sensitive information, but it does not sufficiently limit access to metadata that is derived from the original information.",
+    "examples": [
+      "EXIF GPS coordinates exposed via image previews.",
+      "Filenames revealing internal project codenames."
+    ],
+    "remediation": "Strip metadata at ingest. Treat derived data with the same classification as the source.",
+    "references": ["https://cwe.mitre.org/data/definitions/1230.html"]
+  },
+  {
+    "id": "CWE-1236",
+    "name": "Improper Neutralization of Formula Elements in a CSV File",
+    "description": "The product saves user-provided information into a Comma-Separated Value (CSV) file, but it does not neutralize or incorrectly neutralizes special elements that could be interpreted as a command when the file is opened by a spreadsheet product (CSV injection).",
+    "examples": [
+      "A name field set to '=cmd|...' that executes when the CSV is opened in Excel."
+    ],
+    "remediation": "Prefix any field that begins with =, +, -, @ with a single quote, or reject those characters at the boundary.",
+    "references": ["https://cwe.mitre.org/data/definitions/1236.html"]
+  },
+  {
+    "id": "CWE-1275",
+    "name": "Sensitive Cookie with Improper SameSite Attribute",
+    "description": "The SameSite attribute for sensitive cookies is not set, or an insecure value is used.",
+    "examples": [
+      "Auth cookie with SameSite=None and no other CSRF mitigation."
+    ],
+    "remediation": "Default to SameSite=Lax for session cookies. Use Strict where workflows allow.",
+    "references": ["https://cwe.mitre.org/data/definitions/1275.html"]
+  },
+  {
+    "id": "CWE-1321",
+    "name": "Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')",
+    "description": "The product receives input from an upstream component that specifies attributes that are to be initialized or updated in an object, but it does not properly control modifications of attributes of the object prototype.",
+    "examples": [
+      "Recursive merge that walks into __proto__ keys."
+    ],
+    "remediation": "Use Object.create(null) for data maps. Reject __proto__, constructor, and prototype keys in deserialization. Prefer Map over plain objects.",
+    "references": ["https://cwe.mitre.org/data/definitions/1321.html"]
+  },
+  {
+    "id": "CWE-1333",
+    "name": "Inefficient Regular Expression Complexity (ReDoS)",
+    "description": "The product uses a regular expression with an inefficient, possibly exponential worst-case computational complexity that consumes excessive CPU cycles when input strings are crafted to cause excessive backtracking.",
+    "examples": [
+      "/^(a+)+$/ tested against 'aaaa...!'.",
+      "Nested quantifiers in user-driven regex."
+    ],
+    "remediation": "Audit regexes for catastrophic backtracking. Use linear-time engines (RE2, Hyperscan) or apply input length limits.",
+    "references": ["https://cwe.mitre.org/data/definitions/1333.html"]
+  },
+  {
+    "id": "CWE-1395",
+    "name": "Dependency on Vulnerable Third-Party Component",
+    "description": "The product has a dependency on a third-party component that contains one or more known vulnerabilities.",
+    "examples": [
+      "An app pinning a Node module version that has a documented CVE."
+    ],
+    "remediation": "Run SCA on every PR. Maintain a patch SLA tied to severity. Keep an SBOM for downstream consumers.",
+    "references": ["https://cwe.mitre.org/data/definitions/1395.html", "OWASP Top 10 2025 A03"]
+  },
+  {
+    "id": "CWE-1426",
+    "name": "Improper Validation of Generative AI Output",
+    "description": "The product does not adequately validate or sanitize the output of a generative AI model before using it in downstream operations.",
+    "examples": [
+      "Executing shell commands generated by an LLM without review."
+    ],
+    "remediation": "Treat LLM output as untrusted user input. Validate against schemas; require human or policy approval for high-impact actions.",
+    "references": ["https://cwe.mitre.org/data/definitions/1426.html", "OWASP LLM Top 10 2025"]
+  },
+  {
+    "id": "CWE-1427",
+    "name": "Improper Neutralization of Input Used for LLM Prompting",
+    "description": "The product builds an LLM prompt using externally-influenced input but does not neutralize or incorrectly neutralizes content that could alter the prompt's intent (prompt injection).",
+    "examples": [
+      "Concatenating retrieved document text directly into a system prompt."
+    ],
+    "remediation": "Separate instruction and data channels. Apply input filtering, output validation, and least-privilege tool access. Use structured tool calls instead of free-form instructions where possible.",
+    "references": ["https://cwe.mitre.org/data/definitions/1427.html", "OWASP LLM Top 10 2025 LLM01"]
+  },
+  {
+    "id": "CWE-15",
+    "name": "External Control of System or Configuration Setting",
+    "description": "One or more system settings or configuration elements can be externally controlled by a user.",
+    "examples": [
+      "A debug flag toggleable via an unauthenticated query parameter."
+    ],
+    "remediation": "Gate configuration changes behind authentication and authorization. Restrict which settings can be changed at runtime.",
+    "references": ["https://cwe.mitre.org/data/definitions/15.html"]
+  },
+  {
+    "id": "CWE-563",
+    "name": "Assignment to Variable without Use",
+    "description": "The variable's value is assigned but never used, making it a dead store.",
+    "examples": [
+      "Clearing a secret variable by overwrite — the compiler may optimize it away."
+    ],
+    "remediation": "Use platform-provided secure-erase primitives (sodium_memzero, SecureZeroMemory).",
+    "references": ["https://cwe.mitre.org/data/definitions/563.html"]
+  },
+  {
+    "id": "CWE-209-API",
+    "name": "API Error Disclosure of Sensitive Information",
+    "description": "An API returns error responses that leak stack traces, query fragments, or internal identifiers useful for reconnaissance.",
+    "examples": [
+      "500 responses that include SQL fragments."
+    ],
+    "remediation": "Return generic error envelopes with stable codes. Log details server-side with a correlation ID.",
+    "references": ["OWASP API Security Top 10 2023", "https://cwe.mitre.org/data/definitions/209.html"]
+  },
+  {
+    "id": "CWE-565",
+    "name": "Reliance on Cookies without Validation and Integrity Checking",
+    "description": "The product relies on the existence or values of cookies when performing security-critical operations, but it does not properly ensure that the setting is valid for the associated user.",
+    "examples": [
+      "A 'role=admin' cookie set client-side and trusted server-side."
+    ],
+    "remediation": "Store identity in signed/encrypted tokens or server-side session records. Never trust client-set cookies for authorization.",
+    "references": ["https://cwe.mitre.org/data/definitions/565.html"]
+  },
+  {
+    "id": "CWE-1391",
+    "name": "Use of Weak Credentials",
+    "description": "The product uses weak credentials (such as a default key or password, or an easily guessable secret) for authentication or other security purposes.",
+    "examples": [
+      "Service account with password 'service'."
+    ],
+    "remediation": "Generate credentials with sufficient entropy. Block common/dictionary values. Enforce rotation.",
+    "references": ["https://cwe.mitre.org/data/definitions/1391.html"]
+  },
+  {
+    "id": "CWE-1390",
+    "name": "Weak Authentication",
+    "description": "The product uses an authentication mechanism that is insufficient to verify the identity of a user.",
+    "examples": [
+      "Single-factor SMS-only authentication for an admin account."
+    ],
+    "remediation": "Require phishing-resistant MFA (WebAuthn/passkeys) for high-privilege roles. Layer with risk-based signals.",
+    "references": ["https://cwe.mitre.org/data/definitions/1390.html", "OWASP Top 10 2025 A07"]
+  },
+  {
+    "id": "CWE-668",
+    "name": "Exposure of Resource to Wrong Sphere",
+    "description": "The product exposes a resource to the wrong control sphere, providing unintended actors with access to the resource.",
+    "examples": [
+      "Internal admin endpoint reachable from the public internet."
+    ],
+    "remediation": "Enforce network segmentation. Bind internal services to private interfaces.",
+    "references": ["https://cwe.mitre.org/data/definitions/668.html"]
+  },
+  {
+    "id": "CWE-1357",
+    "name": "Reliance on Insufficiently Trustworthy Component",
+    "description": "The product is built from multiple separate components, but it uses a component that is not sufficiently trusted to meet expectations for security, reliability, updatability, and maintainability.",
+    "examples": [
+      "Depending on a single-maintainer package for critical cryptographic functionality."
+    ],
+    "remediation": "Vet dependencies for active maintenance and community trust. Mirror or fork as needed; have a continuity plan.",
+    "references": ["https://cwe.mitre.org/data/definitions/1357.html"]
+  },
+  {
+    "id": "CWE-1336",
+    "name": "Improper Neutralization of Special Elements Used in a Template Engine",
+    "description": "The product uses a template engine to insert or process externally-influenced input, but it does not neutralize or incorrectly neutralizes special elements that could modify the template logic (SSTI).",
+    "examples": [
+      "Jinja2 render_template_string(user_input)."
+    ],
+    "remediation": "Treat templates as code; never compile templates from user input. Render trusted templates with data passed as variables.",
+    "references": ["https://cwe.mitre.org/data/definitions/1336.html"]
+  },
+  {
+    "id": "CWE-942",
+    "name": "Permissive Cross-domain Policy with Untrusted Domains",
+    "description": "The product uses a cross-domain policy file that includes domains that should not be trusted.",
+    "examples": [
+      "Access-Control-Allow-Origin: * with Access-Control-Allow-Credentials: true."
+    ],
+    "remediation": "Reflect a validated origin from an allowlist. Never combine wildcard origin with credentials.",
+    "references": ["https://cwe.mitre.org/data/definitions/942.html"]
+  },
+  {
+    "id": "CWE-77-LDAP",
+    "name": "Generic Injection",
+    "description": "Any context where untrusted input is combined with a structured interpreter command without separation between data and control (database, shell, expression evaluators, message queues, search engines).",
+    "examples": [
+      "Building a Solr or Elasticsearch query by concatenating user input."
+    ],
+    "remediation": "Use language-native parameterization for every downstream interpreter. Treat ad-hoc query construction as a smell.",
+    "references": ["https://cwe.mitre.org/data/definitions/77.html"]
+  },
+  {
+    "id": "CWE-1230-LOG",
+    "name": "Sensitive Information in Telemetry/Trace Data",
+    "description": "Tracing and observability pipelines may capture full URLs, headers, or request/response bodies that contain secrets.",
+    "examples": [
+      "OpenTelemetry span attributes containing Authorization headers."
+    ],
+    "remediation": "Configure SDKs to drop sensitive headers and bodies. Audit span attribute keys against an allowlist.",
+    "references": ["https://cwe.mitre.org/data/definitions/1230.html"]
+  }
+]

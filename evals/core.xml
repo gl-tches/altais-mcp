@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="core">
+  <qa_pair>
+    <question>Which security modules are currently loaded and active on this altais-mcp server? Report the server transport too.</question>
+    <tools>altais_get_config</tools>
+    <answer>altais_get_config returns the server config and an `active_modules` array listing every loaded module, plus the server `transport` (stdio or http) and `package_version`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Explain CWE-79 — what weakness is it and how do I remediate it?</question>
+    <tools>altais_explain_cwe</tools>
+    <answer>altais_explain_cwe returns the CWE-79 entry (Cross-site Scripting / improper neutralization of input during web page generation) with its name, description, examples, and remediation guidance.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Look up CWE-89 from the bundled database and give me its name and description.</question>
+    <tools>altais_explain_cwe</tools>
+    <answer>altais_explain_cwe returns the CWE-89 entry (SQL Injection / improper neutralization of special elements used in an SQL command) with name, description, examples, and remediation.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>I passed `cwe: "79"` without the CWE- prefix. Does the lookup still resolve it?</question>
+    <tools>altais_explain_cwe</tools>
+    <answer>altais_explain_cwe accepts a bare numeric id and resolves `79` to the CWE-79 entry, returning the same Cross-site Scripting record.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Look up CWE-99999, an identifier that does not exist. What happens?</question>
+    <tools>altais_explain_cwe</tools>
+    <answer>altais_explain_cwe returns an error result (`Unknown CWE`) because CWE-99999 is not in the bundled database; no entry is produced.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Score the CVSS v3.1 vector `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H` and tell me the base score and severity.</question>
+    <tools>altais_score</tools>
+    <answer>altais_score parses the v3.1 vector and returns a base score of 9.8 with a Critical qualitative severity.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What base score does the CVSS v3.1 vector `CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:L/I:N/A:N` produce?</question>
+    <tools>altais_score</tools>
+    <answer>altais_score returns a low base score (1.8) for this vector, reflecting local attack vector, high complexity, high privileges, and limited confidentiality-only impact.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>I gave the scorer the malformed string `not-a-cvss-vector`. What does it return?</question>
+    <tools>altais_score</tools>
+    <answer>altais_score returns an error result describing that the input is not a valid CVSS vector; no score is produced.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a consolidated markdown security report for everything found in this session, grouped by module.</question>
+    <tools>altais_report</tools>
+    <answer>altais_report with `format: markdown` and `group_by: module` returns a markdown report with a module-level summary table and per-module subsections of findings.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Produce the session report as JSON so I can process it programmatically.</question>
+    <tools>altais_report</tools>
+    <answer>altais_report with `format: json` returns a JSON report that includes a `by_module` breakdown of the session findings.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Give me a composite risk score (0-100) and severity breakdown for all findings collected in this session.</question>
+    <tools>altais_risk_summary</tools>
+    <answer>altais_risk_summary returns a `risk_score` between 0 and 100 plus `total`, `by_severity`, and `by_module` counts for the session's findings.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>On a fresh session with no scans run yet, what does the risk summary report?</question>
+    <tools>altais_risk_summary</tools>
+    <answer>altais_risk_summary returns a risk_score of 0 with a total of 0 findings and empty by_severity / by_module breakdowns when no findings exist.</answer>
+  </qa_pair>
+</evaluation>

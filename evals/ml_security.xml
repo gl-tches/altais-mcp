@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="ml_security">
+  <qa_pair>
+    <question>Audit this ML pipeline code for insecure model deserialization: `model = torch.load("model.pt")` with no `weights_only`.</question>
+    <tools>altais_audit_ml_pipeline</tools>
+    <answer>altais_audit_ml_pipeline reports an insecure-deserialization finding (CWE-502) for `torch.load` without `weights_only=True`.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an ML training pipeline config: `{ "config": { "data_validation": false, "data_provenance_tracked": false, "model_signed": false } }`.</question>
+    <tools>altais_audit_ml_pipeline</tools>
+    <answer>altais_audit_ml_pipeline reports findings for unvalidated training data (data poisoning, CWE-1395), missing data provenance, and an unsigned model.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an inference API: `{ "config": { "rate_limited": false, "authentication": false, "returns_logits": true } }`.</question>
+    <tools>altais_audit_inference_api</tools>
+    <answer>altais_audit_inference_api reports findings for missing rate limiting (model theft, OWASP ML05), missing authentication (CWE-306), and exposed raw logits that ease model extraction.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit a model supply chain: `{ "config": { "source": "huggingface.co/random-user/model", "format": "pickle", "signed": false, "checksum_verified": false } }`.</question>
+    <tools>altais_audit_model_supply_chain</tools>
+    <answer>altais_audit_model_supply_chain reports findings for the pickle-format model (insecure deserialization, CWE-502), the unsigned artifact (CWE-347), and the unverified checksum.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check OWASP ML Top 10 coverage: `{ "config": { "input_validation": false, "data_validation": false, "model_theft_controls": false } }`.</question>
+    <tools>altais_check_owasp_ml</tools>
+    <answer>altais_check_owasp_ml returns per-category coverage flagging ML01 Input Manipulation, ML02 Data Poisoning, and ML05 Model Theft as needing review, and emits a finding for each gap.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check OWASP LLM Top 10 coverage: `{ "config": { "prompt_injection_defenses": false, "output_pii_filtering": false, "agency_limited": false } }`.</question>
+    <tools>altais_check_llm_top10</tools>
+    <answer>altais_check_llm_top10 returns per-category coverage flagging LLM01 Prompt Injection, LLM02 Sensitive Information Disclosure, and LLM06 Excessive Agency as gaps, and emits findings for them.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit prompt handling in this code: `prompt = f"Answer the user: {user_input}"; llm.complete(prompt)`.</question>
+    <tools>altais_audit_prompt_injection</tools>
+    <answer>altais_audit_prompt_injection reports a prompt-injection finding (OWASP LLM01, CWE-1427) for the untrusted input interpolated directly into the prompt f-string.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit agent permissions: `{ "config": { "has_destructive_tools": true, "human_approval_required": false, "can_spend_money": true, "autonomous": true } }`.</question>
+    <tools>altais_audit_agent_permissions</tools>
+    <answer>altais_audit_agent_permissions reports excessive-agency findings (OWASP LLM06): destructive / money-spending actions with no human-in-the-loop approval and fully autonomous high-risk operation.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit LLM output handling in this code: `db.query("SELECT * FROM t WHERE x = '" + llmOutput + "'");`</question>
+    <tools>altais_audit_output_handling</tools>
+    <answer>altais_audit_output_handling reports a finding that model output flows unsanitized into a SQL query (SQL injection via LLM output, CWE-89, OWASP LLM05).</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit prompt handling for a system with full controls: `{ "config": { "instruction_data_separation": true, "input_filtering": true, "output_validation": true, "tool_output_sanitized": true } }`.</question>
+    <tools>altais_audit_prompt_injection</tools>
+    <answer>altais_audit_prompt_injection returns zero findings; instructions are separated from data, input is filtered, output is validated, and tool output is sanitized.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit an inference API that is fully hardened: `{ "config": { "rate_limited": true, "authentication": true, "returns_confidence_scores": false, "returns_logits": false, "input_validation": true, "monitoring": true } }`.</question>
+    <tools>altais_audit_inference_api</tools>
+    <answer>altais_audit_inference_api returns zero findings; the API is rate-limited, authenticated, validates input, has monitoring, and exposes neither confidence scores nor logits.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Audit LLM output handling for a system that HTML-encodes, parameterizes SQL, keeps output out of the shell, and schema-validates: `{ "config": { "html_encoded": true, "sql_parameterized": true, "shell_safe": true, "schema_validated": true, "treated_as_trusted": false } }`.</question>
+    <tools>altais_audit_output_handling</tools>
+    <answer>altais_audit_output_handling returns zero findings; model output is sanitized before every downstream use and is not treated as trusted.</answer>
+  </qa_pair>
+</evaluation>

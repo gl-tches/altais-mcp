@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation module="scan">
+  <qa_pair>
+    <question>Scan this Python for SQL injection: `query = "SELECT * FROM users WHERE id = '" + user_input + "'"; cursor.execute(query)`</question>
+    <tools>altais_scan_code</tools>
+    <answer>altais_scan_code detects an injection finding (SQL query built by string concatenation of untrusted input) at high/critical severity, citing CWE-89.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Does this JavaScript have an XSS issue? `document.getElementById('out').innerHTML = location.hash;`</question>
+    <tools>altais_scan_code</tools>
+    <answer>altais_scan_code reports an XSS finding for assigning untrusted input (`location.hash`) into `innerHTML`, citing CWE-79.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Scan this Node code for SSRF: `const url = req.query.target; fetch(url);`</question>
+    <tools>altais_scan_code</tools>
+    <answer>altais_scan_code reports a server-side request forgery (SSRF) finding because a user-controlled value is passed directly to `fetch`, citing CWE-918.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check this Python for path traversal: `open(os.path.join('/data', request.args['file']))`</question>
+    <tools>altais_scan_code</tools>
+    <answer>altais_scan_code reports a path-traversal finding because untrusted input is used to build a filesystem path, citing CWE-22.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Scan this clean TypeScript snippet — it should produce no findings: `export function add(a: number, b: number): number { return a + b; }`</question>
+    <tools>altais_scan_code</tools>
+    <answer>altais_scan_code returns zero findings for this benign arithmetic function; the summary total is 0.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Scan this JavaScript only for the `injection` rule category: `eval(req.body.code)` — restrict the scan to injection rules.</question>
+    <tools>altais_scan_code</tools>
+    <answer>altais_scan_code with `rules: ["injection"]` reports an injection finding for `eval` on untrusted input and emits findings only from the injection category.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Detect prototype pollution in this JavaScript: `function merge(t, s){ for (const k in s) t[k] = s[k]; }` invoked with attacker JSON.</question>
+    <tools>altais_scan_code</tools>
+    <answer>altais_scan_code reports a prototype-pollution finding for the recursive merge that copies attacker-controlled keys (e.g. `__proto__`) into a target object.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Scan a file on disk at path `src/handlers/login.ts` (relative to the configured scan_root) for security issues.</question>
+    <tools>altais_scan_file</tools>
+    <answer>altais_scan_file canonicalizes the path, confirms it is inside scan_root, reads the file, runs the scan patterns, and returns the findings with the file's detected language.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Try to scan the file `../../etc/passwd` which is outside the project. What does altais_scan_file do?</question>
+    <tools>altais_scan_file</tools>
+    <answer>altais_scan_file returns an error result stating the path escapes scan_root; it refuses to read files outside the configured scan root.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Scan this git diff and report findings only on added lines:
+```
+--- a/app.py
++++ b/app.py
+@@ -1,2 +1,3 @@
+ import os
++os.system("rm -rf " + user_dir)
+```</question>
+    <tools>altais_scan_diff</tools>
+    <answer>altais_scan_diff parses the unified diff and reports an injection / command-execution finding on the added `os.system` line that concatenates untrusted input.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Scan this diff where the only change is a comment — confirm nothing is flagged:
+```
+--- a/util.go
++++ b/util.go
+@@ -1,1 +1,2 @@
+ package util
++// helper utilities
+```</question>
+    <tools>altais_scan_diff</tools>
+    <answer>altais_scan_diff returns zero findings; the added line is only a comment and overlaps no vulnerable pattern.</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Scan this Rust for an insecure deserialization or unsafe-input issue: `let cfg: Config = serde_yaml::from_str(&amp;untrusted).unwrap();` — provide language hint rust.</question>
+    <tools>altais_scan_code</tools>
+    <answer>altais_scan_code with `language: "rust"` runs the Rust patterns and reports any deserialization / exceptional-conditions finding (e.g. unchecked `unwrap` on untrusted parse) it matches.</answer>
+  </qa_pair>
+</evaluation>
