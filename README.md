@@ -1,4 +1,5 @@
 # altais-mcp
+> **Why "Altais"?** Altais (δ Draconis) is a star in the tail of Draco, the dragon constellation that wraps around the north celestial pole. In Greek mythology, Draco was the guardian that never slept. The name felt right for a security tool, something that sits quietly in the background, watching everything that passes through.
 
 **altais-mcp** is a modular, open-source [Model Context Protocol](https://modelcontextprotocol.io) server that provides comprehensive security analysis for AI coding agents. It exposes 132 tools across 24 modules: agents call them to scan code, model threats, audit dependencies, verify compliance, and generate remediation guidance. Every tool is **read-only** (`readOnlyHint: true`) — altais-mcp analyzes code, configuration, and architecture; it never modifies, executes, or transmits the code it inspects.
 
