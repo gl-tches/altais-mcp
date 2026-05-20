@@ -279,9 +279,9 @@ Adding a new module? See the [Module Development guide](./wiki/Module-Developmen
 | Document                                                       | Contents                                                              |
 | -------------------------------------------------------------- | --------------------------------------------------------------------- |
 | [Project wiki](./wiki/Home.md)                                 | A reference page for every tool, module pages, and how-to guides      |
-| [`wiki/Module-Development.md`](./wiki/Module-Development.md)    | Guide for contributors adding a new module                            |
+| [`wiki/Module-Development.md`](./wiki/Module-Development.md)   | Guide for contributors adding a new module                            |
 | [`wiki/Deployment.md`](./wiki/Deployment.md)                   | Deploying altais-mcp (stdio, HTTP, Docker, systemd)                   |
 | [`wiki/Contributing.md`](./wiki/Contributing.md)               | Branch naming, commit conventions, and the PR process                 |
 | [`SECURITY.md`](./SECURITY.md)                                 | Threat model, the nine security rules, vulnerability reporting        |
 | [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.0.0)                                     |
-| `altais-mcp-architecture.md`                                   | Full module tree, tool tables, and phase plan                         |
+| [`altais-mcp-architecture.md`](altais-mcp-architecture.md)     | Full module tree, tool tables, and phase plan                         |
