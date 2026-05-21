@@ -1,6 +1,6 @@
 {
   "name": "altais-mcp",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "Modular, open-source MCP server providing comprehensive security analysis for AI coding agents.",
   "type": "module",
   "license": "MIT",
