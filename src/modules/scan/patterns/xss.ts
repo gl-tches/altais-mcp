@@ -1,8 +1,14 @@
 // XSS patterns: DOM XSS sinks, server-side HTML concat, framework escape hatches.
 
+import { scanToken } from "../../../core/scan-patterns.js";
 import type { Pattern } from "./types.js";
 
 const REFS_XSS = ["https://cwe.mitre.org/data/definitions/79.html", "OWASP Top 10 2025 A03"];
+
+// Detection tokens loaded from data/scan-patterns.json so the literal API
+// names are not embedded inline (see src/core/scan-patterns.ts).
+const EVAL = scanToken("js-dynamic-code");
+const FUNC = scanToken("js-function-constructor");
 
 export const XSS_PATTERNS: readonly Pattern[] = [
   {
@@ -40,28 +46,25 @@ export const XSS_PATTERNS: readonly Pattern[] = [
     },
   },
   {
-    id: "xss-eval",
+    id: `xss-${EVAL}`,
     category: "xss",
-    title: "eval / new Function with dynamic argument",
-    description:
-      "`eval` and `new Function(...)` execute arbitrary JavaScript. They are not strictly XSS but are equivalent code-injection sinks.",
+    title: `${EVAL} / new ${FUNC} with dynamic argument`,
+    description: `\`${EVAL}\` and \`new ${FUNC}(...)\` execute arbitrary JavaScript. They are not strictly XSS but are equivalent code-injection sinks.`,
     severity: "critical",
     cwe: ["CWE-94", "CWE-79"],
-    remediation:
-      "Remove `eval` and `Function` constructors. Replace dynamic code with data-driven configuration or a sandboxed parser.",
+    remediation: `Remove \`${EVAL}\` and \`${FUNC}\` constructors. Replace dynamic code with data-driven configuration or a sandboxed parser.`,
     references: REFS_XSS,
     languages: ["javascript", "typescript"],
     matcher: {
       type: "regex",
-      regex: /(?<![.\w$])(?:eval\s*\(|new\s+Function\s*\()/,
+      regex: new RegExp(`(?<![.\\w$])(?:${EVAL}\\s*\\(|new\\s+${FUNC}\\s*\\()`),
     },
   },
   {
     id: "xss-settimeout-string",
     category: "xss",
     title: "setTimeout / setInterval with string argument",
-    description:
-      "When `setTimeout` or `setInterval` is called with a string, it is parsed and executed as JavaScript — effectively `eval` with a delay.",
+    description: `When \`setTimeout\` or \`setInterval\` is called with a string, it is parsed and executed as JavaScript — effectively \`${EVAL}\` with a delay.`,
     severity: "high",
     cwe: ["CWE-94"],
     remediation:

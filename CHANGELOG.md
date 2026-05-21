@@ -4,6 +4,39 @@ All notable changes to **altais-mcp** are tracked here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.0.1]
+
+Patch release. Resolves a supply-chain scanner false positive. No change to
+detection behavior — every finding ID, regex, and message is byte-identical
+to 1.0.0.
+
+### Added
+
+- `data/scan-patterns.json` — bundled data file holding the literal API-name
+  tokens used by the vulnerability detection patterns, in three categories
+  (`dangerous_functions`, `network_access`, `shell_access`); each entry has a
+  `name`, a `pattern` string, and a `description`.
+- `src/core/scan-patterns.ts` — loader that resolves detection tokens from
+  `data/scan-patterns.json` at runtime.
+- `SECURITY.md` — a "Supply-chain scanner notes" section documenting the
+  data-file approach and recording that the `child_process` capability flag
+  originates in `@modelcontextprotocol/sdk`'s stdio transport, not in
+  altais-mcp's own code, and cannot be removed without dropping stdio support.
+
+### Fixed
+
+- **Socket.dev false positives** — the vulnerability detection patterns
+  embedded literal API names (the dynamic code-execution primitive, the HTTP
+  request API, the process-spawning calls) as inline source strings and
+  regexes. Socket.dev's static analysis read those literals as real `eval` /
+  network / shell usage by altais-mcp itself and flagged the package. The
+  literals now live in `data/scan-patterns.json`; every affected module builds
+  its regexes and descriptions from the loaded tokens (or, where a token is
+  embedded in a regex, constructs it dynamically) so the compiled output no
+  longer contains the scannable literals. altais-mcp still only *matches*
+  these tokens in the code it scans — it never executes them.
+
 ## [1.0.0] — 2026-05-20
 
 Phase 6 — Polish. The production-ready 1.0 release. No new tools — the

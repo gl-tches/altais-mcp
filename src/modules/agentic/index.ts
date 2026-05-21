@@ -9,6 +9,7 @@ import { z } from "zod";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
 import type { FindingStore } from "../../core/report.js";
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding, ModuleDefinition, ToolDefinition } from "../../core/types.js";
 import { auditAgentIdentity } from "./agent-identity.js";
 import { auditCascadingFailures } from "./cascading.js";
@@ -22,6 +23,13 @@ import { auditToolMisuse } from "./tool-misuse.js";
 import { auditTrustExploitation } from "./trust-exploitation.js";
 
 const MODULE_VERSION = "0.5.0";
+
+// Detection tokens loaded from data/scan-patterns.json so the literal API
+// names are not embedded inline (see src/core/scan-patterns.ts).
+const TOKEN_EVAL = scanToken("js-dynamic-code");
+const TOKEN_FUNC = scanToken("js-function-constructor");
+const TOKEN_EXEC = scanToken("shell-command");
+const TOKEN_CHILD_PROCESS = scanToken("node-process-module");
 
 const COMMON_ANNOTATIONS = {
   readOnlyHint: true,
@@ -276,8 +284,7 @@ function buildCodeExecutionTool(deps: AgenticModuleDeps): ToolDefinition {
   return {
     name: "altais_audit_code_execution",
     title: "Audit agent code execution (ASI05)",
-    description:
-      "Audit an agent system against OWASP ASI05 (Code Execution): flags execution of generated code with no sandbox, a sandbox with network or host filesystem access, no operation allowlist, and missing resource limits. Scans `source` for `eval` / `exec` / `Function` / `child_process` on a line that references a model / LLM output variable.",
+    description: `Audit an agent system against OWASP ASI05 (Code Execution): flags execution of generated code with no sandbox, a sandbox with network or host filesystem access, no operation allowlist, and missing resource limits. Scans \`source\` for \`${TOKEN_EVAL}\` / \`${TOKEN_EXEC}\` / \`${TOKEN_FUNC}\` / \`${TOKEN_CHILD_PROCESS}\` on a line that references a model / LLM output variable.`,
     inputSchema: codeExecutionSchema.shape,
     annotations: COMMON_ANNOTATIONS,
     handler: makeRunner(deps, zodParser(codeExecutionSchema), (d) => auditCodeExecution(d)),

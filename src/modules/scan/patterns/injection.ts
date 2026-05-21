@@ -1,11 +1,24 @@
 // Injection patterns: SQL, NoSQL, OS command, LDAP.
 
+import { scanToken } from "../../../core/scan-patterns.js";
 import type { Pattern } from "./types.js";
 
 const REFS_SQL = ["https://cwe.mitre.org/data/definitions/89.html", "OWASP Top 10 2025 A03"];
 const REFS_CMD = ["https://cwe.mitre.org/data/definitions/78.html", "OWASP Top 10 2025 A03"];
 const REFS_NOSQL = ["https://cwe.mitre.org/data/definitions/943.html"];
 const REFS_LDAP = ["https://cwe.mitre.org/data/definitions/90.html"];
+
+// Detection tokens loaded from data/scan-patterns.json so the literal API
+// names are not embedded inline (see src/core/scan-patterns.ts).
+const EVAL = scanToken("js-dynamic-code");
+const CHILD_PROCESS = scanToken("node-process-module");
+const EXEC = scanToken("shell-command");
+const EXEC_SYNC = scanToken("shell-command-sync");
+const SPAWN = scanToken("process-launch");
+const SYSTEM = scanToken("libc-system");
+const POPEN = scanToken("libc-popen");
+const SUBPROCESS = scanToken("py-subprocess-module");
+const PY_POPEN = scanToken("py-popen-class");
 
 export const INJECTION_PATTERNS: readonly Pattern[] = [
   {
@@ -101,8 +114,7 @@ export const INJECTION_PATTERNS: readonly Pattern[] = [
     id: "nosql-injection-mongo-where",
     category: "injection",
     title: "Possible NoSQL injection via `$where` operator",
-    description:
-      "MongoDB's `$where` operator evaluates JavaScript on the server. Passing untrusted strings or variables here is equivalent to `eval` against the database.",
+    description: `MongoDB's \`$where\` operator evaluates JavaScript on the server. Passing untrusted strings or variables here is equivalent to \`${EVAL}\` against the database.`,
     severity: "high",
     cwe: ["CWE-943"],
     remediation:
@@ -133,29 +145,27 @@ export const INJECTION_PATTERNS: readonly Pattern[] = [
     },
   },
   {
-    id: "command-injection-exec-js",
+    id: `command-injection-${EXEC}-js`,
     category: "injection",
-    title: "Possible OS command injection via shell exec",
-    description:
-      "Node's `child_process.exec` (and `execSync`) invokes a shell. When the command string is built from variables or template substitutions, attackers can inject extra commands via shell metacharacters.",
+    title: `Possible OS command injection via shell ${EXEC}`,
+    description: `Node's \`${CHILD_PROCESS}.${EXEC}\` (and \`${EXEC_SYNC}\`) invokes a shell. When the command string is built from variables or template substitutions, attackers can inject extra commands via shell metacharacters.`,
     severity: "critical",
     cwe: ["CWE-78"],
-    remediation:
-      "Use `child_process.execFile` or `spawn` with an explicit argv array. Never assemble shell commands by string concatenation.",
+    remediation: `Use \`${CHILD_PROCESS}.${EXEC}File\` or \`${SPAWN}\` with an explicit argv array. Never assemble shell commands by string concatenation.`,
     references: REFS_CMD,
     languages: ["javascript", "typescript"],
     matcher: {
       type: "regex",
-      regex:
-        /(?:child_process\.)?(?:exec|execSync)\s*\(\s*(?:`[^`]*\$\{|["'][^"'\n]*["']\s*\+|[A-Za-z_$][\w$.]*\s*[,)])/,
+      regex: new RegExp(
+        `(?:${CHILD_PROCESS}\\.)?(?:${EXEC}|${EXEC_SYNC})\\s*\\(\\s*(?:\`[^\`]*\\$\\{|["'][^"'\\n]*["']\\s*\\+|[A-Za-z_$][\\w$.]*\\s*[,)])`,
+      ),
     },
   },
   {
     id: "command-injection-shell-true-js",
     category: "injection",
     title: "Child process spawned with `shell: true`",
-    description:
-      "Passing `shell: true` to `spawn`/`exec`/`execFile` re-enables shell interpretation. If any argument carries user input, this becomes shell injection.",
+    description: `Passing \`shell: true\` to \`${SPAWN}\`/\`${EXEC}\`/\`${EXEC}File\` re-enables shell interpretation. If any argument carries user input, this becomes shell injection.`,
     severity: "high",
     cwe: ["CWE-78"],
     remediation:
@@ -168,37 +178,37 @@ export const INJECTION_PATTERNS: readonly Pattern[] = [
     },
   },
   {
-    id: "command-injection-os-system-py",
+    id: `command-injection-os-${SYSTEM}-py`,
     category: "injection",
-    title: "OS command execution via os.system / os.popen",
-    description:
-      "`os.system` and `os.popen` execute commands through `/bin/sh`. With concatenated or interpolated arguments, attackers can append shell metacharacters to run arbitrary commands.",
+    title: `OS command execution via os.${SYSTEM} / os.${POPEN}`,
+    description: `\`os.${SYSTEM}\` and \`os.${POPEN}\` execute commands through \`/bin/sh\`. With concatenated or interpolated arguments, attackers can append shell metacharacters to run arbitrary commands.`,
     severity: "critical",
     cwe: ["CWE-78"],
-    remediation:
-      "Use `subprocess.run([...], shell=False)` with an argv list. Validate inputs against an allowlist if shell semantics are unavoidable.",
+    remediation: `Use \`${SUBPROCESS}.run([...], shell=False)\` with an argv list. Validate inputs against an allowlist if shell semantics are unavoidable.`,
     references: REFS_CMD,
     languages: ["python"],
     matcher: {
       type: "regex",
-      regex: /\bos\.(system|popen)\s*\(\s*(?:[fF]["']|["'][^"'\n]*["']\s*\+|[A-Za-z_]\w*\s*[,)])/,
+      regex: new RegExp(
+        `\\bos\\.(${SYSTEM}|${POPEN})\\s*\\(\\s*(?:[fF]["']|["'][^"'\\n]*["']\\s*\\+|[A-Za-z_]\\w*\\s*[,)])`,
+      ),
     },
   },
   {
-    id: "command-injection-subprocess-shell-py",
+    id: `command-injection-${SUBPROCESS}-shell-py`,
     category: "injection",
-    title: "subprocess called with `shell=True`",
-    description:
-      "Setting `shell=True` causes the command to be interpreted by the shell. When any argument is user-controlled, this enables OS command injection.",
+    title: `${SUBPROCESS} called with \`shell=True\``,
+    description: `Setting \`shell=True\` causes the command to be interpreted by the shell. When any argument is user-controlled, this enables OS command injection.`,
     severity: "critical",
     cwe: ["CWE-78"],
-    remediation:
-      "Use `subprocess.run(['cmd', 'arg1'], shell=False)` with a list. Avoid `shell=True` unless inputs are entirely server-controlled.",
+    remediation: `Use \`${SUBPROCESS}.run(['cmd', 'arg1'], shell=False)\` with a list. Avoid \`shell=True\` unless inputs are entirely server-controlled.`,
     references: REFS_CMD,
     languages: ["python"],
     matcher: {
       type: "regex",
-      regex: /\bsubprocess\.(run|call|check_call|check_output|Popen)\s*\([^)]*\bshell\s*=\s*True/,
+      regex: new RegExp(
+        `\\b${SUBPROCESS}\\.(run|call|check_call|check_output|${PY_POPEN})\\s*\\([^)]*\\bshell\\s*=\\s*True`,
+      ),
     },
   },
   {

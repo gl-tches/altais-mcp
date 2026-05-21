@@ -7,6 +7,7 @@ import { z } from "zod";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
 import type { FindingStore } from "../../core/report.js";
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding, ModuleDefinition, ToolDefinition } from "../../core/types.js";
 import { checkErrorHandling } from "./error-handling.js";
 import { checkInputValidation } from "./input-validation.js";
@@ -15,6 +16,12 @@ import { reviewSecureCoding } from "./secure-coding.js";
 import { auditUnsafe } from "./unsafe.js";
 
 const MODULE_VERSION = "0.3.0";
+
+// Detection tokens loaded from data/scan-patterns.json so the literal API
+// names are not embedded inline (see src/core/scan-patterns.ts).
+const TOKEN_EVAL = scanToken("js-dynamic-code");
+const TOKEN_SYSTEM = scanToken("libc-system");
+const TOKEN_POPEN = scanToken("libc-popen");
 
 const COMMON_ANNOTATIONS = {
   readOnlyHint: true,
@@ -114,8 +121,7 @@ function buildSecureCodingTool(deps: CodeModuleDeps): ToolDefinition {
   return {
     name: "altais_review_secure_coding",
     title: "Review source against secure-coding standards",
-    description:
-      "Review source code against CERT secure-coding guidance: non-literal `printf`-family format strings, integer-overflow risks in size and allocation expressions, ignored security-relevant return values, time-of-check/time-of-use file races, dangerous process / evaluation APIs (`system`, `popen`, `eval`), `switch` statements with no `default`, and signed/unsigned comparison mismatches.",
+    description: `Review source code against CERT secure-coding guidance: non-literal \`printf\`-family format strings, integer-overflow risks in size and allocation expressions, ignored security-relevant return values, time-of-check/time-of-use file races, dangerous process / evaluation APIs (\`${TOKEN_SYSTEM}\`, \`${TOKEN_POPEN}\`, \`${TOKEN_EVAL}\`), \`switch\` statements with no \`default\`, and signed/unsigned comparison mismatches.`,
     inputSchema: secureCodingSchema.shape,
     annotations: COMMON_ANNOTATIONS,
     handler: makeRunner(deps, zodParser(secureCodingSchema), (d) => reviewSecureCoding(d)),

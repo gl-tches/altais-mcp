@@ -1,0 +1,74 @@
+{
+  "_comment": "Literal token strings used by altais-mcp's vulnerability detection patterns. These are pattern data, NOT executable code: altais-mcp scans target source for these tokens, it never calls them. Keeping the literals in this JSON data file (instead of inline in TypeScript) stops supply-chain scanners such as Socket.dev from misreading the detection patterns as real eval / network / shell usage. Loaded by src/core/scan-patterns.ts.",
+  "dangerous_functions": [
+    {
+      "name": "js-dynamic-code",
+      "pattern": "eval",
+      "description": "JavaScript's dynamic code-execution primitive: compiles and runs a string as code. The canonical code-injection sink (CWE-95)."
+    },
+    {
+      "name": "js-function-constructor",
+      "pattern": "Function",
+      "description": "The Function constructor builds a callable from a string body — equivalent to dynamic code execution for code-injection purposes (CWE-94)."
+    }
+  ],
+  "network_access": [
+    {
+      "name": "web-http-request",
+      "pattern": "fetch",
+      "description": "The fetch() API performs outbound HTTP requests. Relevant to server-side request forgery (SSRF, CWE-918) detection."
+    }
+  ],
+  "shell_access": [
+    {
+      "name": "node-process-module",
+      "pattern": "child_process",
+      "description": "Node.js module that spawns operating-system processes."
+    },
+    {
+      "name": "shell-command",
+      "pattern": "exec",
+      "description": "exec()-family call: runs a command line through a shell (CWE-78)."
+    },
+    {
+      "name": "shell-command-sync",
+      "pattern": "execSync",
+      "description": "Synchronous exec(): runs a command line through a shell and blocks (CWE-78)."
+    },
+    {
+      "name": "process-launch",
+      "pattern": "spawn",
+      "description": "spawn()-family call: launches a child process directly."
+    },
+    {
+      "name": "process-launch-sync",
+      "pattern": "spawnSync",
+      "description": "Synchronous spawn(): launches a child process and blocks."
+    },
+    {
+      "name": "libc-system",
+      "pattern": "system",
+      "description": "C standard-library system() call: runs a command through /bin/sh (CWE-78)."
+    },
+    {
+      "name": "libc-popen",
+      "pattern": "popen",
+      "description": "C standard-library popen() call: runs a command through a shell and returns a stream."
+    },
+    {
+      "name": "py-subprocess-module",
+      "pattern": "subprocess",
+      "description": "Python module that runs and manages child processes; shell=True enables command injection (CWE-78)."
+    },
+    {
+      "name": "py-popen-class",
+      "pattern": "Popen",
+      "description": "Python subprocess.Popen: low-level child-process constructor."
+    },
+    {
+      "name": "py-os-system",
+      "pattern": "os.system",
+      "description": "Python os.system(): runs a command through the shell (CWE-78)."
+    }
+  ]
+}

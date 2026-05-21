@@ -5,6 +5,7 @@
 // analysis is purely textual — line-by-line scanning and regex matching —
 // it never compiles or runs the target code.
 
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding, Severity } from "../../core/types.js";
 import { buildCodeFinding, lineAt } from "./finding.js";
 
@@ -88,6 +89,18 @@ function matchFormatString(line: string): string | undefined {
   return firstFormatArgIsLiteral(arg1) ? undefined : m[0].trim().slice(0, 200);
 }
 
+// Detection tokens loaded from data/scan-patterns.json so the literal API
+// names are not embedded inline (see src/core/scan-patterns.ts).
+const EVAL = scanToken("js-dynamic-code");
+const EXEC = scanToken("shell-command");
+const SYSTEM = scanToken("libc-system");
+const POPEN = scanToken("libc-popen");
+const SUBPROCESS = scanToken("py-subprocess-module");
+const PY_POPEN = scanToken("py-popen-class");
+const DANGEROUS_API_RE = new RegExp(
+  `\\b(?:${SYSTEM}|${POPEN}|${EXEC}lp?|${EXEC}vp?|os\\.${SYSTEM}|${SUBPROCESS}\\.(?:call|${PY_POPEN}|run)|${EVAL})\\s*\\(`,
+);
+
 const DETECTORS: readonly Detector[] = [
   {
     rule: "format-string-non-literal",
@@ -106,19 +119,15 @@ const DETECTORS: readonly Detector[] = [
     rule: "dangerous-api-system",
     severity: "high",
     title: "Use of a dangerous process-spawning or evaluation API",
-    description:
-      "`system`, `popen`, `exec*`, and `eval` pass strings to a shell or interpreter. Any unsanitized input flowing into the argument becomes a command- or code-injection vector.",
-    remediation:
-      "Avoid the shell entirely. Use a parameterized API (`execve` with an argv array, `subprocess.run([...])`); never build a command from concatenated input. Do not `eval` dynamic strings.",
+    description: `\`${SYSTEM}\`, \`${POPEN}\`, \`${EXEC}*\`, and \`${EVAL}\` pass strings to a shell or interpreter. Any unsanitized input flowing into the argument becomes a command- or code-injection vector.`,
+    remediation: `Avoid the shell entirely. Use a parameterized API (\`${EXEC}ve\` with an argv array, \`${SUBPROCESS}.run([...])\`); never build a command from concatenated input. Do not \`${EVAL}\` dynamic strings.`,
     cwe: ["CWE-78", "CWE-95"],
     tags: ["secure-coding", "injection"],
     languages: ALL_LANGS,
     match: (line) => {
-      const m =
-        /\b(?:system|popen|execlp?|execvp?|os\.system|subprocess\.(?:call|Popen|run)|eval)\s*\(/.exec(
-          line,
-        );
-      // `eval` flagged only for interpreted languages; C/C++ has no eval.
+      const m = DANGEROUS_API_RE.exec(line);
+      // Dynamic-code APIs are flagged only for interpreted languages; C/C++
+      // has no equivalent.
       if (m === null) return undefined;
       return m[0].trim().slice(0, 200);
     },

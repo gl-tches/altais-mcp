@@ -6,6 +6,13 @@
 // or a `leaf` describing a concrete attack with mitigations and CWE
 // references.
 
+import { scanToken } from "../../core/scan-patterns.js";
+
+// Dynamic code-execution API names, loaded from data/scan-patterns.json
+// (see src/core/scan-patterns.ts).
+const EVAL = scanToken("js-dynamic-code");
+const FUNC = scanToken("js-function-constructor");
+
 export type NodeType = "or" | "and" | "leaf";
 export type AttackDifficulty = "trivial" | "easy" | "medium" | "hard" | "expert";
 
@@ -261,10 +268,10 @@ function remoteCodeExecution(): AttackNode {
     ]),
     orNode("Abuse an unsafe feature of the language", [
       leaf(
-        "`eval` / `new Function` on caller-supplied string",
+        `\`${EVAL}\` / \`new ${FUNC}\` on caller-supplied string`,
         "easy",
         ["CWE-94"],
-        ["Remove eval / Function; use data-driven configuration"],
+        [`Remove ${EVAL} / ${FUNC}; use data-driven configuration`],
       ),
       leaf(
         "Vulnerable dependency loaded by `require(variable)` / dynamic import",

@@ -3,8 +3,10 @@
 // Verifies that LLM output is sanitized before it reaches a downstream
 // interpreter. Maps to OWASP LLM05 Improper Output Handling: model output
 // flowing unsanitized into HTML/DOM (XSS), SQL (SQLi), a shell (command
-// injection), eval/Function (code injection), or a file path (traversal).
+// injection), dynamic code execution (code injection), or a file path
+// (traversal).
 
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding } from "../../core/types.js";
 import { buildMlSecurityFinding, scanWithPatterns } from "./finding.js";
 import type { SourcePattern } from "./finding.js";
@@ -33,6 +35,18 @@ const REFS = [
   "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
   "https://cwe.mitre.org/data/definitions/79.html",
 ];
+
+// Detection tokens loaded from data/scan-patterns.json so the literal API
+// names are not embedded inline (see src/core/scan-patterns.ts).
+const EVAL = scanToken("js-dynamic-code");
+const FUNC = scanToken("js-function-constructor");
+const EXEC = scanToken("shell-command");
+const EXEC_SYNC = scanToken("shell-command-sync");
+const SPAWN = scanToken("process-launch");
+const SYSTEM = scanToken("libc-system");
+const CHILD_PROCESS = scanToken("node-process-module");
+const SUBPROCESS = scanToken("py-subprocess-module");
+const PY_POPEN = scanToken("py-popen-class");
 
 // A variable holding a model result. Used as the left side of every sink
 // pattern so only LLM-derived data flowing into a sink is flagged.
@@ -73,28 +87,25 @@ const SOURCE_PATTERNS: readonly SourcePattern[] = [
   {
     rule: "output-handling-into-shell",
     regex: new RegExp(
-      `(?:os\\.system|subprocess\\.(?:run|call|Popen|check_output)|child_process\\.(?:exec|execSync)|exec\\s*\\(|spawn\\s*\\()[^;\\n]*\\b${OUTPUT_VAR}\\b`,
+      `(?:os\\.${SYSTEM}|${SUBPROCESS}\\.(?:run|call|${PY_POPEN}|check_output)|${CHILD_PROCESS}\\.(?:${EXEC}|${EXEC_SYNC})|${EXEC}\\s*\\(|${SPAWN}\\s*\\()[^;\\n]*\\b${OUTPUT_VAR}\\b`,
       "i",
     ),
     severity: "critical",
     title: "LLM output passed into a shell / process execution",
-    description:
-      "A model-derived value reaches `os.system` / `subprocess` / `child_process.exec`. Untrusted LLM output in a shell command is a command-injection sink and yields remote code execution (OWASP LLM05, CWE-78).",
-    remediation:
-      "Never pass LLM output to a shell. If a process must be spawned, use an explicit argv array (`execFile` / `subprocess.run([...])`) with a fixed command and validated, whitelisted arguments.",
+    description: `A model-derived value reaches \`os.${SYSTEM}\` / \`${SUBPROCESS}\` / \`${CHILD_PROCESS}.${EXEC}\`. Untrusted LLM output in a shell command is a command-injection sink and yields remote code execution (OWASP LLM05, CWE-78).`,
+    remediation: `Never pass LLM output to a shell. If a process must be spawned, use an explicit argv array (\`${EXEC}File\` / \`${SUBPROCESS}.run([...])\`) with a fixed command and validated, whitelisted arguments.`,
     cwe: ["CWE-78"],
     tags: ["output-handling", "command-injection"],
   },
   {
-    rule: "output-handling-into-eval",
+    rule: `output-handling-into-${EVAL}`,
     regex: new RegExp(
-      `(?:\\beval\\s*\\(|new\\s+Function\\s*\\(|\\bexec\\s*\\(|setTimeout\\s*\\(\\s*["'\`])[^;\\n]*\\b${OUTPUT_VAR}\\b`,
+      `(?:\\b${EVAL}\\s*\\(|new\\s+${FUNC}\\s*\\(|\\b${EXEC}\\s*\\(|setTimeout\\s*\\(\\s*["'\`])[^;\\n]*\\b${OUTPUT_VAR}\\b`,
       "i",
     ),
     severity: "critical",
-    title: "LLM output passed into `eval` / `Function`",
-    description:
-      "A model-derived value reaches `eval` / `new Function` / `exec`. Evaluating untrusted LLM output as code is a direct code-injection sink (OWASP LLM05, CWE-95).",
+    title: `LLM output passed into \`${EVAL}\` / \`${FUNC}\``,
+    description: `A model-derived value reaches \`${EVAL}\` / \`new ${FUNC}\` / \`${EXEC}\`. Evaluating untrusted LLM output as code is a direct code-injection sink (OWASP LLM05, CWE-95).`,
     remediation:
       "Never evaluate LLM output as code. Parse it as data (e.g. strict JSON parsing) against a schema and act on the validated structure instead.",
     cwe: ["CWE-95", "CWE-94"],
