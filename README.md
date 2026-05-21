@@ -237,7 +237,7 @@ The `scan_root` boundary is a security control: `altais_scan_file` canonicalizes
 | Tier             | Modules                                                                                  | Tools   |
 | ---------------- | ---------------------------------------------------------------------------------------- | ------- |
 | Core             | `core`                                                                                   | 5       |
-| Default          | `scan`, `threat_model`, `owasp`, `secrets`, `headers`, `supply_chain`, `auth`             | 38      |
+| Default          | `scan`, `threat_model`, `owasp`, `secrets`, `headers`, `supply_chain`, `auth`            | 38      |
 | Opt-in           | `crypto`, `container`, `code`, `data`, `iac`, `api`, `compliance`, `infra`, `protocol`, `vuln_db`, `incident`, `testing`, `sdlc`, `ml_security`, `agentic`, `runtime` | 89      |
 | **Total**        | **24 modules**                                                                           | **132** |
 
@@ -283,5 +283,5 @@ Adding a new module? See the [Module Development guide](./wiki/Module-Developmen
 | [`wiki/Deployment.md`](./wiki/Deployment.md)                   | Deploying altais-mcp (stdio, HTTP, Docker, systemd)                   |
 | [`wiki/Contributing.md`](./wiki/Contributing.md)               | Branch naming, commit conventions, and the PR process                 |
 | [`SECURITY.md`](./SECURITY.md)                                 | Threat model, the nine security rules, vulnerability reporting        |
-| [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.0.0)                                     |
+| [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.0.1)                                     |
 | [`altais-mcp-architecture.md`](altais-mcp-architecture.md)     | Full module tree, tool tables, and phase plan                         |
