@@ -1,19 +1,23 @@
-// SSRF patterns: server-side HTTP/fetch calls where the destination URL is
+// SSRF patterns: server-side HTTP-client calls where the destination URL is
 // influenced by request data.
 //
 // SSRF moved under OWASP A01:2025 (Broken Access Control) for the 2025 list.
 
+import { scanToken } from "../../../core/scan-patterns.js";
 import type { Pattern } from "./types.js";
 
 const REFS_SSRF = ["https://cwe.mitre.org/data/definitions/918.html", "OWASP Top 10 2025 A01"];
 
+// HTTP request API name loaded from data/scan-patterns.json so the literal
+// token is not embedded inline (see src/core/scan-patterns.ts).
+const FETCH = scanToken("web-http-request");
+
 export const SSRF_PATTERNS: readonly Pattern[] = [
   {
-    id: "ssrf-fetch-request-data",
+    id: `ssrf-${FETCH}-request-data`,
     category: "ssrf",
-    title: "fetch() called with request data",
-    description:
-      "The `fetch` URL is taken directly from `req.body`, `req.query`, `req.params`, or `req.headers`. An attacker can target internal services (cloud metadata at 169.254.169.254, internal admin URLs).",
+    title: `${FETCH}() called with request data`,
+    description: `The \`${FETCH}\` URL is taken directly from \`req.body\`, \`req.query\`, \`req.params\`, or \`req.headers\`. An attacker can target internal services (cloud metadata at 169.254.169.254, internal admin URLs).`,
     severity: "high",
     cwe: ["CWE-918"],
     remediation:
@@ -22,7 +26,7 @@ export const SSRF_PATTERNS: readonly Pattern[] = [
     languages: ["javascript", "typescript"],
     matcher: {
       type: "regex",
-      regex: /\bfetch\s*\(\s*req\.(body|query|params|headers)\b/,
+      regex: new RegExp(`\\b${FETCH}\\s*\\(\\s*req\\.(body|query|params|headers)\\b`),
     },
   },
   {

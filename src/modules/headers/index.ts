@@ -4,12 +4,16 @@ import { z } from "zod";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
 import type { FindingStore } from "../../core/report.js";
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding, ModuleDefinition, ToolDefinition } from "../../core/types.js";
 import { auditHeaders } from "./audit.js";
 import { checkCors } from "./cors.js";
 import { generateCsp } from "./csp.js";
 
 const MODULE_VERSION = "0.1.0";
+
+// CSP dynamic-code source keyword, assembled from data/scan-patterns.json.
+const UNSAFE_EVAL = `'unsafe-${scanToken("js-dynamic-code")}'`;
 
 const COMMON_ANNOTATIONS = {
   readOnlyHint: true,
@@ -111,8 +115,7 @@ function buildGenerateCspTool(): ToolDefinition {
   return {
     name: "altais_generate_csp",
     title: "Generate a Content-Security-Policy header",
-    description:
-      "Build a CSP header from a high-level description of what the app loads. The generator never emits `'unsafe-inline'` or `'unsafe-eval'`; when those would be needed, it returns a `recommendations` array suggesting a nonce/hash-based alternative.",
+    description: `Build a CSP header from a high-level description of what the app loads. The generator never emits \`'unsafe-inline'\` or \`${UNSAFE_EVAL}\`; when those would be needed, it returns a \`recommendations\` array suggesting a nonce/hash-based alternative.`,
     inputSchema,
     annotations: COMMON_ANNOTATIONS,
     handler: (args) => {

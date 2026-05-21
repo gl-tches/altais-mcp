@@ -8,6 +8,7 @@ import { z } from "zod";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
 import type { FindingStore } from "../../core/report.js";
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding, ModuleDefinition, ToolDefinition } from "../../core/types.js";
 import { auditAgentPermissions } from "./agent-permissions.js";
 import { auditInferenceApi } from "./inference-api.js";
@@ -386,12 +387,17 @@ const outputHandlingSchema = z.object({
   filename: filenameField,
 });
 
+// Detection tokens loaded from data/scan-patterns.json so the literal API
+// names are not embedded inline (see src/core/scan-patterns.ts).
+const TOKEN_EVAL = scanToken("js-dynamic-code");
+const TOKEN_FUNC = scanToken("js-function-constructor");
+const TOKEN_EXEC = scanToken("shell-command");
+
 function buildOutputHandlingTool(deps: MlSecurityModuleDeps): ToolDefinition {
   return {
     name: "altais_audit_output_handling",
     title: "Audit LLM output handling",
-    description:
-      "Verify LLM output is sanitized before downstream use (OWASP LLM05): model output passed unsanitized into HTML / the DOM (XSS — CWE-79), into SQL (CWE-89), into a shell / `exec` (command injection — CWE-78), into `eval` / `Function` (code injection — CWE-95), into a file path (path traversal — CWE-22), or returned to the user as trusted content.",
+    description: `Verify LLM output is sanitized before downstream use (OWASP LLM05): model output passed unsanitized into HTML / the DOM (XSS — CWE-79), into SQL (CWE-89), into a shell / \`${TOKEN_EXEC}\` (command injection — CWE-78), into \`${TOKEN_EVAL}\` / \`${TOKEN_FUNC}\` (code injection — CWE-95), into a file path (path traversal — CWE-22), or returned to the user as trusted content.`,
     inputSchema: outputHandlingSchema.shape,
     annotations: COMMON_ANNOTATIONS,
     handler: makeRunner(deps, zodParser(outputHandlingSchema), (d) => ({

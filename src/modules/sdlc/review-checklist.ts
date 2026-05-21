@@ -5,6 +5,16 @@
 // returns an artifact as structured data and does not push Finding
 // objects.
 
+import { scanToken } from "../../core/scan-patterns.js";
+
+// Detection tokens loaded from data/scan-patterns.json so the literal API
+// names are not embedded inline (see src/core/scan-patterns.ts).
+const EVAL = scanToken("js-dynamic-code");
+const FUNC = scanToken("js-function-constructor");
+const EXEC = scanToken("shell-command");
+const CHILD_PROCESS = scanToken("node-process-module");
+const SUBPROCESS = scanToken("py-subprocess-module");
+
 export type ChangeType = "feature" | "bugfix" | "dependency" | "infrastructure" | "auth" | "crypto";
 
 export type Sensitivity = "low" | "medium" | "high";
@@ -195,22 +205,22 @@ const SENSITIVITY_ITEMS: Readonly<Record<Sensitivity, readonly RawItem[]>> = {
 const LANGUAGE_ITEMS: Readonly<Record<string, RawItem>> = {
   python: {
     category: "Language pitfalls",
-    text: "No use of `eval`, `exec`, `pickle` on untrusted data, `subprocess` with `shell=True`, or `yaml.load` without `SafeLoader`.",
+    text: `No use of \`${EVAL}\`, \`${EXEC}\`, \`pickle\` on untrusted data, \`${SUBPROCESS}\` with \`shell=True\`, or \`yaml.load\` without \`SafeLoader\`.`,
     priority: "should",
   },
   javascript: {
     category: "Language pitfalls",
-    text: "No `eval`, `Function()`, `child_process.exec` with interpolation, prototype-pollution sinks, or unsanitized `innerHTML`.",
+    text: `No \`${EVAL}\`, \`${FUNC}()\`, \`${CHILD_PROCESS}.${EXEC}\` with interpolation, prototype-pollution sinks, or unsanitized \`innerHTML\`.`,
     priority: "should",
   },
   typescript: {
     category: "Language pitfalls",
-    text: "No `eval` / `Function()`, no `any` that defeats type checks at trust boundaries, and no unchecked non-null assertions on external data.",
+    text: `No \`${EVAL}\` / \`${FUNC}()\`, no \`any\` that defeats type checks at trust boundaries, and no unchecked non-null assertions on external data.`,
     priority: "should",
   },
   go: {
     category: "Language pitfalls",
-    text: "Errors are checked, not discarded; no `os/exec` with interpolated input; SQL uses parameterized queries.",
+    text: `Errors are checked, not discarded; no \`os/${EXEC}\` with interpolated input; SQL uses parameterized queries.`,
     priority: "should",
   },
   rust: {

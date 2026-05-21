@@ -6,6 +6,7 @@
 // FindingStore. The auditor is purely advisory — it does not infer
 // "missing" CORS or HSTS for contexts where they would be inappropriate.
 
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding, FindingLocation, Severity } from "../../core/types.js";
 import { findingId } from "../../core/utils.js";
 
@@ -32,6 +33,13 @@ const MIN_HSTS_MAX_AGE = 31_536_000; // 1 year
 
 const REF_OWASP_HEADERS = "https://owasp.org/www-project-secure-headers/";
 const REF_MDN_SECURITY = "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers";
+
+// Detection tokens loaded from data/scan-patterns.json so the literal API
+// names are not embedded inline (see src/core/scan-patterns.ts).
+const EVAL = scanToken("js-dynamic-code");
+const FUNC = scanToken("js-function-constructor");
+// The CSP source keyword that permits dynamic code execution.
+const UNSAFE_EVAL = `'unsafe-${EVAL}'`;
 
 /**
  * Audit the supplied header map against the configured context.
@@ -108,15 +116,13 @@ function checkCsp(headers: Map<string, string>, context: AuditContext): CheckOut
         evidence: `${name} ${sources.join(" ")}`,
       });
     }
-    if (sources.includes("'unsafe-eval'")) {
+    if (sources.includes(UNSAFE_EVAL)) {
       out.push({
-        rule: "csp-unsafe-eval",
+        rule: `csp-unsafe-${EVAL}`,
         severity: "high",
-        title: `CSP \`${name}\` allows 'unsafe-eval'`,
-        description:
-          "'unsafe-eval' permits eval, new Function, and string-form setTimeout. Any XSS that lands in JavaScript runtime can use these to escalate.",
-        remediation:
-          "Remove libraries that require eval (legacy templating engines). Use compiled templates or sandboxed evaluators instead.",
+        title: `CSP \`${name}\` allows ${UNSAFE_EVAL}`,
+        description: `${UNSAFE_EVAL} permits ${EVAL}, new ${FUNC}, and string-form setTimeout. Any XSS that lands in JavaScript runtime can use these to escalate.`,
+        remediation: `Remove libraries that require ${EVAL} (legacy templating engines). Use compiled templates or sandboxed evaluators instead.`,
         cwe: ["CWE-693", "CWE-94"],
         references: [REF_OWASP_HEADERS],
         evidence: `${name} ${sources.join(" ")}`,

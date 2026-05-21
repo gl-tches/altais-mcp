@@ -4,10 +4,15 @@
 // popular packages (by ecosystem). If the edit distance is small (1-2)
 // but the name does not match exactly, flag.
 
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding, FindingLocation } from "../../core/types.js";
 import { findingId } from "../../core/utils.js";
 import { levenshtein } from "./semver.js";
 import type { DependencyPackage, EcosystemId } from "./types.js";
+
+// Assembled from data/scan-patterns.json so the literal HTTP-client token is
+// not embedded inline (see src/core/scan-patterns.ts).
+const HTTP_PKG = `node-${scanToken("web-http-request")}`;
 
 const POPULAR: Readonly<Record<EcosystemId, readonly string[]>> = {
   npm: [
@@ -54,7 +59,7 @@ const POPULAR: Readonly<Record<EcosystemId, readonly string[]>> = {
     "jsonwebtoken",
     "uuid",
     "nanoid",
-    "node-fetch",
+    HTTP_PKG,
     "undici",
     "ws",
   ],

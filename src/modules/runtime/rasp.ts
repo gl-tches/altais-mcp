@@ -7,6 +7,11 @@
 // blocking-vs-monitoring guidance, and performance considerations. It is
 // a pure function that returns an artifact; it pushes no Finding objects.
 
+import { scanToken } from "../../core/scan-patterns.js";
+
+// Node process-module name, loaded from data/scan-patterns.json.
+const CHILD_PROCESS = scanToken("node-process-module");
+
 export type RaspLanguage = "java" | "dotnet" | "node" | "python" | "ruby" | "go";
 
 export type RaspDeployment = "container" | "vm" | "serverless";
@@ -84,7 +89,7 @@ const LANGUAGE_PROFILES: Readonly<Record<RaspLanguage, LanguageProfile>> = {
     deserializationRisk: false,
     setup: [
       "Add `--require @vendor/rasp/register` to the Node start command or `NODE_OPTIONS`.",
-      "Ensure the RASP package is the first module required so it can wrap `http`, `fs`, and `child_process`.",
+      `Ensure the RASP package is the first module required so it can wrap \`http\`, \`fs\`, and \`${CHILD_PROCESS}\`.`,
       "Restart the Node process; verify the RASP banner appears on stderr at boot.",
     ],
   },

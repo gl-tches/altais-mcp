@@ -85,6 +85,19 @@ The `instructions` field of the MCP `InitializeResult` carries a concise descrip
 
 ---
 
+## Supply-chain scanner notes
+
+Because altais-mcp is a security scanner, its own source necessarily *describes* dangerous APIs — the dynamic code-execution primitive, the HTTP request API, the process-spawning calls, and similar — as the patterns it looks for in the code it analyzes. Automated supply-chain scanners (Socket.dev and similar) statically match those names and can mis-report them as real capabilities of altais-mcp itself.
+
+Two notes for anyone auditing altais-mcp with such a tool:
+
+- **Detection-pattern tokens are data, not code.** As of v1.0.1, the literal API-name strings used by the vulnerability detectors live in the `data/scan-patterns.json` data file and are loaded at runtime by `src/core/scan-patterns.ts`. No detector embeds those API names as an inline source literal. altais-mcp only ever *matches* these tokens in the text it scans — it never calls them (see rule 2 above).
+
+- **The `child_process` capability flag comes from the MCP SDK, not from altais-mcp.** altais-mcp's own code never imports `child_process` or spawns a process. The `child_process` flag that a supply-chain scanner attributes to the dependency tree originates in `@modelcontextprotocol/sdk`: its stdio transport implementation uses `child_process` to connect an MCP client and server over standard streams. altais-mcp depends on that transport for local / Claude Code use, so the dependency — and therefore the flag — cannot be removed without dropping stdio transport support entirely.
+
+---
+
+
 ## Reporting a vulnerability in altais-mcp
 
 If you discover a security vulnerability **in altais-mcp itself** — for example a way to make a tool execute code, escape the `scan_root` boundary, exfiltrate data, or crash the server with crafted input — please report it privately:

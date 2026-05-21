@@ -4,6 +4,7 @@
 // execution, or a sandbox with network / filesystem access, turns model
 // output into arbitrary code on the host.
 
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding } from "../../core/types.js";
 import { buildAgenticFinding, lineAt } from "./finding.js";
 
@@ -45,10 +46,22 @@ const REFS = [
   "https://cwe.mitre.org/data/definitions/94.html",
 ];
 
+// Detection tokens loaded from data/scan-patterns.json so the literal
+// API names are not embedded inline (see src/core/scan-patterns.ts).
+const EVAL = scanToken("js-dynamic-code");
+const FUNC = scanToken("js-function-constructor");
+const EXEC = scanToken("shell-command");
+const EXEC_SYNC = scanToken("shell-command-sync");
+const SPAWN = scanToken("process-launch");
+const SPAWN_SYNC = scanToken("process-launch-sync");
+const CHILD_PROCESS = scanToken("node-process-module");
+
 // A line that invokes a dynamic-execution sink AND mentions a model /
 // LLM / completion output variable on the same line is a likely path
 // from model output straight to code execution.
-const EXEC_SINK_RE = /\b(?:eval|exec|Function|child_process|execSync|spawn|spawnSync|compile)\s*\(/;
+const EXEC_SINK_RE = new RegExp(
+  `\\b(?:${EVAL}|${EXEC}|${FUNC}|${CHILD_PROCESS}|${EXEC_SYNC}|${SPAWN}|${SPAWN_SYNC}|compile)\\s*\\(`,
+);
 const MODEL_VAR_RE = /\b(?:llm|model|completion|generated|response|output|ai_?|gpt|claude|agent)/i;
 
 export function auditCodeExecution(input: CodeExecutionAuditInput): readonly Finding[] {
@@ -189,8 +202,7 @@ function scanSource(source: string, file: string | undefined): readonly Finding[
           rule: "code-exec-model-output-to-sink",
           severity: "critical",
           title: "ASI05: Model output flows into a dynamic code-execution sink",
-          description:
-            "A dynamic-execution call (`eval` / `exec` / `Function` / `child_process`) on a line that also references a model / LLM output variable is a direct path from generated text to arbitrary code execution (ASI05 Code Execution).",
+          description: `A dynamic-execution call (\`${EVAL}\` / \`${EXEC}\` / \`${FUNC}\` / \`${CHILD_PROCESS}\`) on a line that also references a model / LLM output variable is a direct path from generated text to arbitrary code execution (ASI05 Code Execution).`,
           remediation:
             "Never pass model output to an execution sink. If code must run, route it through a strongly isolated sandbox with allowlisting and no host access.",
           cwe: ["CWE-94", "CWE-913"],

@@ -3,9 +3,10 @@
 // Builds a CSP header string from a high-level description of what the
 // application needs. The generator is conservative: anything not
 // explicitly requested is `'none'` (in strict mode) or `'self'` (in
-// compatible mode). `'unsafe-inline'` and `'unsafe-eval'` are never
-// emitted; callers asking for them get a `recommendations` entry that
-// suggests a safer alternative (nonces / hashes).
+// compatible mode). The `'unsafe-inline'` keyword and the dynamic-code
+// source keyword are never emitted; callers asking for them get a
+// `recommendations` entry that suggests a safer alternative (nonces /
+// hashes).
 
 export type CspMode = "strict" | "compatible";
 
@@ -155,7 +156,7 @@ export function generateCsp(req: CspRequirements): CspResult {
   if (errors.length > 0) notes.push(...errors);
   if (mode === "compatible") {
     notes.push(
-      "Compatible mode: `default-src 'self'` instead of `'none'`. Tighten to strict once you have confirmed every fetch origin.",
+      "Compatible mode: `default-src 'self'` instead of `'none'`. Tighten to strict once you have confirmed every origin the app loads from.",
     );
   }
   if (

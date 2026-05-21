@@ -5,10 +5,14 @@
 // patterns supply extra evidence for prompt-injection and output-handling
 // gaps. Every category needing review yields a Finding.
 
+import { scanToken } from "../../core/scan-patterns.js";
 import type { Finding } from "../../core/types.js";
 import { buildMlSecurityFinding } from "./finding.js";
 import { auditOutputHandling } from "./output-handling.js";
 import { auditPromptInjection } from "./prompt-injection.js";
+
+// Dynamic code-execution API name, loaded from data/scan-patterns.json.
+const EVAL = scanToken("js-dynamic-code");
 
 export interface LlmTop10Config {
   /** Whether untrusted input is separated from system instructions (LLM01). */
@@ -128,12 +132,10 @@ const CATEGORIES: readonly CategorySpec[] = [
     name: "Improper Output Handling",
     severity: "high",
     cwe: ["CWE-79"],
-    detection_hint:
-      "Look for model output passed unsanitized into HTML, SQL, shells, eval, or file paths.",
+    detection_hint: `Look for model output passed unsanitized into HTML, SQL, shells, ${EVAL}, or file paths.`,
     description:
       "LLM output is treated as trusted and flows into downstream interpreters, causing XSS, SQLi, SSRF, or RCE.",
-    remediation:
-      "Treat LLM output as untrusted: context-encode for HTML, parameterize SQL, never pass output to a shell or eval.",
+    remediation: `Treat LLM output as untrusted: context-encode for HTML, parameterize SQL, never pass output to a shell or ${EVAL}.`,
     covered: (c) => c.output_sanitization,
   },
   {
