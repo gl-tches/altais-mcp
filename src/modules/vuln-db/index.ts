@@ -2,8 +2,8 @@
 // CVE lookup, full CWE taxonomy lookup, a complete CVSS v3.1 + v4.0
 // calculator, and CWE/description-to-MITRE-ATT&CK mapping.
 //
-// All four tools read bundled, offline data files (CLAUDE.md rule 3 —
-// no network calls). These are lookup/calculation tools: they return
+// All four tools read bundled, offline data files and make no network
+// calls at runtime. These are lookup/calculation tools: they return
 // structured JSON results and do not push Finding objects into the
 // shared FindingStore.
 
