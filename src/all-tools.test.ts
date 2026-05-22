@@ -54,6 +54,7 @@ const MODULE_TOOL_COUNTS: Readonly<Record<string, number>> = {
   ml_security: 8,
   agentic: 10,
   runtime: 3,
+  database: 16,
 };
 
 const EXPECTED_TOOL_COUNT = Object.values(MODULE_TOOL_COUNTS).reduce((a, b) => a + b, 0);
@@ -379,6 +380,24 @@ const SAMPLE_ARGS: Readonly<Record<string, Record<string, unknown>>> = {
       mean_time_to_detect_minutes: 15,
     },
   },
+
+  // ── database ────────────────────────────────────────────────────────────
+  altais_audit_connection: { connection_strings: ["postgres://localhost:5432/app"] },
+  altais_audit_queries: { source: "const r = db.query('SELECT 1');", language: "javascript" },
+  altais_audit_postgres: { config: {} },
+  altais_audit_mysql: { config: {} },
+  altais_audit_mongodb: { config: {} },
+  altais_audit_redis: { config: {} },
+  altais_audit_sqlite: { config: {} },
+  altais_audit_mssql: { config: {} },
+  altais_audit_elasticsearch: { config: {} },
+  altais_audit_dynamodb: { config: {} },
+  altais_audit_pooling: { config: {} },
+  altais_audit_migrations: { source: "ALTER TABLE users ADD COLUMN note text;" },
+  altais_audit_backup: { config: {} },
+  altais_audit_nosql_injection: { source: "collection.find(req.body);" },
+  altais_audit_db_tls: { config: {} },
+  altais_audit_db_logging: { config: {} },
 };
 
 beforeAll(async () => {
@@ -408,6 +427,7 @@ beforeAll(async () => {
       ml_security: true,
       agentic: true,
       runtime: true,
+      database: true,
     },
     scan: { scan_root: tempDir },
   });

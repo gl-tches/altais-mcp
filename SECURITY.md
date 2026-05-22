@@ -77,7 +77,7 @@ annotations: {
 }
 ```
 
-These are hints, not enforced guarantees — but they are accurate for every one of the 132 tools.
+These are hints, not enforced guarantees — but they are accurate for every one of the 148 tools.
 
 ### 9. Instructions field
 
@@ -96,7 +96,6 @@ Two notes for anyone auditing altais-mcp with such a tool:
 - **The `child_process` capability flag comes from the MCP SDK, not from altais-mcp.** altais-mcp's own code never imports `child_process` or spawns a process. The `child_process` flag that a supply-chain scanner attributes to the dependency tree originates in `@modelcontextprotocol/sdk`: its stdio transport implementation uses `child_process` to connect an MCP client and server over standard streams. altais-mcp depends on that transport for local / Claude Code use, so the dependency — and therefore the flag — cannot be removed without dropping stdio transport support entirely.
 
 ---
-
 
 ## Reporting a vulnerability in altais-mcp
 

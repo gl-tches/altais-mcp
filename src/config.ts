@@ -45,6 +45,7 @@ const modulesSchema = z
     agentic: z.boolean().default(false),
     api: z.boolean().default(false),
     runtime: z.boolean().default(false),
+    database: z.boolean().default(false),
   })
   .prefault({});
 
@@ -142,6 +143,29 @@ const agenticSchema = z
   })
   .prefault({});
 
+const databaseSchema = z
+  .object({
+    drivers: z
+      .array(z.string().max(64))
+      .max(32)
+      .default([
+        "postgres",
+        "mysql",
+        "mongodb",
+        "redis",
+        "sqlite",
+        "mssql",
+        "elasticsearch",
+        "dynamodb",
+      ]),
+    check_connection_strings: z.boolean().default(true),
+    check_parameterization: z.boolean().default(true),
+    check_migrations: z.boolean().default(true),
+    check_backup: z.boolean().default(true),
+    check_nosql_injection: z.boolean().default(true),
+  })
+  .prefault({});
+
 export const configSchema = z
   .object({
     server: serverSchema,
@@ -153,6 +177,7 @@ export const configSchema = z
     severity: severitySchema,
     iac: iacSchema,
     agentic: agenticSchema,
+    database: databaseSchema,
   })
   .prefault({});
 
