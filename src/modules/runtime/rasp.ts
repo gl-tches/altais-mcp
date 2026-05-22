@@ -132,7 +132,7 @@ interface DeploymentProfile {
 
 const DEPLOYMENT_PROFILES: Readonly<Record<RaspDeployment, DeploymentProfile>> = {
   container: {
-    note: "Bake the agent into the container image as an immutable layer; do not download it at runtime (CLAUDE.md / supply-chain hygiene).",
+    note: "Bake the agent into the container image as an immutable layer; do not download it at runtime (supply-chain hygiene).",
     performance: [
       "Add the agent layer to the image build so cold starts are not delayed by a runtime download.",
       "Budget roughly 30-80 MB extra memory per container for the agent; size container limits accordingly.",

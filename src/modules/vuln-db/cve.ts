@@ -2,7 +2,7 @@
 //
 // Reads a curated, bundled offline snapshot of well-known, high-impact
 // CVEs from `data/cve-database.json`. No network calls — the database
-// ships with the package (CLAUDE.md rule 3).
+// ships with the package.
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";

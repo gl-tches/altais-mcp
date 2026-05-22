@@ -103,8 +103,8 @@ const CLASS_META: Readonly<Record<VulnerabilityClass, ClassMeta>> = {
     malicious: "http://169.254.169.254/latest/meta-data/",
     benign: "https://api.example.com/v1/items",
     intent_negative:
-      "A URL pointing at link-local / internal addresses is rejected before any fetch.",
-    intent_positive: "A URL on the allow-list is fetched normally.",
+      "A URL pointing at link-local / internal addresses is rejected before any outbound request is made.",
+    intent_positive: "A URL on the allow-list is requested normally.",
   },
   csrf: {
     cwe: ["CWE-352"],

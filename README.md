@@ -1,6 +1,6 @@
 # altais-mcp
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](./LICENSE) [![Version](https://img.shields.io/badge/version-1.0.1-blue)](./CHANGELOG.md) [![npm](https://img.shields.io/npm/v/altais-mcp)](https://www.npmjs.com/package/altais-mcp) [![Node.js](https://img.shields.io/badge/node-%3E%3D20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![MCP](https://img.shields.io/badge/MCP-server-blueviolet)](https://modelcontextprotocol.io) [![Tools](https://img.shields.io/badge/tools-132-blueviolet)](./wiki/Home.md) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](./wiki/Contributing.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](./LICENSE) [![Version](https://img.shields.io/badge/version-1.0.2-blue)](./CHANGELOG.md) [![npm](https://img.shields.io/npm/v/altais-mcp)](https://www.npmjs.com/package/altais-mcp) [![Node.js](https://img.shields.io/badge/node-%3E%3D20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![MCP](https://img.shields.io/badge/MCP-server-blueviolet)](https://modelcontextprotocol.io) [![Tools](https://img.shields.io/badge/tools-132-blueviolet)](./wiki/Home.md) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](./wiki/Contributing.md)
 
 > **Why "Altais"?** Altais (δ Draconis) is a star in the tail of Draco, the dragon constellation that wraps around the north celestial pole. In Greek mythology, Draco was the guardian that never slept. The name felt right for a security tool, something that sits quietly in the background, watching everything that passes through.
 
@@ -283,5 +283,5 @@ Adding a new module? See the [Module Development guide](./wiki/Module-Developmen
 | [`wiki/Deployment.md`](./wiki/Deployment.md)                   | Deploying altais-mcp (stdio, HTTP, Docker, systemd)                   |
 | [`wiki/Contributing.md`](./wiki/Contributing.md)               | Branch naming, commit conventions, and the PR process                 |
 | [`SECURITY.md`](./SECURITY.md)                                 | Threat model, the nine security rules, vulnerability reporting        |
-| [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.0.1)                                     |
+| [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.0.2)                                     |
 | [`altais-mcp-architecture.md`](altais-mcp-architecture.md)     | Full module tree, tool tables, and phase plan                         |

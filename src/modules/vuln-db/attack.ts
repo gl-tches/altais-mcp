@@ -3,7 +3,7 @@
 // Maps a CWE id and/or a free-text vulnerability description to MITRE
 // ATT&CK techniques. The technique catalogue is a curated, bundled
 // subset of software-relevant techniques in `data/attack-techniques.json`
-// — no network calls (CLAUDE.md rule 3).
+// — no network calls at runtime.
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";

@@ -35,7 +35,7 @@ import { createMlSecurityModule } from "./modules/ml-security/index.js";
 import { createAgenticModule } from "./modules/agentic/index.js";
 import { createRuntimeModule } from "./modules/runtime/index.js";
 
-export const SERVER_VERSION = "1.0.1";
+export const SERVER_VERSION = "1.0.2";
 const HTTP_PATH = "/mcp";
 const HTTP_HOST = "127.0.0.1";
 
