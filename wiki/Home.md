@@ -255,4 +255,4 @@ Every tool has its own reference page.
 
 ---
 
-_This wiki is generated for altais-mcp v1.0.1. Tool and module pages are kept in `wiki/tools/` and `wiki/modules/`._
+_This wiki is generated for altais-mcp v1.0.2. Tool and module pages are kept in `wiki/tools/` and `wiki/modules/`._

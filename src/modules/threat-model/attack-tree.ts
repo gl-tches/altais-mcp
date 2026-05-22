@@ -224,7 +224,7 @@ function dataExfiltration(): AttackNode {
         "Iterate object IDs to read records belonging to other users",
         "easy",
         ["CWE-639", "CWE-285"],
-        ["Enforce object-level authorization on every fetch", "Use indirect references"],
+        ["Enforce object-level authorization on every object access", "Use indirect references"],
       ),
     ]),
     orNode("Exfiltrate via a side channel", [

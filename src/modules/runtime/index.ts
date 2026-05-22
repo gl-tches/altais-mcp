@@ -1,23 +1,23 @@
-// Runtime module: 3 tools for runtime application protection —
-// a WAF rule generator, a RASP configuration recommender, and an
-// application-monitoring auditor.
+// vuln_db module: 4 vulnerability-knowledge lookup tools —
+// CVE lookup, full CWE taxonomy lookup, a complete CVSS v3.1 + v4.0
+// calculator, and CWE/description-to-MITRE-ATT&CK mapping.
 //
-// The two generators (`altais_generate_waf_rules`,
-// `altais_recommend_rasp`) return ready-to-use artifacts as JSON text and
-// do not push Finding objects. The auditor (`altais_audit_monitoring`)
-// flags security-monitoring gaps and pushes Finding objects into the
+// All four tools read bundled, offline data files and make no network
+// calls at runtime. These are lookup/calculation tools: they return
+// structured JSON results and do not push Finding objects into the
 // shared FindingStore.
 
 import { z } from "zod";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
 import type { FindingStore } from "../../core/report.js";
-import type { Finding, ModuleDefinition, ToolDefinition } from "../../core/types.js";
-import { auditMonitoring } from "./monitoring.js";
-import { recommendRasp } from "./rasp.js";
-import { generateWafRules } from "./waf.js";
+import type { ModuleDefinition, ToolDefinition } from "../../core/types.js";
+import { AttackCatalog, mapToAttack } from "./attack.js";
+import { CveDatabase, CVE_ID_RE, lookupCve } from "./cve.js";
+import { calculateCvss, CvssCalcError } from "./cvss.js";
+import { CweDatabase, lookupCwe } from "./cwe.js";
 
-const MODULE_VERSION = "0.5.0";
+const MODULE_VERSION = "0.4.0";
 
 const COMMON_ANNOTATIONS = {
   readOnlyHint: true,
@@ -26,8 +26,9 @@ const COMMON_ANNOTATIONS = {
   openWorldHint: false,
 } as const;
 
-export interface RuntimeModuleDeps {
+export interface VulnDbModuleDeps {
   readonly findingStore: FindingStore;
+  readonly dataDir?: string;
 }
 
 function textResult(text: string): CallToolResult {
@@ -40,19 +41,6 @@ function errorResult(text: string): CallToolResult {
 
 function jsonText(value: unknown): string {
   return JSON.stringify(value, null, 2);
-}
-
-function summarize(findings: readonly Finding[]): {
-  total: number;
-  by_severity: Record<string, number>;
-} {
-  const bySeverity: Record<string, number> = {};
-  for (const f of findings) bySeverity[f.severity] = (bySeverity[f.severity] ?? 0) + 1;
-  return { total: findings.length, by_severity: bySeverity };
-}
-
-function withSummary(findings: readonly Finding[]): unknown {
-  return { summary: summarize(findings), findings };
 }
 
 function zodParser<T>(
@@ -70,199 +58,218 @@ function zodParser<T>(
   };
 }
 
-function makeRunner<TInput>(
-  deps: RuntimeModuleDeps,
-  parser: (args: unknown) => { success: true; data: TInput } | { success: false; message: string },
-  run: (data: TInput) => readonly Finding[],
-): (args: unknown) => CallToolResult {
-  return (args: unknown) => {
-    const parsed = parser(args);
-    if (!parsed.success) return errorResult(`Invalid input: ${parsed.message}`);
-    const findings = run(parsed.data);
-    deps.findingStore.addMany(findings);
-    return textResult(jsonText(withSummary(findings)));
-  };
-}
+// ─── altais_lookup_cve ─────────────────────────────────────────────────────
 
-// ─── altais_generate_waf_rules ─────────────────────────────────────────────
-
-const wafSchema = z.object({
-  config: z.object({
-    platform: z
-      .enum(["modsecurity", "cloudflare", "aws-waf", "nginx-naxsi"])
-      .describe("Target WAF platform whose native rule syntax should be generated."),
-    protect_against: z
-      .array(
-        z.enum(["sql-injection", "xss", "path-traversal", "rce", "ssrf", "scanner", "rate-abuse"]),
-      )
-      .min(1)
-      .max(7)
-      .describe("Attack classes the generated rule set should block."),
-    paths_to_protect: z
-      .array(z.string().min(1).max(512))
-      .max(64)
-      .optional()
-      .describe(
-        "Optional URL path globs to scope the rules to (e.g. `/api/*`). Defaults to all paths.",
-      ),
-  }),
+const cveSchema = z.object({
+  cve_id: z
+    .string()
+    .min(1)
+    .max(32)
+    .regex(CVE_ID_RE, "must be a CVE identifier of the form CVE-YYYY-NNNN")
+    .describe("A CVE identifier, e.g. `CVE-2021-44228`."),
 });
 
-function buildWafTool(): ToolDefinition {
-  const parse = zodParser(wafSchema);
+function buildLookupCveTool(db: CveDatabase): ToolDefinition {
+  const parse = zodParser(cveSchema);
   return {
-    name: "altais_generate_waf_rules",
-    title: "Generate WAF rules",
+    name: "altais_lookup_cve",
+    title: "Look up a CVE",
     description:
-      "Generate a ready-to-use Web Application Firewall rule set for a chosen platform (ModSecurity SecRules, a Cloudflare ruleset expression, an AWS WAFv2 rule JSON document, or NGINX/NAXSI directives) covering the requested attack classes — SQL injection, XSS, path traversal, RCE / command injection, SSRF, scanner traffic, and request-rate abuse. Returns the rule definitions, an optional path scope, a platform-specific deployment note, and a recommendation to run in detection mode before enforcing.",
-    inputSchema: wafSchema.shape,
+      "Look up a CVE by identifier in a bundled, curated offline snapshot of well-known, high-impact CVEs (Log4Shell, Heartbleed, Spring4Shell, xz backdoor, and others). Returns the description, CVSS v3.1 vector and score, severity, related CWEs, affected versions, publication date, remediation guidance, and references. This is an offline snapshot, not a live feed.",
+    inputSchema: cveSchema.shape,
     annotations: COMMON_ANNOTATIONS,
     handler: (args) => {
       const parsed = parse(args);
       if (!parsed.success) return errorResult(`Invalid input: ${parsed.message}`);
-      const result = generateWafRules({
-        platform: parsed.data.config.platform,
-        protect_against: parsed.data.config.protect_against,
-        ...(parsed.data.config.paths_to_protect !== undefined
-          ? { paths_to_protect: parsed.data.config.paths_to_protect }
-          : {}),
-      });
-      return textResult(jsonText(result));
+      const result = lookupCve(db, parsed.data.cve_id);
+      if (!result.found) return errorResult(result.message);
+      return textResult(jsonText(result.cve));
     },
   };
 }
 
-// ─── altais_recommend_rasp ─────────────────────────────────────────────────
+// ─── altais_lookup_cwe ─────────────────────────────────────────────────────
 
-const raspSchema = z.object({
-  config: z.object({
-    language: z
-      .enum(["java", "dotnet", "node", "python", "ruby", "go"])
-      .describe("Primary application language — drives the instrumentation mechanism."),
-    framework: z
-      .string()
-      .min(1)
-      .max(128)
-      .describe("Application framework, e.g. `spring-boot`, `express`, `django`."),
-    deployment: z
-      .enum(["container", "vm", "serverless"])
-      .describe("Deployment model — drives agent packaging and performance guidance."),
-    risk_tolerance: z
-      .enum(["low", "medium", "high"])
-      .describe(
-        "Team risk tolerance — `low` favors aggressive blocking, `high` favors monitor-first.",
-      ),
-  }),
+const cweSchema = z.object({
+  cwe_id: z
+    .string()
+    .min(1)
+    .max(32)
+    .regex(
+      /^(?:cwe[-_ ]?)?\d{1,5}(?:[-_][a-z0-9]+)?$/i,
+      "must be a CWE identifier, e.g. CWE-79 or 79",
+    )
+    .describe("A CWE identifier in any common form: `79`, `CWE-79`, `cwe-79`."),
 });
 
-function buildRaspTool(): ToolDefinition {
-  const parse = zodParser(raspSchema);
+function buildLookupCweTool(db: CweDatabase): ToolDefinition {
+  const parse = zodParser(cweSchema);
   return {
-    name: "altais_recommend_rasp",
-    title: "Recommend a RASP configuration",
+    name: "altais_lookup_cwe",
+    title: "Look up a CWE in the full taxonomy",
     description:
-      "Recommend a Runtime Application Self-Protection configuration for an application's language, framework, deployment model, and risk tolerance. Returns the RASP product category to evaluate, the protections to enable (unsafe deserialization, OS command injection, SQL injection, path traversal, SSRF) each with a block-vs-monitor recommendation, stack-specific instrumentation and agent setup steps, blocking-vs-monitoring guidance keyed to risk tolerance, and deployment-specific performance considerations.",
-    inputSchema: raspSchema.shape,
+      "Full CWE taxonomy lookup against the bundled CWE database. Accepts an id in any form (`79`, `CWE-79`). Returns the weakness name, description, concrete examples, remediation, and references, plus related CWEs (parent / child / peer relations) derived from a curated relation map and cross-references in the entry text. Richer than the core module's `altais_explain_cwe`.",
+    inputSchema: cweSchema.shape,
     annotations: COMMON_ANNOTATIONS,
     handler: (args) => {
       const parsed = parse(args);
       if (!parsed.success) return errorResult(`Invalid input: ${parsed.message}`);
-      const result = recommendRasp({
-        language: parsed.data.config.language,
-        framework: parsed.data.config.framework,
-        deployment: parsed.data.config.deployment,
-        risk_tolerance: parsed.data.config.risk_tolerance,
-      });
-      return textResult(jsonText(result));
+      const result = lookupCwe(db, parsed.data.cwe_id);
+      if (!result.found) return errorResult(result.message);
+      return textResult(jsonText({ entry: result.entry, related: result.related }));
     },
   };
 }
 
-// ─── altais_audit_monitoring ───────────────────────────────────────────────
+// ─── altais_calculate_cvss ─────────────────────────────────────────────────
 
-const monitoringSchema = z.object({
-  config: z.object({
-    logs_authentication: z
-      .boolean()
-      .describe("Whether authentication events (login success / failure) are logged."),
-    logs_authorization_failures: z
-      .boolean()
-      .describe("Whether authorization / access-denied failures are logged."),
-    logs_input_validation_failures: z
-      .boolean()
-      .describe("Whether input-validation failures are logged."),
-    logs_admin_actions: z
-      .boolean()
-      .describe("Whether administrative / privileged actions are logged."),
-    alerting_enabled: z.boolean().describe("Whether alerts fire on security events."),
-    alert_routing: z
-      .boolean()
-      .describe("Whether alerts are routed to a responder or on-call destination."),
-    siem_integrated: z.boolean().describe("Whether logs are forwarded to a SIEM."),
-    metrics_collected: z.boolean().describe("Whether application metrics are collected."),
-    anomaly_detection: z.boolean().describe("Whether behavioral / anomaly detection is in place."),
-    dashboards: z.boolean().describe("Whether security / operations dashboards exist."),
-    on_call: z.boolean().describe("Whether an on-call rotation owns security alerts."),
-    mean_time_to_detect_minutes: z
-      .number()
-      .int()
-      .min(0)
-      .max(525600)
-      .describe("Mean time to detect a security incident, in minutes."),
-  }),
-  filename: z
+const cvssSchema = z.object({
+  vector: z
     .string()
     .min(1)
     .max(512)
-    .optional()
-    .describe("Optional filename used for the finding location."),
+    .regex(/^CVSS:[34]\.[0-9]\//, "must start with a `CVSS:3.1/` or `CVSS:4.0/` prefix")
+    .describe(
+      "A CVSS vector string. v3.1 (`CVSS:3.1/...`) or v4.0 (`CVSS:4.0/...`). Temporal / Environmental / Threat / Supplemental metrics are scored when present.",
+    ),
 });
 
-function buildMonitoringTool(deps: RuntimeModuleDeps): ToolDefinition {
-  const parse = zodParser(monitoringSchema);
-  const run = makeRunner(deps, parse, (d) => {
-    const result = auditMonitoring({
-      logs_authentication: d.config.logs_authentication,
-      logs_authorization_failures: d.config.logs_authorization_failures,
-      logs_input_validation_failures: d.config.logs_input_validation_failures,
-      logs_admin_actions: d.config.logs_admin_actions,
-      alerting_enabled: d.config.alerting_enabled,
-      alert_routing: d.config.alert_routing,
-      siem_integrated: d.config.siem_integrated,
-      metrics_collected: d.config.metrics_collected,
-      anomaly_detection: d.config.anomaly_detection,
-      dashboards: d.config.dashboards,
-      on_call: d.config.on_call,
-      mean_time_to_detect_minutes: d.config.mean_time_to_detect_minutes,
-      ...(d.filename !== undefined ? { filename: d.filename } : {}),
-    });
-    return result.findings;
-  });
+function buildCalculateCvssTool(): ToolDefinition {
+  const parse = zodParser(cvssSchema);
   return {
-    name: "altais_audit_monitoring",
-    title: "Audit application monitoring coverage",
+    name: "altais_calculate_cvss",
+    title: "Calculate a CVSS score",
     description:
-      "Audit an application's monitoring and observability posture for security-event coverage. Flags missing security-event logging (authentication, authorization failures, input-validation failures, administrative actions), no alerting, unrouted alerts, no SIEM integration, no anomaly detection, missing metrics or dashboards, no on-call rotation, and a slow mean time to detect. Emits one finding per gap with real CWE references and actionable remediation.",
-    inputSchema: monitoringSchema.shape,
+      "Parse and score a CVSS vector. CVSS v3.1: Base score plus Temporal and Environmental metric groups when supplied. CVSS v4.0: all four metric groups (Base, Threat, Environmental, Supplemental) are parsed and validated, the MacroVector is derived, and the score is computed with the official FIRST CVSS v4.0 lookup-table algorithm. Returns the version, score, qualitative severity, subscores, and the parsed metric groups.",
+    inputSchema: cvssSchema.shape,
     annotations: COMMON_ANNOTATIONS,
-    handler: run,
+    handler: (args) => {
+      const parsed = parse(args);
+      if (!parsed.success) return errorResult(`Invalid input: ${parsed.message}`);
+      try {
+        const result = calculateCvss(parsed.data.vector);
+        return textResult(jsonText(result));
+      } catch (err) {
+        if (err instanceof CvssCalcError) {
+          return errorResult(
+            `Could not score the CVSS vector: ${err.message}. Verify each metric key and value ` +
+              `against the FIRST CVSS specification at https://www.first.org/cvss/.`,
+          );
+        }
+        return errorResult("Could not score the CVSS vector due to an unexpected parsing error.");
+      }
+    },
   };
 }
 
-export function createRuntimeModule(deps: RuntimeModuleDeps): ModuleDefinition {
-  const tools: readonly ToolDefinition[] = [
-    buildWafTool(),
-    buildRaspTool(),
-    buildMonitoringTool(deps),
-  ];
+// ─── altais_map_attack ─────────────────────────────────────────────────────
+
+const attackSchema = z
+  .object({
+    cwe: z
+      .string()
+      .min(1)
+      .max(32)
+      .regex(/^(?:cwe[-_ ]?)?\d{1,5}(?:[-_][a-z0-9]+)?$/i, "must be a CWE identifier, e.g. CWE-89")
+      .optional()
+      .describe("Optional CWE identifier to map, e.g. `CWE-89`."),
+    description: z
+      .string()
+      .min(1)
+      .max(4096)
+      .optional()
+      .describe(
+        "Optional free-text vulnerability description to match against technique keywords.",
+      ),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(30)
+      .default(10)
+      .describe("Maximum number of ranked techniques to return."),
+  })
+  .refine((v) => v.cwe !== undefined || v.description !== undefined, {
+    message: "provide at least one of `cwe` or `description`",
+  });
+
+function buildMapAttackTool(catalog: AttackCatalog): ToolDefinition {
+  const parse = zodParser(attackSchema);
   return {
-    name: "runtime",
+    name: "altais_map_attack",
+    title: "Map a vulnerability to MITRE ATT&CK techniques",
     description:
-      "Runtime application protection: a WAF rule generator (ModSecurity / Cloudflare / AWS WAF / NGINX-NAXSI), a RASP configuration recommender, and an application-monitoring auditor for security-event logging, alerting, SIEM integration, and detection coverage.",
+      "Map a CWE identifier and/or a free-text vulnerability description to MITRE ATT&CK techniques, using a bundled, curated subset of software-relevant techniques. A CWE match against a technique's related weaknesses is the strongest signal; description keywords add weight. Returns ranked techniques with id, name, tactic, a normalized confidence score, and the reasons each matched.",
+    inputSchema: attackSchema.shape,
+    annotations: COMMON_ANNOTATIONS,
+    handler: (args) => {
+      const parsed = parse(args);
+      if (!parsed.success) return errorResult(`Invalid input: ${parsed.message}`);
+      const result = mapToAttack(catalog, {
+        ...(parsed.data.cwe !== undefined ? { cwe: parsed.data.cwe } : {}),
+        ...(parsed.data.description !== undefined ? { description: parsed.data.description } : {}),
+        limit: parsed.data.limit,
+      });
+      return textResult(jsonText(result));
+    },
+  };
+}
+
+// ─── module assembly ───────────────────────────────────────────────────────
+
+export function createVulnDbModule(deps: VulnDbModuleDeps): ModuleDefinition {
+  const state: {
+    cve: CveDatabase | null;
+    cwe: CweDatabase | null;
+    attack: AttackCatalog | null;
+  } = { cve: null, cwe: null, attack: null };
+
+  const ensureCve = (): CveDatabase => {
+    if (state.cve === null) throw new Error("vuln_db module accessed before init()");
+    return state.cve;
+  };
+  const ensureCwe = (): CweDatabase => {
+    if (state.cwe === null) throw new Error("vuln_db module accessed before init()");
+    return state.cwe;
+  };
+  const ensureAttack = (): AttackCatalog => {
+    if (state.attack === null) throw new Error("vuln_db module accessed before init()");
+    return state.attack;
+  };
+
+  // Build placeholder tools so registration metadata (name, schema,
+  // description) is available immediately; handlers resolve the loaded
+  // databases lazily after init().
+  const cvePlaceholder = buildLookupCveTool(new CveDatabase([]));
+  const cwePlaceholder = buildLookupCweTool(new CweDatabase([]));
+  const attackPlaceholder = buildMapAttackTool(new AttackCatalog([]));
+
+  const tools: readonly ToolDefinition[] = [
+    {
+      ...cvePlaceholder,
+      handler: (args) => buildLookupCveTool(ensureCve()).handler(args),
+    },
+    {
+      ...cwePlaceholder,
+      handler: (args) => buildLookupCweTool(ensureCwe()).handler(args),
+    },
+    buildCalculateCvssTool(),
+    {
+      ...attackPlaceholder,
+      handler: (args) => buildMapAttackTool(ensureAttack()).handler(args),
+    },
+  ];
+
+  return {
+    name: "vuln_db",
+    description:
+      "Vulnerability knowledge base: CVE lookup, full CWE taxonomy lookup with related weaknesses, a complete CVSS v3.1 + v4.0 calculator, and CWE/description-to-MITRE-ATT&CK technique mapping — all from bundled offline data.",
     version: MODULE_VERSION,
     tools,
-    init() {
-      // No async resources to load.
+    async init() {
+      state.cve = await CveDatabase.load(deps.dataDir);
+      state.cwe = await CweDatabase.load(deps.dataDir);
+      state.attack = await AttackCatalog.load(deps.dataDir);
     },
   };
 }

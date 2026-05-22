@@ -99,7 +99,7 @@ const COMPONENT_THREATS: Readonly<Record<ComponentType, readonly ThreatTemplate[
     T(
       "information_disclosure",
       "IDOR — caller can read records by guessing identifiers",
-      "Enforce object-level authorization on every fetch. Prefer indirect references where appropriate.",
+      "Enforce object-level authorization on every object access. Prefer indirect references where appropriate.",
       ["CWE-639", "CWE-285"],
     ),
     T(

@@ -4,7 +4,23 @@ This guide explains how to add a new module to altais-mcp. It covers the `Module
 
 The [`container` module](modules/container.md) (`src/modules/container/`) is used as the worked example throughout — it is small, self-contained, and exercises the full pattern.
 
-Before starting, read [`CLAUDE.md`](../CLAUDE.md) — its **MCP Server Security Rules** and **Code Conventions** are non-negotiable and apply to every module. The [Contributing guide](Contributing.md) covers branch naming, the commit convention, and the pull-request process.
+Two sets of project rules are non-negotiable and apply to every module. They are stated in full here so this guide is self-contained.
+
+**MCP Server Security Rules.** altais-mcp holds itself to nine rules:
+
+1. **Input validation** — every tool input is a Zod schema with explicit constraints (lengths, enums, numeric ranges); file paths are canonicalized and confined to `scan_root`. No raw string reaches a filesystem, parser, or analyzer. (See §5.)
+2. **No code execution** — never `eval`, `new Function`, `vm.*`, `child_process`, or `import()` of scanned input; analysis is static (regex / AST) only.
+3. **No runtime network calls** — analysis is local; the reference databases (CWE, OSV, OWASP, CVE, ATT&CK) ship bundled under `data/`.
+4. **No secrets in code** — no credentials in source, tests, or data files; sensitive runtime values come from environment variables, not config.
+5. **Transport security** — stdio logs only to stderr; the HTTP transport binds `127.0.0.1`, validates the `Origin` header, and requires a bearer token.
+6. **Output safety** — tool responses never leak internal state, filesystem paths beyond the scanned scope, environment variables, or stack traces; errors are sanitized and output is bounded.
+7. **Deterministic finding IDs** — `{module}:{rule}:{contentHash}`. (See §4.)
+8. **Tool annotations** — every tool declares `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: true`, `openWorldHint: false`. (See §3.)
+9. **Instructions field** — the MCP `InitializeResult` `instructions` string is updated whenever a module's tools change. (See §6.1.)
+
+**Code Conventions.** TypeScript strict mode; ES modules with `.js` import extensions; no `any` (use `unknown` and narrow with type guards); explicit return types on every function; `interface` over `type` for object shapes. Naming: tool names `altais_{action}_{resource}` and config keys in snake_case; module directories and TypeScript files in kebab-case; types and interfaces in PascalCase; constants in SCREAMING_SNAKE_CASE. Register tools with `server.registerTool()`; pin exact dependency versions; add no native modules.
+
+The [Contributing guide](Contributing.md) covers branch naming, the commit convention, and the pull-request process.
 
 ---
 
@@ -271,7 +287,7 @@ const modulesSchema = z
 
 If the module needs its own configuration section, add a dedicated schema (like `scanSchema`, `iacSchema`, `agenticSchema`) and reference it from `configSchema`. Document the new keys in `altais.config.toml` with their defaults.
 
-Also tick the relevant box in the **PR Checklist** in `CLAUDE.md`: every Zod schema constrained, no code execution, no network calls, no secrets, accurate annotations, actionable errors, deterministic IDs, tests pass, build succeeds, `npm audit` clean, and the `instructions` field updated.
+Also tick the relevant box in the **PR Checklist**: every Zod schema constrained, no code execution, no network calls, no secrets, accurate annotations, actionable errors, deterministic IDs, tests pass, build succeeds, `npm audit` clean, and the `instructions` field updated.
 
 ---
 
@@ -282,7 +298,7 @@ Tests use Vitest and live alongside the source: `dockerfile.test.ts` next to `do
 - **Cover every analyzer.** Each `*.ts` analyzer gets a `*.test.ts` with positive cases (a misconfiguration is flagged with the expected `rule` and `severity`) and negative cases (clean input produces no finding).
 - **Assert deterministic IDs.** Verify that scanning the same input twice produces the same finding `id`.
 - **Assert the security invariants.** Confirm tools never throw on malformed input (they return `isError: true`) and that secret/PII evidence is redacted.
-- **Eval questions.** Per `CLAUDE.md`, every module ships 10+ eval questions in Phase 6 (`evals/`).
+- **Eval questions.** Every module ships 10+ eval questions in `evals/` (one XML file per module).
 - **Integration.** `src/integration.test.ts` connects an MCP `Client` to the server over `InMemoryTransport` and exercises every active tool end-to-end; new tools should be reachable through it.
 
 Run the suite with `npm test`.

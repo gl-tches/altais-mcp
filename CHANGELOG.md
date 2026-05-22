@@ -4,8 +4,21 @@ All notable changes to **altais-mcp** are tracked here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] — Unreleased
 
-## [1.0.1]
+Patch release. Wording-only change — no detection, scoring, finding ID, or
+API behavior is affected.
+
+### Changed
+
+- Reworded the loose verb "fetch" to precise terms in three threat-model and
+  testing template strings: `altais_attack_tree` and `altais_stride` now
+  recommend "object-level authorization on every object access", and the
+  `altais_generate_security_tests` SSRF test intents refer to an "outbound
+  request". This also removes the last bare `fetch` substrings from those
+  modules' source.
+
+## [1.0.1] — Unreleased
 
 Patch release. Resolves a supply-chain scanner false positive. No change to
 detection behavior — every finding ID, regex, and message is byte-identical

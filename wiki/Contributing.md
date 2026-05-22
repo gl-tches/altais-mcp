@@ -168,7 +168,7 @@ assistant co-authored the change, keep its `Co-Authored-By:` trailer.
 
 ## Code conventions
 
-TypeScript, strict throughout (see `CLAUDE.md` for the authoritative list):
+TypeScript, strict throughout:
 
 - `"strict": true`; **no `any`** — use `unknown` and narrow with type guards.
 - **Explicit return types** on every function.
@@ -200,8 +200,8 @@ TypeScript, strict throughout (see `CLAUDE.md` for the authoritative list):
 ## The MCP security rules
 
 altais-mcp follows nine non-negotiable security rules (full text in
-`CLAUDE.md` and [SECURITY.md](../SECURITY.md)). The ones most likely to
-affect a contribution:
+[SECURITY.md](../SECURITY.md)). The ones most likely to affect a
+contribution:
 
 1. **Input validation** — every tool input is a Zod schema with explicit
    constraints (max lengths, enums, numeric ranges). No raw passthrough.
@@ -234,7 +234,7 @@ A PR that violates rule 2 or 3 will not be merged.
    ```
 4. Push your branch and open a PR **against `main`**. Describe what changed
    and why; link any issue.
-5. Confirm the **PR checklist** (from `CLAUDE.md`):
+5. Confirm the **PR checklist**:
    - [ ] All Zod schemas have explicit constraints (max lengths, enums, ranges)
    - [ ] No `eval`, `exec`, `Function()`, or dynamic code execution
    - [ ] No network calls from tool handlers
