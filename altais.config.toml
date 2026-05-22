@@ -38,6 +38,7 @@ iac = false
 agentic = false
 api = false
 runtime = false
+database = false
 
 [scan]
 max_file_size_kb = 512
@@ -86,3 +87,11 @@ check_inter_agent = true        # ASI07
 check_cascading = true          # ASI08
 check_trust_exploitation = true # ASI09
 check_rogue_agents = true       # ASI10
+
+[database]
+drivers = ["postgres", "mysql", "mongodb", "redis", "sqlite", "mssql", "elasticsearch", "dynamodb"]
+check_connection_strings = true
+check_parameterization = true
+check_migrations = true
+check_backup = true
+check_nosql_injection = true

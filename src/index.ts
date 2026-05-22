@@ -34,8 +34,9 @@ import { createSdlcModule } from "./modules/sdlc/index.js";
 import { createMlSecurityModule } from "./modules/ml-security/index.js";
 import { createAgenticModule } from "./modules/agentic/index.js";
 import { createRuntimeModule } from "./modules/runtime/index.js";
+import { createDatabaseModule } from "./modules/database/index.js";
 
-export const SERVER_VERSION = "1.0.2";
+export const SERVER_VERSION = "1.1.0";
 const HTTP_PATH = "/mcp";
 const HTTP_HOST = "127.0.0.1";
 
@@ -160,6 +161,8 @@ const MODULE_DESCRIPTIONS: Readonly<Record<string, string>> = {
   agentic:
     "altais_audit_goal_hijack, altais_audit_tool_misuse, altais_audit_agent_identity, altais_audit_agentic_supply_chain, altais_audit_code_execution, altais_audit_memory_poisoning, altais_audit_inter_agent_comms, altais_audit_cascading_failures, altais_audit_trust_exploitation, altais_audit_rogue_agents — OWASP Agentic Top 10 (ASI01-ASI10)",
   runtime: "altais_generate_waf_rules, altais_recommend_rasp, altais_audit_monitoring",
+  database:
+    "altais_audit_connection, altais_audit_queries (parameterization across Prisma/Drizzle/TypeORM/Sequelize/Knex/pg/mysql2/SQLAlchemy/Django/psycopg/diesel/sqlx/GORM/pgx), altais_audit_postgres, altais_audit_mysql, altais_audit_mongodb, altais_audit_redis, altais_audit_sqlite, altais_audit_mssql, altais_audit_elasticsearch, altais_audit_dynamodb, altais_audit_pooling, altais_audit_migrations, altais_audit_backup, altais_audit_nosql_injection, altais_audit_db_tls, altais_audit_db_logging — connection / config / migration / backup / NoSQL-injection / TLS / logging audits per database engine",
 };
 
 export function buildInstructions(activeModules: readonly string[]): string {
@@ -272,6 +275,9 @@ export function loadEnabledModules(deps: {
       findingStore: deps.findingStore,
     }),
     createRuntimeModule({
+      findingStore: deps.findingStore,
+    }),
+    createDatabaseModule({
       findingStore: deps.findingStore,
     }),
   ];

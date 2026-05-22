@@ -1,0 +1,287 @@
+{
+  "_comment": "Detection patterns for the altais-mcp database module's source-scanning tools (altais_audit_queries, altais_audit_migrations, altais_audit_nosql_injection). These are pattern data, NOT executable code: altais-mcp matches them in target source, it never runs them. Holding the literal pattern strings here keeps the module's TypeScript free of inline query/driver/command tokens that supply-chain scanners may misread. Loaded by src/modules/database/finding.ts.",
+  "queries": [
+    {
+      "id": "db-query-js-string-concat",
+      "languages": ["javascript", "typescript"],
+      "severity": "critical",
+      "title": "SQL query built with string concatenation",
+      "description": "A query / execute / raw call receives a string literal joined with `+`. Concatenating untrusted values into SQL lets an attacker change the query's meaning (SQL injection).",
+      "remediation": "Use parameterized queries / prepared statements — pass values as bound parameters (`$1`, `?`) via the driver (pg, mysql2, better-sqlite3) or the ORM's typed query builder, never by string assembly.",
+      "cwe": ["CWE-89"],
+      "regex": "\\.(query|execute|raw)\\s*\\(\\s*[\"'`][^\"'`\\n]*[\"'`]\\s*\\+"
+    },
+    {
+      "id": "db-query-js-template-interp",
+      "languages": ["javascript", "typescript"],
+      "severity": "critical",
+      "title": "SQL query built with template-literal interpolation",
+      "description": "A query / execute / raw call receives a template literal containing a `${...}` substitution. Interpolated values are unescaped and can alter the query (SQL injection).",
+      "remediation": "Switch to parameterized queries. For tagged-template libraries (`postgres`, Drizzle `sql`) ensure interpolation goes through the library's parameter binding, not a plain template literal passed to `.query()`.",
+      "cwe": ["CWE-89"],
+      "regex": "\\.(query|execute|raw)\\s*\\(\\s*`[^`]*\\$\\{"
+    },
+    {
+      "id": "db-query-prisma-raw-unsafe",
+      "languages": ["javascript", "typescript"],
+      "severity": "critical",
+      "title": "Prisma $queryRawUnsafe / $executeRawUnsafe used",
+      "description": "Prisma's `$queryRawUnsafe` / `$executeRawUnsafe` accept a raw SQL string with no parameterization. Any caller-influenced segment is a SQL-injection sink.",
+      "remediation": "Use the tagged-template `$queryRaw` / `$executeRaw` (which parameterize interpolations) or the typed Prisma Client API. Reserve the `Unsafe` variants for fully server-controlled, constant SQL.",
+      "cwe": ["CWE-89"],
+      "regex": "\\$(queryRawUnsafe|executeRawUnsafe)\\s*\\("
+    },
+    {
+      "id": "db-query-orm-where-concat",
+      "languages": ["javascript", "typescript"],
+      "severity": "high",
+      "title": "ORM where-clause built with string concatenation",
+      "description": "A `where` / `andWhere` / `orWhere` / `having` call (TypeORM / Knex query builder) receives a concatenated string. The query builder cannot parameterize a clause assembled by hand, so untrusted input reaches the SQL verbatim.",
+      "remediation": "Pass parameters as the second argument of the where clause (`.where('id = :id', { id })`) so the builder binds them, instead of concatenating values into the clause text.",
+      "cwe": ["CWE-89"],
+      "regex": "\\.(where|andWhere|orWhere|having)\\s*\\(\\s*[\"'`][^\"'`\\n]*[\"'`]\\s*\\+"
+    },
+    {
+      "id": "db-query-py-execute-fstring",
+      "languages": ["python"],
+      "severity": "critical",
+      "title": "Database execute() called with an f-string",
+      "description": "A `cursor.execute(...)` call (psycopg2 / psycopg3 / sqlite3 / SQLAlchemy) receives an f-string. f-strings interpolate values with no escaping — a classic SQL-injection path.",
+      "remediation": "Pass parameters as a separate tuple/dict argument: `cursor.execute('... WHERE id = %s', (user_id,))`. Never format SQL with f-strings, `%`, `.format()`, or `+`.",
+      "cwe": ["CWE-89"],
+      "regex": "\\.execute\\w*\\s*\\(\\s*[fF][\"']"
+    },
+    {
+      "id": "db-query-py-execute-format",
+      "languages": ["python"],
+      "severity": "critical",
+      "title": "Database execute() built with %, .format(), or concatenation",
+      "description": "A `cursor.execute(...)` call receives a string assembled with `%`, `.format()`, or `+`. Python string formatting does not escape SQL metacharacters (SQL injection).",
+      "remediation": "Use the DB-API parameter substitution — pass values as the second argument of `execute()` so the driver binds them. Do not pre-format the SQL string.",
+      "cwe": ["CWE-89"],
+      "regex": "\\.execute\\w*\\s*\\(\\s*[\"'][^\"'\\n]*[\"']\\s*(?:\\+|%[^=]|\\.format\\s*\\()"
+    },
+    {
+      "id": "db-query-py-sqlalchemy-text",
+      "languages": ["python"],
+      "severity": "high",
+      "title": "SQLAlchemy text() built with an f-string",
+      "description": "SQLAlchemy `text()` wraps a literal SQL fragment. Building it from an f-string interpolates untrusted values directly into SQL (SQL injection).",
+      "remediation": "Bind parameters with `text('... = :id').bindparams(id=value)` or use the SQLAlchemy expression language / ORM query API instead of a formatted string.",
+      "cwe": ["CWE-89"],
+      "regex": "\\btext\\s*\\(\\s*[fF][\"']"
+    },
+    {
+      "id": "db-query-py-django-raw",
+      "languages": ["python"],
+      "severity": "high",
+      "title": "Django raw() / extra() built with an f-string",
+      "description": "Django's `.raw()` / `.extra()` escape hatches receive an f-string. Interpolating request data into raw SQL bypasses the ORM's parameterization (SQL injection).",
+      "remediation": "Pass parameters via the `params=[...]` argument of `.raw()`, or use the ORM's filter API. Avoid `.extra()` entirely — it is deprecated and unsafe with untrusted input.",
+      "cwe": ["CWE-89"],
+      "regex": "\\.(raw|extra)\\s*\\(\\s*[fF][\"']"
+    },
+    {
+      "id": "db-query-rust-sqlx-format",
+      "languages": ["rust"],
+      "severity": "critical",
+      "title": "sqlx query built with format!",
+      "description": "An `sqlx::query` (`query_as` / `query_scalar`) call receives a `format!`-built string. sqlx parameterizes `$1` bind markers — a formatted string defeats that and injects values into the SQL.",
+      "remediation": "Use sqlx bind markers and `.bind(value)`, or the compile-time-checked `query!` macros. Never build the SQL argument with `format!`.",
+      "cwe": ["CWE-89"],
+      "regex": "sqlx::query(?:_as|_scalar|_as_unchecked)?\\s*\\(\\s*&?\\s*format!"
+    },
+    {
+      "id": "db-query-rust-diesel-format",
+      "languages": ["rust"],
+      "severity": "high",
+      "title": "Diesel sql_query built with format!",
+      "description": "Diesel's `sql_query` runs raw SQL. Building its argument with `format!` interpolates untrusted values into the statement (SQL injection).",
+      "remediation": "Use `.bind::<Type, _>(value)` on the `sql_query`, or express the query through Diesel's typed DSL instead of a formatted raw string.",
+      "cwe": ["CWE-89"],
+      "regex": "\\bsql_query\\s*\\(\\s*&?\\s*format!"
+    },
+    {
+      "id": "db-query-go-sprintf",
+      "languages": ["go"],
+      "severity": "critical",
+      "title": "Go SQL query built with fmt.Sprintf",
+      "description": "A `database/sql` / pgx / GORM `Query` / `Exec` call receives a `fmt.Sprintf`-built string. `fmt` performs no SQL escaping, so formatted values can change the query (SQL injection).",
+      "remediation": "Use placeholder parameters (`$1` for pgx/Postgres, `?` for MySQL) and pass values as variadic arguments to `Query` / `Exec`. Never assemble SQL with `fmt.Sprintf`.",
+      "cwe": ["CWE-89"],
+      "regex": "\\.(Query|QueryRow|QueryContext|QueryRowContext|Exec|ExecContext)\\s*\\([^)]*\\bfmt\\.Sprintf\\s*\\("
+    },
+    {
+      "id": "db-query-go-concat",
+      "languages": ["go"],
+      "severity": "high",
+      "title": "Go SQL query built with string concatenation",
+      "description": "A `database/sql` / pgx `Query` / `Exec` call receives a string literal joined with `+`. Concatenated values reach the SQL unescaped (SQL injection).",
+      "remediation": "Use placeholder parameters and pass values as arguments to `Query` / `Exec`; for GORM use the typed API or `?` placeholders in `Where`.",
+      "cwe": ["CWE-89"],
+      "regex": "\\.(Query|QueryRow|QueryContext|Exec|ExecContext)\\s*\\(\\s*[\"`][^\"`\\n]*[\"`]\\s*\\+"
+    }
+  ],
+  "migrations": [
+    {
+      "id": "db-migration-drop-table",
+      "languages": [],
+      "severity": "high",
+      "title": "Migration drops a table",
+      "description": "The migration issues `DROP TABLE`. Dropping a table is irreversible and destroys all rows — a forward migration that drops a table cannot be rolled back and risks data loss.",
+      "remediation": "Stage destructive drops: first deploy code that no longer reads the table, retain it for one release as a safety window, then drop it in a later migration. Ensure a verified backup exists before the drop runs.",
+      "cwe": [],
+      "regex": "\\bDROP\\s+TABLE\\b",
+      "flags": "i"
+    },
+    {
+      "id": "db-migration-drop-column",
+      "languages": [],
+      "severity": "high",
+      "title": "Migration drops a column or constraint",
+      "description": "The migration drops a column or constraint. Removing a column deletes its data irreversibly and breaks any running application instance still selecting it.",
+      "remediation": "Use an expand/contract rollout: stop writing the column, deploy, then drop it in a later migration once no instance references it. Back up the data first.",
+      "cwe": [],
+      "regex": "\\bDROP\\s+(COLUMN|CONSTRAINT)\\b|\\.dropColumn\\s*\\(",
+      "flags": "i"
+    },
+    {
+      "id": "db-migration-drop-database",
+      "languages": [],
+      "severity": "critical",
+      "title": "Migration drops a database or schema",
+      "description": "The migration issues `DROP DATABASE` / `DROP SCHEMA`. This destroys every object and row it contains and is effectively unrecoverable without a full restore.",
+      "remediation": "A migration should never drop a database or schema. Remove this statement; perform schema-level teardown as a deliberate, separately reviewed operational task with a confirmed backup.",
+      "cwe": [],
+      "regex": "\\bDROP\\s+(DATABASE|SCHEMA)\\b",
+      "flags": "i"
+    },
+    {
+      "id": "db-migration-truncate",
+      "languages": [],
+      "severity": "high",
+      "title": "Migration truncates a table",
+      "description": "The migration issues `TRUNCATE`. It deletes every row, does not fire row triggers, and on most engines cannot be rolled back inside the transaction — silent, irreversible data loss.",
+      "remediation": "Avoid `TRUNCATE` in migrations. If rows must be cleared, use a reviewed data migration with a `WHERE` filter and a verified backup, or perform it as an operational task.",
+      "cwe": [],
+      "regex": "\\bTRUNCATE\\s+(?:TABLE\\s+)?",
+      "flags": "i"
+    },
+    {
+      "id": "db-migration-delete-no-where",
+      "languages": [],
+      "severity": "high",
+      "title": "Migration DELETE has no WHERE clause",
+      "description": "A `DELETE FROM <table>` statement ends without a `WHERE` clause, removing every row in the table.",
+      "remediation": "Add an explicit `WHERE` filter scoping the delete, or confirm the unconditional delete is intended and reviewed with a backup in place.",
+      "cwe": [],
+      "regex": "\\bDELETE\\s+FROM\\s+[A-Za-z_][\\w.\"`]*\\s*;",
+      "flags": "i"
+    },
+    {
+      "id": "db-migration-add-not-null",
+      "languages": [],
+      "severity": "medium",
+      "title": "Migration adds a NOT NULL column",
+      "description": "The migration adds a `NOT NULL` column. On a populated table this fails — or, with a volatile default, rewrites every row and locks the table — unless a safe default and backfill are in place.",
+      "remediation": "Add the column as nullable, backfill existing rows in batches, then add the `NOT NULL` constraint in a later migration. Confirm a non-volatile `DEFAULT` is set if the column must be NOT NULL immediately.",
+      "cwe": [],
+      "regex": "\\bADD\\s+COLUMN\\b[^;\\n]*\\bNOT\\s+NULL\\b",
+      "flags": "i"
+    },
+    {
+      "id": "db-migration-rename-column",
+      "languages": [],
+      "severity": "medium",
+      "title": "Migration renames a column",
+      "description": "The migration renames a column. The old and new names cannot both exist, so any application instance still using the old name breaks during the deploy window.",
+      "remediation": "Use expand/contract: add the new column, dual-write, migrate reads, then drop the old column in a later release — instead of an in-place rename.",
+      "cwe": [],
+      "regex": "\\bRENAME\\s+COLUMN\\b|\\.renameColumn\\s*\\(",
+      "flags": "i"
+    },
+    {
+      "id": "db-migration-alter-column-type",
+      "languages": [],
+      "severity": "medium",
+      "title": "Migration changes a column type",
+      "description": "The migration alters a column's type. A narrowing or incompatible type change can truncate or fail on existing data and may take a full table-rewrite lock.",
+      "remediation": "Verify the new type accepts all existing values, run the change in a low-traffic window, and for large tables prefer a new column with a backfill over an in-place `ALTER TYPE`.",
+      "cwe": [],
+      "regex": "\\bALTER\\s+COLUMN\\b[^;\\n]*\\bTYPE\\b|\\bMODIFY\\s+COLUMN\\b",
+      "flags": "i"
+    }
+  ],
+  "nosql_injection": [
+    {
+      "id": "db-nosql-mongo-request-query",
+      "languages": ["javascript", "typescript"],
+      "severity": "high",
+      "title": "MongoDB query built directly from request data",
+      "description": "A MongoDB collection method receives `req.body` / `req.query` / `req.params` directly. An attacker can supply query operators (`{ \"$ne\": null }`, `{ \"$gt\": \"\" }`) and bypass the intended filter (NoSQL injection).",
+      "remediation": "Validate request data against a strict schema (Zod, Joi) before it reaches a query, and cast scalar fields to their expected primitive type so operator objects are rejected.",
+      "cwe": ["CWE-943"],
+      "regex": "\\.(find|findOne|findOneAndUpdate|findOneAndDelete|updateOne|updateMany|deleteOne|deleteMany|count|countDocuments|aggregate)\\s*\\(\\s*(?:req|request|ctx)\\.(body|query|params)\\b"
+    },
+    {
+      "id": "db-nosql-mongo-where-operator",
+      "languages": ["javascript", "typescript", "python"],
+      "severity": "high",
+      "title": "MongoDB $where operator used",
+      "description": "The `$where` operator runs a JavaScript expression on the server for every document. Any untrusted input reaching it is a server-side code-injection sink, and it bypasses indexes.",
+      "remediation": "Replace `$where` with standard query operators. If server-side evaluation is unavoidable, use a fixed, hard-coded function with no caller-supplied input.",
+      "cwe": ["CWE-943"],
+      "regex": "\\$where\\s*:"
+    },
+    {
+      "id": "db-nosql-mongo-mapreduce",
+      "languages": ["javascript", "typescript"],
+      "severity": "medium",
+      "title": "MongoDB mapReduce used",
+      "description": "`mapReduce` executes caller-provided JavaScript on the server. With any untrusted portion in the map / reduce / finalize functions this is a code-injection sink.",
+      "remediation": "Use the aggregation pipeline instead of `mapReduce`. If `mapReduce` is required, keep the functions static and server-controlled.",
+      "cwe": ["CWE-943"],
+      "regex": "\\.mapReduce\\s*\\("
+    },
+    {
+      "id": "db-nosql-mongoose-where-request",
+      "languages": ["javascript", "typescript"],
+      "severity": "high",
+      "title": "Mongoose where() built from request data",
+      "description": "A Mongoose `.where(...)` clause is fed `req` / `request` data directly, letting an attacker inject query operators into the filter (NoSQL injection).",
+      "remediation": "Validate and type-cast request fields before building the query, and use explicit equality (`.equals(value)`) rather than passing raw request objects.",
+      "cwe": ["CWE-943"],
+      "regex": "\\.where\\s*\\(\\s*(?:req|request)\\."
+    },
+    {
+      "id": "db-nosql-elasticsearch-query-string",
+      "languages": ["javascript", "typescript", "python"],
+      "severity": "medium",
+      "title": "Elasticsearch query_string built with interpolation",
+      "description": "An Elasticsearch `query_string` query is assembled with an interpolated value. `query_string` has a powerful mini-language (field selectors, wildcards, boolean operators) — untrusted input can broaden the search or trigger expensive queries.",
+      "remediation": "Use a structured `match` / `term` query with the user value as a bound field, or sanitize and escape input before placing it in `query_string`. Prefer `simple_query_string` with restricted flags.",
+      "cwe": ["CWE-943"],
+      "regex": "[\"']query_string[\"'][^}]{0,80}\\$\\{"
+    },
+    {
+      "id": "db-nosql-redis-eval-interp",
+      "languages": ["javascript", "typescript"],
+      "severity": "high",
+      "title": "Redis Lua script built with interpolation",
+      "description": "A Redis `eval` / `evalsha` Lua script is assembled with a `${...}` substitution. Interpolating untrusted input into the script body is a server-side command/script-injection sink.",
+      "remediation": "Keep the Lua script body static and pass dynamic values as `KEYS` / `ARGV` arguments to `eval`, never by interpolating them into the script string.",
+      "cwe": ["CWE-943"],
+      "regex": "\\.(eval|evalsha|eval_ro)\\s*\\(\\s*[`\"'][^`\"'\\n]*\\$\\{"
+    },
+    {
+      "id": "db-nosql-py-pymongo-request",
+      "languages": ["python"],
+      "severity": "high",
+      "title": "PyMongo query built directly from request data",
+      "description": "A PyMongo collection method receives framework `request` data directly. An attacker can pass operator dictionaries and bypass the intended filter (NoSQL injection).",
+      "remediation": "Validate request data against a schema before querying and cast scalar fields to their expected type so operator objects (`$ne`, `$gt`, `$where`) cannot pass through.",
+      "cwe": ["CWE-943"],
+      "regex": "\\.(find|find_one|find_one_and_update|update_one|update_many|delete_one|delete_many|aggregate)\\s*\\(\\s*request\\."
+    }
+  ]
+}

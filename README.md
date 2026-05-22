@@ -1,12 +1,12 @@
 # altais-mcp
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](./LICENSE) [![Version](https://img.shields.io/badge/version-1.0.2-blue)](./CHANGELOG.md) [![npm](https://img.shields.io/npm/v/altais-mcp)](https://www.npmjs.com/package/altais-mcp) [![Node.js](https://img.shields.io/badge/node-%3E%3D20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![MCP](https://img.shields.io/badge/MCP-server-blueviolet)](https://modelcontextprotocol.io) [![Tools](https://img.shields.io/badge/tools-132-blueviolet)](./wiki/Home.md) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](./wiki/Contributing.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](./LICENSE) [![Version](https://img.shields.io/badge/version-1.1.0-blue)](./CHANGELOG.md) [![npm](https://img.shields.io/npm/v/altais-mcp)](https://www.npmjs.com/package/altais-mcp) [![Node.js](https://img.shields.io/badge/node-%3E%3D20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![MCP](https://img.shields.io/badge/MCP-server-blueviolet)](https://modelcontextprotocol.io) [![Tools](https://img.shields.io/badge/tools-148-blueviolet)](./wiki/Home.md) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](./wiki/Contributing.md)
 
 > **Why "Altais"?** Altais (δ Draconis) is a star in the tail of Draco, the dragon constellation that wraps around the north celestial pole. In Greek mythology, Draco was the guardian that never slept. The name felt right for a security tool, something that sits quietly in the background, watching everything that passes through.
 
 ---
 
-**altais-mcp** is a modular, open-source [Model Context Protocol](https://modelcontextprotocol.io) server that provides comprehensive security analysis for AI coding agents. It exposes 132 tools across 24 modules: agents call them to scan code, model threats, audit dependencies, verify compliance, and generate remediation guidance. Every tool is **read-only** (`readOnlyHint: true`) — altais-mcp analyzes code, configuration, and architecture; it never modifies, executes, or transmits the code it inspects.
+**altais-mcp** is a modular, open-source [Model Context Protocol](https://modelcontextprotocol.io) server that provides comprehensive security analysis for AI coding agents. It exposes 148 tools across 25 modules: agents call them to scan code, model threats, audit dependencies, verify compliance, and generate remediation guidance. Every tool is **read-only** (`readOnlyHint: true`) — altais-mcp analyzes code, configuration, and architecture; it never modifies, executes, or transmits the code it inspects.
 
 - **License:** MIT
 - **Language:** TypeScript (ES modules, strict mode)
@@ -96,7 +96,7 @@ Clients connect to `http://127.0.0.1:<port>/mcp` and send `Authorization: Bearer
 
 ## Module list
 
-altais-mcp has 24 modules. `core` is always loaded. Seven modules ship enabled by default; the rest are opt-in. Toggle modules in the `[modules]` section of `altais.config.toml`.
+altais-mcp has 25 modules. `core` is always loaded. Seven modules ship enabled by default; the rest are opt-in. Toggle modules in the `[modules]` section of `altais.config.toml`.
 
 | Module          | Default | Tools | Purpose                                                                                 |
 | --------------- | ------- | ----- | --------------------------------------------------------------------------------------- |
@@ -124,6 +124,7 @@ altais-mcp has 24 modules. `core` is always loaded. Seven modules ship enabled b
 | `ml_security`   | opt-in  | 8     | ML pipeline, inference API, model supply chain, OWASP ML/LLM Top 10, prompt injection   |
 | `agentic`       | opt-in  | 10    | OWASP Agentic Applications Top 10 (ASI01–ASI10) audits                                  |
 | `runtime`       | opt-in  | 3     | WAF rule generation, RASP recommendations, monitoring-coverage audit                    |
+| `database`      | opt-in  | 16    | Connection, per-engine config, query, migration, backup, NoSQL-injection, TLS, logging audits |
 
 The set of active modules is summarized in the `instructions` field of the MCP `InitializeResult` so a client's tool search can surface the right tools.
 
@@ -238,8 +239,8 @@ The `scan_root` boundary is a security control: `altais_scan_file` canonicalizes
 | ---------------- | ---------------------------------------------------------------------------------------- | ------- |
 | Core             | `core`                                                                                   | 5       |
 | Default          | `scan`, `threat_model`, `owasp`, `secrets`, `headers`, `supply_chain`, `auth`            | 38      |
-| Opt-in           | `crypto`, `container`, `code`, `data`, `iac`, `api`, `compliance`, `infra`, `protocol`, `vuln_db`, `incident`, `testing`, `sdlc`, `ml_security`, `agentic`, `runtime` | 89      |
-| **Total**        | **24 modules**                                                                           | **132** |
+| Opt-in           | `crypto`, `container`, `code`, `data`, `iac`, `api`, `compliance`, `infra`, `protocol`, `vuln_db`, `incident`, `testing`, `sdlc`, `ml_security`, `agentic`, `runtime`, `database` | 105     |
+| **Total**        | **25 modules**                                                                           | **148** |
 
 Every tool has its own reference page in the [project wiki](./wiki/Home.md) — its name, input fields, output shape, and a representative request/response example.
 
@@ -283,5 +284,5 @@ Adding a new module? See the [Module Development guide](./wiki/Module-Developmen
 | [`wiki/Deployment.md`](./wiki/Deployment.md)                   | Deploying altais-mcp (stdio, HTTP, Docker, systemd)                   |
 | [`wiki/Contributing.md`](./wiki/Contributing.md)               | Branch naming, commit conventions, and the PR process                 |
 | [`SECURITY.md`](./SECURITY.md)                                 | Threat model, the nine security rules, vulnerability reporting        |
-| [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.0.2)                                     |
+| [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.1.0)                                     |
 | [`altais-mcp-architecture.md`](altais-mcp-architecture.md)     | Full module tree, tool tables, and phase plan                         |

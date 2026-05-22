@@ -4,6 +4,48 @@ All notable changes to **altais-mcp** are tracked here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — Unreleased
+
+Minor release. Adds the `database` module — comprehensive database-layer
+security auditing — bringing altais-mcp to **148 tools across 25 modules**.
+
+### Added
+
+- **Database module (16 tools)** — a new opt-in module for database-layer
+  security auditing:
+  - `altais_audit_connection` — connection-string credentials, TLS
+    enforcement, plaintext schemes, default/empty passwords
+  - `altais_audit_queries` — query parameterization across Prisma, Drizzle,
+    TypeORM, Sequelize, Knex, pg, mysql2, better-sqlite3, SQLAlchemy, Django
+    ORM, psycopg, diesel, sqlx, sea-orm, GORM, database/sql, and pgx
+  - `altais_audit_postgres`, `altais_audit_mysql`, `altais_audit_mongodb`,
+    `altais_audit_redis`, `altais_audit_sqlite`, `altais_audit_mssql`,
+    `altais_audit_elasticsearch`, `altais_audit_dynamodb` — per-engine
+    configuration audits (relational, document, key-value, search, and
+    cloud-managed databases)
+  - `altais_audit_pooling` — connection-pool size, timeouts, leak detection,
+    TLS enforcement
+  - `altais_audit_migrations` — destructive / irreversible migration detection
+  - `altais_audit_backup` — backup encryption, retention, PITR, off-site copies
+  - `altais_audit_nosql_injection` — MongoDB operator, Elasticsearch
+    query_string, and Redis Lua-script injection
+  - `altais_audit_db_tls` — per-database TLS protocol, cipher, and
+    certificate-verification audit
+  - `altais_audit_db_logging` — audit / connection / failed-login logging and
+    log-destination security
+  - Findings carry real CWE references (CWE-89, CWE-943, CWE-319, CWE-798,
+    CWE-250, CWE-312, CWE-532, and others), severity, and remediation.
+- `data/database-patterns.json` — bundled detection patterns for the three
+  source-scanning database tools; the literal pattern strings live in the data
+  file rather than inline in TypeScript.
+- A `[database]` section in `altais.config.toml` (the module ships disabled by
+  default — `database = false`).
+
+### Changed
+
+- `instructions` field on `InitializeResult` enumerates the `database` module.
+- `package.json`, `package-lock.json`, and `SERVER_VERSION` bumped to `1.1.0`.
+
 ## [1.0.2] — Unreleased
 
 Patch release. Wording-only change — no detection, scoring, finding ID, or

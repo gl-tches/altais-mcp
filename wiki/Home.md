@@ -2,7 +2,7 @@
 
 **altais-mcp** is a modular, open-source [Model Context Protocol](https://modelcontextprotocol.io) server that gives AI coding agents comprehensive, **read-only** security analysis. It scans code, models threats, audits dependencies, checks compliance, and generates remediation guidance — it analyzes, it never modifies your code.
 
-- **132 tools** across **24 modules**
+- **148 tools** across **25 modules**
 - Every tool is `readOnlyHint: true` — no code execution, no runtime network calls
 - Transports: stdio (local) and streamable HTTP (remote, bearer-token authenticated)
 - License: MIT
@@ -44,6 +44,7 @@ Seven modules plus `core` are enabled by default; the rest are opt-in via `altai
 | [`ml_security`](modules/ml_security.md) | Opt-in | 8 | ML pipelines, inference APIs, model supply chain, OWASP ML & LLM Top 10. |
 | [`agentic`](modules/agentic.md) | Opt-in | 10 | OWASP Agentic Applications Security Top 10 (ASI01-ASI10). |
 | [`runtime`](modules/runtime.md) | Opt-in | 3 | WAF rule generation, RASP recommendations, monitoring coverage. |
+| [`database`](modules/database.md) | Opt-in | 16 | Connection, per-engine config, query, migration, backup, NoSQL-injection, TLS, and logging audits. |
 
 ## All tools
 
@@ -253,6 +254,25 @@ Every tool has its own reference page.
 - [`altais_recommend_rasp`](tools/altais_recommend_rasp.md)
 - [`altais_audit_monitoring`](tools/altais_audit_monitoring.md)
 
+### [`database`](modules/database.md)
+
+- [`altais_audit_connection`](tools/altais_audit_connection.md)
+- [`altais_audit_queries`](tools/altais_audit_queries.md)
+- [`altais_audit_postgres`](tools/altais_audit_postgres.md)
+- [`altais_audit_mysql`](tools/altais_audit_mysql.md)
+- [`altais_audit_mongodb`](tools/altais_audit_mongodb.md)
+- [`altais_audit_redis`](tools/altais_audit_redis.md)
+- [`altais_audit_sqlite`](tools/altais_audit_sqlite.md)
+- [`altais_audit_mssql`](tools/altais_audit_mssql.md)
+- [`altais_audit_elasticsearch`](tools/altais_audit_elasticsearch.md)
+- [`altais_audit_dynamodb`](tools/altais_audit_dynamodb.md)
+- [`altais_audit_pooling`](tools/altais_audit_pooling.md)
+- [`altais_audit_migrations`](tools/altais_audit_migrations.md)
+- [`altais_audit_backup`](tools/altais_audit_backup.md)
+- [`altais_audit_nosql_injection`](tools/altais_audit_nosql_injection.md)
+- [`altais_audit_db_tls`](tools/altais_audit_db_tls.md)
+- [`altais_audit_db_logging`](tools/altais_audit_db_logging.md)
+
 ---
 
-_This wiki is generated for altais-mcp v1.0.2. Tool and module pages are kept in `wiki/tools/` and `wiki/modules/`._
+_This wiki is generated for altais-mcp v1.1.0. Tool and module pages are kept in `wiki/tools/` and `wiki/modules/`._
