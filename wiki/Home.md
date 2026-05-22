@@ -275,4 +275,4 @@ Every tool has its own reference page.
 
 ---
 
-_This wiki is generated for altais-mcp v1.1.0. Tool and module pages are kept in `wiki/tools/` and `wiki/modules/`._
+_This wiki is generated for altais-mcp v1.1.1. Tool and module pages are kept in `wiki/tools/` and `wiki/modules/`._

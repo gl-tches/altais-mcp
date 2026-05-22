@@ -1,6 +1,6 @@
 # altais-mcp
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](./LICENSE) [![Version](https://img.shields.io/badge/version-1.1.0-blue)](./CHANGELOG.md) [![npm](https://img.shields.io/npm/v/altais-mcp)](https://www.npmjs.com/package/altais-mcp) [![Node.js](https://img.shields.io/badge/node-%3E%3D20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![MCP](https://img.shields.io/badge/MCP-server-blueviolet)](https://modelcontextprotocol.io) [![Tools](https://img.shields.io/badge/tools-148-blueviolet)](./wiki/Home.md) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](./wiki/Contributing.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](./LICENSE) [![Version](https://img.shields.io/badge/version-1.1.1-blue)](./CHANGELOG.md) [![npm](https://img.shields.io/npm/v/altais-mcp)](https://www.npmjs.com/package/altais-mcp) [![Node.js](https://img.shields.io/badge/node-%3E%3D20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![MCP](https://img.shields.io/badge/MCP-server-blueviolet)](https://modelcontextprotocol.io) [![Tools](https://img.shields.io/badge/tools-148-blueviolet)](./wiki/Home.md) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](./wiki/Contributing.md)
 
 > **Why "Altais"?** Altais (δ Draconis) is a star in the tail of Draco, the dragon constellation that wraps around the north celestial pole. In Greek mythology, Draco was the guardian that never slept. The name felt right for a security tool, something that sits quietly in the background, watching everything that passes through.
 
@@ -23,6 +23,30 @@ altais-mcp performs static analysis and advisory generation only. It does not ex
 
 altais-mcp requires **Node.js >= 20** and nothing else — no native modules, no external services.
 
+### Install from npm (recommended)
+
+Install the package from npm:
+
+```bash
+npm install altais-mcp
+```
+
+Run it directly with `npx` — no install step required:
+
+```bash
+npx altais-mcp
+```
+
+Add it to Claude Code as an MCP server:
+
+```bash
+claude mcp add altais-mcp -- npx altais-mcp
+```
+
+### Build from source
+
+For contributing or local development, build from the repository:
+
 ```bash
 git clone https://github.com/gl-tches/altais-mcp.git
 cd altais-mcp
@@ -30,7 +54,7 @@ npm install
 npm run build
 ```
 
-The build emits `dist/index.js`, which is the server entry point.
+The build emits `dist/index.js`, the server entry point.
 
 ---
 
@@ -284,5 +308,5 @@ Adding a new module? See the [Module Development guide](./wiki/Module-Developmen
 | [`wiki/Deployment.md`](./wiki/Deployment.md)                   | Deploying altais-mcp (stdio, HTTP, Docker, systemd)                   |
 | [`wiki/Contributing.md`](./wiki/Contributing.md)               | Branch naming, commit conventions, and the PR process                 |
 | [`SECURITY.md`](./SECURITY.md)                                 | Threat model, the nine security rules, vulnerability reporting        |
-| [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.1.0)                                     |
+| [`CHANGELOG.md`](./CHANGELOG.md)                               | Release history (v0.1.0 – v1.1.1)                                     |
 | [`altais-mcp-architecture.md`](altais-mcp-architecture.md)     | Full module tree, tool tables, and phase plan                         |

@@ -33,7 +33,7 @@ import { auditNosqlInjection, nosqlInjectionSchema } from "./nosql-injection.js"
 import { auditDbTls, dbTlsSchema } from "./tls.js";
 import { auditDbLogging, dbLoggingSchema } from "./logging.js";
 
-const MODULE_VERSION = "1.1.0";
+const MODULE_VERSION = "1.1.1";
 
 const COMMON_ANNOTATIONS = {
   readOnlyHint: true,
