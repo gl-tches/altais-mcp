@@ -63,6 +63,7 @@ iac = false
 agentic = false
 api = false
 runtime = false
+database = false
 
 [scan]
 max_file_size_kb = 512
@@ -100,6 +101,14 @@ check_inter_agent = true       # ASI07
 check_cascading = true         # ASI08
 check_trust_exploitation = true # ASI09
 check_rogue_agents = true      # ASI10
+
+[database]
+drivers = ["postgres", "mysql", "mongodb", "redis", "sqlite", "mssql", "elasticsearch", "dynamodb"]
+check_connection_strings = true
+check_parameterization = true
+check_migrations = true
+check_backup = true
+check_nosql_injection = true
 ```
 
 ---
@@ -339,12 +348,31 @@ altais-mcp/
 │   │   │   ├── versioning.ts
 │   │   │   ├── gateway.ts
 │   │   │   └── pagination.ts
-│   │   └── runtime/                    # NEW MODULE
+│   │   ├── runtime/                    # NEW MODULE
+│   │   │   ├── index.ts
+│   │   │   ├── rasp.ts
+│   │   │   ├── waf.ts
+│   │   │   ├── sbom-runtime.ts
+│   │   │   └── monitoring.ts
+│   │   └── database/                   # NEW MODULE
 │   │       ├── index.ts
-│   │       ├── rasp.ts
-│   │       ├── waf.ts
-│   │       ├── sbom-runtime.ts
-│   │       └── monitoring.ts
+│   │       ├── finding.ts
+│   │       ├── connection.ts
+│   │       ├── queries.ts
+│   │       ├── postgres.ts
+│   │       ├── mysql.ts
+│   │       ├── mongodb.ts
+│   │       ├── redis.ts
+│   │       ├── sqlite.ts
+│   │       ├── mssql.ts
+│   │       ├── elasticsearch.ts
+│   │       ├── dynamodb.ts
+│   │       ├── pooling.ts
+│   │       ├── migrations.ts
+│   │       ├── backup.ts
+│   │       ├── nosql-injection.ts
+│   │       ├── tls.ts
+│   │       └── logging.ts
 │   └── data/
 │       ├── cwe-database.json
 │       ├── secret-patterns.json
@@ -756,6 +784,27 @@ Tracked for integration into the `agentic` module as it matures. Covers skill su
 | `altais_recommend_rasp` | Recommend RASP configuration based on application stack |
 | `altais_audit_monitoring` | Check application monitoring for security event coverage |
 
+### database (NEW)
+
+| Tool | Description |
+|------|-------------|
+| `altais_audit_connection` | Audit database connection strings for embedded credentials, disabled TLS, and plaintext schemes |
+| `altais_audit_queries` | Detect unsafe query construction across the supported ORMs and raw drivers |
+| `altais_audit_postgres` | Audit a PostgreSQL / CockroachDB configuration (roles, RLS, pg_hba.conf, TLS, extensions) |
+| `altais_audit_mysql` | Audit a MySQL / MariaDB configuration (privileges, skip-grant-tables, bind-address, sql_mode) |
+| `altais_audit_mongodb` | Audit a MongoDB configuration (auth, bind_ip, SCRAM, journaling, roles) |
+| `altais_audit_redis` | Audit a Redis / Memcached configuration (auth, ACLs, dangerous commands, protected-mode) |
+| `altais_audit_sqlite` | Audit a SQLite configuration (file permissions, encryption, extension loading, ATTACH) |
+| `altais_audit_mssql` | Audit a SQL Server configuration (sa account, xp_cmdshell, CLR, linked servers) |
+| `altais_audit_elasticsearch` | Audit an Elasticsearch configuration (security plugin, anonymous access, TLS, scripting) |
+| `altais_audit_dynamodb` | Audit an AWS DynamoDB configuration (encryption, PITR, VPC endpoints, IAM scoping) |
+| `altais_audit_pooling` | Audit a connection-pool configuration (size, timeouts, leak detection, TLS) |
+| `altais_audit_migrations` | Detect destructive or unsafe database migrations |
+| `altais_audit_backup` | Audit a database backup configuration (encryption, retention, PITR, off-site copies) |
+| `altais_audit_nosql_injection` | Detect NoSQL injection sinks (MongoDB operators, Elasticsearch, Redis) |
+| `altais_audit_db_tls` | Audit a database's TLS / SSL configuration (protocol version, ciphers, certificate verification) |
+| `altais_audit_db_logging` | Audit a database's audit-logging configuration |
+
 ---
 
 ## Module Registration Pattern
@@ -889,7 +938,8 @@ export default {
 | ml_security | 8 | 5 |
 | agentic | 10 | 5 |
 | runtime | 3 | 5 |
-| **Total** | **132** | |
+| database | 16 | 6 |
+| **Total** | **148** | |
 
 ---
 
@@ -939,6 +989,11 @@ export default {
 - CVSS v3.1 + v4.0 (NVD publishes both for new CVEs as of 2026; plan to handle dual scoring for 3-5 years)
 - CISA Secure by Design
 - CIS Benchmarks
+
+**Database:**
+- OWASP Database Security Cheat Sheet
+- OWASP SQL Injection / NoSQL Injection Prevention Cheat Sheets
+- Per-engine hardening guidance — PostgreSQL / CockroachDB, MySQL / MariaDB, MongoDB, Redis / Memcached, SQLite, SQL Server, Elasticsearch, AWS DynamoDB
 
 ---
 

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
+import { realpathSync } from "node:fs";
 import http from "node:http";
 import process from "node:process";
+import { pathToFileURL } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -36,7 +38,7 @@ import { createAgenticModule } from "./modules/agentic/index.js";
 import { createRuntimeModule } from "./modules/runtime/index.js";
 import { createDatabaseModule } from "./modules/database/index.js";
 
-export const SERVER_VERSION = "1.1.0";
+export const SERVER_VERSION = "1.1.1";
 const HTTP_PATH = "/mcp";
 const HTTP_HOST = "127.0.0.1";
 
@@ -442,10 +444,11 @@ export async function main(argv: readonly string[]): Promise<void> {
 }
 
 const isEntrypoint = (): boolean => {
-  const arg1 = process.argv[1];
-  if (arg1 === undefined) return false;
-  const entry = new URL(`file://${arg1}`).href;
-  return import.meta.url === entry;
+  // npm installs the `altais-mcp` bin as a symlink; npx launches that
+  // symlink, so process.argv[1] must be resolved to its real path before
+  // it can be compared to this module's URL.
+  const a = process.argv[1];
+  return a ? import.meta.url === pathToFileURL(realpathSync(a)).href : false;
 };
 
 if (isEntrypoint()) {

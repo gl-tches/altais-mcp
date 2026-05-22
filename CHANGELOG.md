@@ -4,6 +4,31 @@ All notable changes to **altais-mcp** are tracked here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] — Unreleased
+
+Patch release. Fixes the npx / bin-symlink entrypoint detection so the
+server starts when launched as `npx altais-mcp`.
+
+### Fixed
+
+- **npx entrypoint** — `isEntrypoint()` in `src/index.ts` compared
+  `process.argv[1]` to `import.meta.url` directly. When npm installs the
+  `altais-mcp` bin as a symlink and npx launches through it, the two never
+  matched, so the server exited silently without starting. The check now
+  resolves the symlink with `realpathSync` and converts it with
+  `pathToFileURL` before comparing.
+
+### Changed
+
+- `package.json`, `package-lock.json`, `SERVER_VERSION`, and the database
+  module version bumped to `1.1.1`.
+- The README installation section is rewritten so `npm install altais-mcp`
+  is the primary, recommended path and building from source is the
+  secondary path for contributors.
+- `altais-mcp-architecture.md` updated with the `database` module — config
+  section, file tree, the 16-tool table, and the tool-count summary
+  (148 tools across 25 modules).
+
 ## [1.1.0] — Unreleased
 
 Minor release. Adds the `database` module — comprehensive database-layer
